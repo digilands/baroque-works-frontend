@@ -33,7 +33,6 @@
 }
 
 body {
- background: var(--color-bg);
    color: var(--color-text);
   font-family: 'SF Pro Display', Arial, Helvetica, sans-serif;
   padding-left: 1.5rem;

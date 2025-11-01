@@ -27,7 +27,7 @@ export default function VerticalCarousel() {
       <img
         src={services[activeIndex].image}
         alt={services[activeIndex].title}
-        className="h-[12rem] w-[12rem] object-contain mb-[-4rem] transition-all duration-700 ease-in-out"
+        className="h-[12rem] w-[12rem] object-contain mb-[-4rem] mr-[20rem] transition-all duration-700 ease-in-out"
       />
 
    
@@ -42,7 +42,7 @@ export default function VerticalCarousel() {
         }}
         modules={[Autoplay]}
         onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-        className="h-[20rem] w-[70%] select-none "
+        className="h-[20rem] w-[100%] select-none "
       >
         {services.map((service, idx) => {
               const diff = Math.abs(idx - activeIndex);
