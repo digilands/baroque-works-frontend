@@ -6,8 +6,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import { Google, Apple } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       emailOrPhone: "",
@@ -22,6 +24,7 @@ export default function SignupForm() {
     }),
     onSubmit: (values) => {
       console.log("Form submitted:", values);
+      router.push("/auth/serviceselection")
     },
   });
 
