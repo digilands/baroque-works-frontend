@@ -1,15 +1,28 @@
 'use client'
-import { useDarkMode } from '@/utils/DarkmodeContext';
-
+import { useTheme } from 'next-themes';
+import MiniCard from './ui/MiniCard';
+import { useRouter } from 'next/navigation';
 
 export default function page() {
-  const {darkMode, toggleDarkmode} = useDarkMode();
+   const { theme, setTheme } = useTheme();
+ const router = useRouter()
   return (
-    <div className={`flex flex-col items-center justify-center h-screen ${darkMode && "dark"} bg-bg dark:bg-black`}>
-      <button className='w-[10rem] h-[1rem] cursor-pointer bg-black dark:bg-bg dark:border-bg text-white rounded-lg p-4 flex items-center' onClick={toggleDarkmode}>
-        <span className='text-bg dark:text-black'>Toggle darkmode</span>
-        </button>
-      <h1 className='dark:text-bg'>edit me</h1>
-    </div>
+       <>
+        <button
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="px-3 py-1 rounded bg-[var(--color-white-bg)] text-[var(--color-text)] border"
+    >
+      {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
+    </button>
+     <button
+      onClick={() => router.push('/Home')}
+     className="px-3 py-1 rounded bg-blue-600 text-white ml-2"
+    >
+      Go to Home
+    </button>
+      
+      <MiniCard/>
+      </>
+   
   )
 }

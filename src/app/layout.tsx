@@ -1,7 +1,10 @@
+'use client'
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { DarkModeProvider } from "@/utils/DarkmodeContext";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import ThemeProvider  from "@/contexts/ThemeProvider";
+import { useEffect, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "BaroqueWorks",
   description: "product of imperium",
 };
@@ -23,15 +26,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    // Prevent rendering until theme is ready
+    return (
+      <html>
+        <body className="bg-white text-black transition-colors duration-300">
+          {/* You can also add a loader or skeleton */}
+        </body>
+      </html>
+    );
+  }
   return (
     <html lang="en">
-      <DarkModeProvider>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={` ${geistSans.variable} ${geistMono.variable} antialiased bg-bg`}
         >
+          <AppRouterCacheProvider  options={{ enableCssLayer: true }}>
+          <ThemeProvider>
         {children}
+        </ThemeProvider>
+          </AppRouterCacheProvider>
       </body>
-        </DarkModeProvider>
     </html>
   );
 }
