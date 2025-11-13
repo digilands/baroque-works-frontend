@@ -2,9 +2,9 @@ import { nigerianStates } from "@/utils/data";
 import React, { useState } from "react";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Box, IconButton, InputAdornment, SvgIcon, TextField } from "@mui/material";
-import Image from "next/image";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { MessageMultiple01Icon, Notification02Icon, Search01Icon, Location04Icon } from '@hugeicons/core-free-icons';
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState("")
   const [state, setState] = useState("Abuja")
@@ -28,11 +28,13 @@ export default function Header() {
         <span className="text-gray-text1 hover:text-gray-text3 mr-[1.5rem] ">Become a Handyman</span>
       </a>
       <IconButton>
-        <Image src="/chat.svg" alt="chat icon" width={24} height={24} />
+        <HugeiconsIcon
+      icon={MessageMultiple01Icon}
+      color="black"    />
       </IconButton>
       <IconButton className="mr-[1.6rem]">
-        <Image src="/bell.svg" alt="notification bell icon" width={24} height={24} />
-      </IconButton>
+       <HugeiconsIcon icon={Notification02Icon} color="black" />
+     </IconButton>
       <img src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
     </div>
   </div>
@@ -56,7 +58,7 @@ export default function Header() {
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <SearchOutlinedIcon className="text-black" />
+           <HugeiconsIcon icon={Search01Icon}  color="black"/>
           </InputAdornment>
         ),
       }}
@@ -66,7 +68,7 @@ export default function Header() {
     <div className="relative ml-[1rem]">
       {/* visible icon on mobile only */}
       <button aria-label="Select location" className="lg:hidden p-0 w-[2.5rem] h-[2.5rem] flex items-center justify-center bg-[#F2F2F2] rounded-[.5rem] lg:rounded-[1.25rem]">
-        <img src="/location.svg" alt="location icon" width={24} height={26} />
+       <HugeiconsIcon icon={Location04Icon} color="black"/>
       </button>
 
       <Select
@@ -102,7 +104,7 @@ export default function Header() {
         renderValue={(value) => (
           <Box className="flex items-center gap-[.4rem] ml-[.8rem]">
             {/* small icon shown inside select for desktop; mobile icon is the visible button above */}
-            <img src="/location.svg" alt="location icon" width={24} height={26} />
+            <HugeiconsIcon icon={Location04Icon} color="black" />
             <span className="hidden lg:inline">{value}</span>
           </Box>
         )}
@@ -121,11 +123,14 @@ export default function Header() {
     <a href="" className="hidden lg:block">
       <span className="text-gray-text1 hover:text-gray-text3 mr-[1.5rem]">Become a Handyman</span>
     </a>
-    <IconButton className=" mr-[.8rem]">
-      <img src="/chat.svg" alt="chat icon" width={24} height={24}  />
+    <IconButton>
+       <HugeiconsIcon
+      icon={MessageMultiple01Icon}
+      color="black"
+    />
     </IconButton>
-    <IconButton className="mr-[1.6rem">
-      <Image src="/bell.svg" alt="notification bell icon" width={24} height={24}  />
+    <IconButton className="mr-[1.6rem]">
+    <HugeiconsIcon icon={Notification02Icon} color="black" />
     </IconButton>
     <img src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
   </div>

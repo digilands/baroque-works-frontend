@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-// import { HugeiconsIcon } from '@hugeicons/react';
-// import { Cancel01Icon } from '@hugeicons-pro/core-stroke-rounded';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
 import { Chip } from "@mui/material";
-import { CloseOutlined } from "@mui/icons-material";
 interface props {
   activeFilters: string[],
   handleDelete: (filter: string) => void
@@ -20,7 +19,7 @@ export default function ActiveFilters({activeFilters, handleDelete}: props) {
         label={filter}
         // onClick={handleClick}
         onDelete={() => handleDelete(filter)}
-        deleteIcon={<CloseOutlined className="text-black"/>}
+        deleteIcon={<HugeiconsIcon icon={Cancel01Icon} className="text-black" size={16}/>}
       />
   })}
 </div>
