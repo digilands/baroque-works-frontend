@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ActiveFilters from "./ActiveFilters";
-import FilterButton, { FilterIcon } from "./FilterButton";
+import FilterButton from "./FilterButton";
+import { HugeiconsIcon } from '@hugeicons/react';
+import { FilterIcon } from '@hugeicons/core-free-icons';
 import ServiceCategoryFilter from "./ServiceCategoryFilter";
 import Card from "./Card";
 
@@ -115,7 +117,7 @@ export default function ServicesSection({service}: ServicesSectionProps) {
     <FilterButton numberOfFilters={activeFilters.length}/>
     </div>
     <div className="block md:hidden">
-      <FilterIcon/>
+      <HugeiconsIcon icon={FilterIcon} />
     </div>
     </div>
     <ActiveFilters activeFilters={activeFilters} handleDelete={handleDelete}/>

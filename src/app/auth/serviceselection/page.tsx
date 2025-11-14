@@ -19,7 +19,7 @@ export default function ServicesPage() {
 
   const handleNext = () => {
     console.log("Selected services:", selected);
-   
+   router.push("/auth/profilesetup");
   };
 
   return (
