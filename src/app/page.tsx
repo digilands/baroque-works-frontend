@@ -1,9 +1,8 @@
 'use client'
 import { useTheme } from 'next-themes';
-import MiniCard from './ui/MiniCard';
 import { useRouter } from 'next/navigation';
 
-export default function page() {
+export default function Page() {
    const { theme, setTheme } = useTheme();
  const router = useRouter()
   return (
@@ -21,7 +20,6 @@ export default function page() {
       Go to Home
     </button>
       
-      <MiniCard/>
       </>
    
   )

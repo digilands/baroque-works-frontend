@@ -1,15 +1,14 @@
-import { FormControl, InputLabel, MenuItem, Select, FormHelperText } from "@mui/material";
+import { MenuItem, Select, FormHelperText } from "@mui/material";
 import { useField } from "formik";
 
 interface SelectInputProps {
   label: string;
   name: string;
   options: string[];
-  required?: boolean;
   placeholder?: string;
 }
 
-export default function SelectInput({ label, options, required, ...props }: SelectInputProps) {
+export default function SelectInput({ label, options, ...props }: SelectInputProps) {
   const [field, meta, helpers] = useField(props.name);
 
   return (

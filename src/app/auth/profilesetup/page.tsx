@@ -1,6 +1,6 @@
 "use client";
 
-import { Formik, Form, useFormik } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../ui/TextInput";
 import SelectInput from "../../ui/SelectInput";
@@ -21,6 +21,14 @@ const services = [
     "house section"
 ]
 
+interface ProfileSetupValues {
+  name: string;
+  profession: string;
+  bio: string;
+  address: string;
+  profilePhoto: File | null;
+}
+
 export default function SetupProfile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
  
@@ -29,7 +37,7 @@ const validationSchema = Yup.object({
     profession: Yup.string().required("Profession is required"),
   })
   
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: ProfileSetupValues) => {
     console.log(values);
   };
 
@@ -92,7 +100,7 @@ const validationSchema = Yup.object({
             <SelectInput
               label="Profession"
               name="profession"
-              required
+             
               options={services}
             />
             <TextInput

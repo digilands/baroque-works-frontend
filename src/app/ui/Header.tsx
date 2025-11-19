@@ -2,9 +2,10 @@ import { nigerianStates } from "@/utils/data";
 import React, { useState } from "react";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Box, IconButton, InputAdornment, SvgIcon, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment, TextField } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import { MessageMultiple01Icon, Notification02Icon, Search01Icon, Location04Icon } from '@hugeicons/core-free-icons';
+import Image from "next/image";
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState("")
   const [state, setState] = useState("Abuja")
@@ -35,7 +36,7 @@ export default function Header() {
       <IconButton className="mr-[1.6rem]">
        <HugeiconsIcon icon={Notification02Icon} color="black" />
      </IconButton>
-      <img src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
+      <Image width={10} height={10} src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
     </div>
   </div>
 
@@ -132,7 +133,7 @@ export default function Header() {
     <IconButton className="mr-[1.6rem]">
     <HugeiconsIcon icon={Notification02Icon} color="black" />
     </IconButton>
-    <img src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
+    <Image width={10} height={10} src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
   </div>
 </div>
 }
