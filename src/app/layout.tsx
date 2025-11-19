@@ -1,5 +1,4 @@
 'use client'
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
@@ -16,10 +15,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "BaroqueWorks",
-  description: "product of imperium",
-};
+// const metadata: Metadata = {
+//   title: "BaroqueWorks",
+//   description: "product of imperium",
+// };
 
 export default function RootLayout({
   children,

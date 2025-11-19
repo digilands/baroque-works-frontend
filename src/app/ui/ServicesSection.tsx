@@ -85,18 +85,19 @@ export default function ServicesSection({service}: ServicesSectionProps) {
     "Fixed Rate",
   ]);
 
-  const filtered = handymen.filter((item) => item.category === service.category)
-  const [category, setCategory] = useState<typeof handymen>(filtered);
+  const [category, setCategory] = useState<typeof handymen>([]);
 
   useEffect(() => {
+    const filtered = handymen.filter((item) => item.category === service.category)
     setCategory(filtered);
-  }, [service])
+  }, [service.category])
 
          const handleDelete = (prop:string) => {
     setActiveFilters(activeFilters.filter((f) => f !== prop))
   };
 
   const handleSubCategoryChange = (subcat: string) => {
+     const filtered = handymen.filter((item) => item.category === service.category)
     if (subcat === "All") {
       setCategory(filtered);
     } else {
