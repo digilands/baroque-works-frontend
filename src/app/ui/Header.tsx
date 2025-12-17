@@ -25,7 +25,7 @@ export default function Header() {
 
     {/* Item 3: Right side — only visible on mobile here, visible on right for desktop */}
     <div className="flex flex-row items-center lg:hidden">
-      <a href="" className="hidden">
+      <a href="../auth/signup" className="hidden">
         <span className="text-gray-text1 hover:text-gray-text3 mr-[1.5rem] ">Become a Handyman</span>
       </a>
       <IconButton>
@@ -121,7 +121,7 @@ export default function Header() {
 
   {/* Item 3: Right side (desktop view only) */}
   <div className="hidden lg:flex flex-row items-center">
-    <a href="" className="hidden lg:block">
+    <a href="../auth/signup" className="hidden lg:block">
       <span className="text-gray-text1 hover:text-gray-text3 mr-[1.5rem]">Become a Handyman</span>
     </a>
     <IconButton>
