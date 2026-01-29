@@ -1,7 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { UserIcon, ToolsIcon, Image01Icon } from '@hugeicons/core-free-icons';
+import UserIcon from '@hugeicons/core-free-icons/UserIcon';
+import ToolsIcon from '@hugeicons/core-free-icons/ToolsIcon';
+import Image01Icon from '@hugeicons/core-free-icons/Image01Icon';
 
 interface AboutHandymanProps {
     aboutMe: string;

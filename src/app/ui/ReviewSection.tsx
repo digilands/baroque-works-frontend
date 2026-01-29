@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
+import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon';
 
 interface ReviewProps {
     rating: number;

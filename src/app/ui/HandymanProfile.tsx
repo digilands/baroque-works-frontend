@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { MessageMultiple01Icon } from '@hugeicons/core-free-icons';
+import MessageMultiple01Icon from '@hugeicons/core-free-icons/MessageMultiple01Icon';
 
 interface HandymanProfileProps {
     image: string;
