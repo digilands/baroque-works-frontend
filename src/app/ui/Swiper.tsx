@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
+import Image from "next/image";
 const services = [
   { title: "House Section", image: "/illustrations/houseIcon.png" },
   { title: "Plumbing", image: "/illustrations/plumbingIcon.png" },
@@ -24,7 +25,8 @@ export default function VerticalCarousel() {
   return (
     <div className="flex flex-col items-center">
      
-      <img
+      <Image
+      width={10} height={10}
         src={services[activeIndex].image}
         alt={services[activeIndex].title}
         className="h-[12rem] w-[12rem] object-contain mb-[-4rem] mr-[20rem] transition-all duration-700 ease-in-out"
@@ -69,7 +71,7 @@ export default function VerticalCarousel() {
             <div
                 className={`flex flex-row items-center float-right pr-30 transition-all duration-700 ease-in-out ${scale} ${translateX} `}
               >
-                <img src={service.image} alt={service.title} width={imgSize} height={imgSize} />
+                <Image src={service.image} alt={service.title} width={imgSize} height={imgSize} />
                 <p
                   className={` transition-all duration-700 ease-in-out ${textSize} ${color}`}
                 >

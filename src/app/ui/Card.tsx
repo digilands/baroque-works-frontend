@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 interface CardProps {
+  id: number;
   image: string;
   title: string;
   rate: string;
@@ -16,10 +18,10 @@ interface CardProps {
   }
 }
 
-export default function Card({ image, title, rate, rateType, profile }: CardProps) {
-  
+export default function Card({ id, image, title, rate, rateType, profile }: CardProps) {
+
   return (
-    <div className="rounded-2xl w-full">
+    <Link href={`/services/${id}`} className="rounded-2xl w-full block">
       <div className="relative w-full h-[11rem]">
         <Image
           src={image}
@@ -52,6 +54,6 @@ export default function Card({ image, title, rate, rateType, profile }: CardProp
         </div>
         <span className="text-text text-sm">{`⭐ ${profile.rating}`}</span>
       </div>
-    </div>
+    </Link>
   );
 }

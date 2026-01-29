@@ -1,9 +1,7 @@
 "use client";
-import React, {useState} from "react";
-import { services } from "@/utils/data";
+import React from "react";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
-import { IconButton } from "@mui/material";
 
 interface Service {
   name: string;

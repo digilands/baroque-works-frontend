@@ -6,8 +6,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import { Google, Apple } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       emailOrPhone: "",
@@ -22,6 +24,7 @@ export default function SignupForm() {
     }),
     onSubmit: (values) => {
       console.log("Form submitted:", values);
+      router.push("/auth/serviceselection")
     },
   });
 
@@ -33,7 +36,7 @@ export default function SignupForm() {
       </p>
 
       <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-       
+
         <TextField
           id="emailOrPhone"
           name="emailOrPhone"
@@ -50,28 +53,28 @@ export default function SignupForm() {
               "!bg-bg !text-text !rounded-lg ",
           }}
           fullWidth
-         
+
           sx={{
-    '& .MuiOutlinedInput-root': {
-      '&.Mui-focused fieldset': {
-        borderColor: 'black', // focused border color
-      }
-    },
-    '& .MuiInputLabel-root': {
-      '&.Mui-focused': {
-        color: 'black', // focused label color
-      }
-    }
-  }}
+            '& .MuiOutlinedInput-root': {
+              '&.Mui-focused fieldset': {
+                borderColor: 'var(--color-text)', // focused border color adapts to theme
+              }
+            },
+            '& .MuiInputLabel-root': {
+              '&.Mui-focused': {
+                color: 'var(--color-text)', // focused label color adapts to theme
+              }
+            }
+          }}
         />
 
         <Button
           type="submit"
           variant="contained"
           fullWidth
-            className="w-full py-2 bg-text hover:bg-[#1a1a1a] text-white rounded-lg normal-case font-medium"
-        
-                >
+          className="w-full py-2 bg-text hover:bg-[#1a1a1a] dark:bg-white dark:hover:bg-gray-100 dark:text-black text-white rounded-lg normal-case font-medium"
+
+        >
           Continue
         </Button>
       </form>
@@ -86,8 +89,8 @@ export default function SignupForm() {
         <Button
           startIcon={<Google />}
           variant="outlined"
-             className="w-full py-2 text-dark border-text normal-case rounded-lg"
-       
+          className="w-full py-2 text-dark border-text normal-case rounded-lg"
+
         >
           Sign up with Google
         </Button>
@@ -96,8 +99,8 @@ export default function SignupForm() {
           startIcon={<Apple />}
           variant="outlined"
           fullWidth
-           className="w-full py-2 text-dark border-text normal-case rounded-lg"
-       
+          className="w-full py-2 text-dark border-text normal-case rounded-lg"
+
         >
           Sign up with Apple
         </Button>
