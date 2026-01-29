@@ -7,7 +7,7 @@ interface ServiceGalleryProps {
 
 export default function ServiceGallery({ images }: ServiceGalleryProps) {
     return (
-        <div className="w-full h-[12rem] md:h-[18rem] rounded-[1.5rem] overflow-hidden relative bg-gray-100 mb-6">
+        <div className="w-full h-[12rem] md:h-[18rem] rounded-[1.5rem] overflow-hidden relative bg-gray-100 mb-8 shadow-sm">
             {images.length > 0 ? (
                 <Image
                     src={images[0]}

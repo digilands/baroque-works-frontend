@@ -17,18 +17,18 @@ interface ReviewProps {
 
 export default function ReviewSection({ rating, count, review }: ReviewProps) {
     return (
-        <div className="w-full mt-6">
-            <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-1">
-                    <span className="text-yellow-500 text-sm">⭐</span>
-                    <span className="font-bold text-text text-sm">{rating}</span>
-                    <span className="text-gray-text1 text-sm">• {count} Reviews</span>
+        <div className="w-full mt-8">
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <span className="text-yellow-500 text-base">⭐</span>
+                    <span className="font-bold text-text text-base">{rating}</span>
+                    <span className="text-gray-text1 text-sm font-medium">• {count} Reviews</span>
                 </div>
                 <button
                     onClick={() => alert('All reviews page coming soon!')}
-                    className="flex items-center text-text text-xs font-semibold gap-1 hover:underline"
+                    className="flex items-center text-text text-sm font-semibold gap-1.5 hover:opacity-70 transition-opacity"
                 >
-                    see all review <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
+                    See all reviews <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
                 </button>
             </div>
 
