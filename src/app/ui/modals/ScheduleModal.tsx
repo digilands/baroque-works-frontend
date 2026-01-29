@@ -9,7 +9,7 @@ interface ScheduleModalProps {
     onClose: () => void;
     onConfirm: (bookingData: BookingData) => void;
     services: Array<{ name: string; rate: string; rateType: string }>;
-    // handymanName: string;
+    handymanName: string;
 }
 
 export interface BookingData {
