@@ -18,7 +18,7 @@ export default function ServiceDetailsLoading() {
 
                     <div className="flex flex-col gap-8">
                         {/* Profile Skeleton */}
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full p-6 bg-white rounded-[1.25rem] border border-[#EDEDED]">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full p-6 bg-[var(--color-white-bg)] rounded-[1.25rem] border border-[#EDEDED] dark:border-gray-700">
                             <div className="flex items-center gap-5">
                                 <Skeleton variant="circular" width={64} height={64} />
                                 <div>
@@ -95,7 +95,7 @@ export default function ServiceDetailsLoading() {
                             </div>
 
                             {/* Selected Service Card Skeleton */}
-                            <div className="bg-white p-1 rounded-2xl">
+                            <div className="bg-[var(--color-white-bg)] p-1 rounded-2xl">
                                 <Skeleton height={20} width={150} className="mb-3" />
                                 <Skeleton height={160} className="rounded-[1rem] mb-3" />
                                 <Skeleton height={22} width="70%" className="mb-1" />

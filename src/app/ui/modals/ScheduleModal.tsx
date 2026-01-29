@@ -9,7 +9,7 @@ interface ScheduleModalProps {
     onClose: () => void;
     onConfirm: (bookingData: BookingData) => void;
     services: Array<{ name: string; rate: string; rateType: string }>;
-    handymanName: string;
+    // handymanName: string;
 }
 
 export interface BookingData {
@@ -20,7 +20,7 @@ export interface BookingData {
     price: number;
 }
 
-export default function ScheduleModal({ open, onClose, onConfirm, services, handymanName }: ScheduleModalProps) {
+export default function ScheduleModal({ open, onClose, onConfirm, services }: ScheduleModalProps) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedService, setSelectedService] = useState(services[0]?.name || '');
     const [selectedTime, setSelectedTime] = useState('1:00 PM');
@@ -66,7 +66,8 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                 style: {
                     borderRadius: '1.5rem',
                     padding: '1.5rem',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    backgroundColor: 'var(--color-white-bg)'
                 }
             }}
         >
@@ -99,9 +100,9 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                                 key={idx}
                                 onClick={() => day && setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), day))}
                                 className={`h-9 w-9 mx-auto rounded-full text-sm font-medium transition-all ${day === selectedDate.getDate()
-                                    ? 'bg-black text-white shadow-md'
+                                    ? 'bg-black dark:bg-white text-white dark:text-black shadow-md'
                                     : day
-                                        ? 'hover:bg-gray-100 text-text'
+                                        ? 'hover:bg-gray-100 dark:hover:bg-gray-700 text-text'
                                         : ''
                                     }`}
                                 disabled={!day}
@@ -119,7 +120,7 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                         <select
                             value={selectedService}
                             onChange={(e) => setSelectedService(e.target.value)}
-                            className="w-full p-3 border border-gray-200 rounded-xl text-sm appearance-none bg-white font-medium focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                            className="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl text-sm appearance-none bg-[var(--color-white-bg)] font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all"
                         >
                             {services.map((service, idx) => (
                                 <option key={idx} value={service.name}>
@@ -143,7 +144,7 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                             onChange={(e) => setSelectedTime(e.target.value)}
                             className="flex-1 p-3 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
                         />
-                        <button className="px-5 py-3 bg-black text-white rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors shadow-md">
+                        <button className="px-5 py-3 bg-black dark:bg-white text-white dark:text-black rounded-xl text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-md">
                             AI ASSIST
                         </button>
                     </div>
@@ -152,10 +153,10 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                 {/* Duration */}
                 <div className="mb-8">
                     <label className="block text-sm font-bold mb-3">Estimated duration for service</label>
-                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
                         <button
                             onClick={() => setDuration(Math.max(1, duration - 1))}
-                            className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-200 flex items-center justify-center font-bold text-lg hover:bg-gray-50 transition-colors"
+                            className="w-10 h-10 rounded-full bg-[var(--color-white-bg)] shadow-sm border border-gray-200 dark:border-gray-600 flex items-center justify-center font-bold text-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         >
                             -
                         </button>
@@ -165,7 +166,7 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                         </div>
                         <button
                             onClick={() => setDuration(duration + 1)}
-                            className="w-10 h-10 rounded-full bg-black text-white shadow-md flex items-center justify-center font-bold text-lg hover:bg-gray-800 transition-colors"
+                            className="w-10 h-10 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-md flex items-center justify-center font-bold text-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                         >
                             +
                         </button>
@@ -176,7 +177,7 @@ export default function ScheduleModal({ open, onClose, onConfirm, services, hand
                 {/* Book Button */}
                 <button
                     onClick={handleConfirm}
-                    className="w-full bg-black text-white py-4 rounded-xl text-base font-bold hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
+                    className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl text-base font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
                 >
                     Book service
                 </button>

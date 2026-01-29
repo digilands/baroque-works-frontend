@@ -33,7 +33,7 @@ export default function ReviewSection({ rating, count, review }: ReviewProps) {
             </div>
 
             {review ? (
-                <div className="bg-white rounded-[1.25rem] p-4 border border-[#E9E9E9]">
+                <div className="bg-[var(--color-white-bg)] rounded-[1.25rem] p-4 border border-[#E9E9E9] dark:border-gray-700">
                     <p className="text-text text-xs mb-3 leading-5">{review.comment}</p>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

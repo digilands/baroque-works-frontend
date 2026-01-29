@@ -33,20 +33,20 @@ export default function TextInput({
         error={meta.touched && Boolean(meta.error)}
         helperText={meta.touched && meta.error}
         size="small"
-         InputProps={{
-            className:
-              "!bg-bg !text-text !rounded-lg",
-          }}
-         
-          sx={{
-    '& .MuiOutlinedInput-root': {
-      '&.Mui-focused fieldset': {
-        borderColor: 'black', // focused border color
-      }
-    },
-   
-  }}
-        />
+        InputProps={{
+          className:
+            "!bg-bg !text-text !rounded-lg",
+        }}
+
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&.Mui-focused fieldset': {
+              borderColor: 'var(--color-text)', // focused border color adapts to theme
+            }
+          },
+
+        }}
+      />
     </div>
   );
 }

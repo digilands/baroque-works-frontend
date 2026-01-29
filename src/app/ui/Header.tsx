@@ -34,10 +34,10 @@ export default function Header() {
         <IconButton>
           <HugeiconsIcon
             icon={MessageMultiple01Icon}
-            color="black" />
+            color="var(--color-text)" />
         </IconButton>
         <IconButton className="mr-[1.6rem]">
-          <HugeiconsIcon icon={Notification02Icon} color="black" />
+          <HugeiconsIcon icon={Notification02Icon} color="var(--color-text)" />
         </IconButton>
         <Image width={10} height={10} src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
       </div>
@@ -46,7 +46,7 @@ export default function Header() {
     {/* Item 2: Search + Select */}
     <div className="flex flex-row w-full lg:w-auto mt-4 lg:mt-0">
       <TextField
-        className="rounded-[.5rem] lg:rounded-[1.25rem] w-[23rem] h-[2.5rem] bg-[#F2F2F2]"
+        className="rounded-[.5rem] lg:rounded-[1.25rem] w-[23rem] h-[2.5rem] bg-[#F2F2F2] dark:bg-gray-800"
         sx={{
 
           '& .MuiOutlinedInput-root': {
@@ -62,7 +62,7 @@ export default function Header() {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <HugeiconsIcon icon={Search01Icon} color="black" />
+              <HugeiconsIcon icon={Search01Icon} color="var(--color-text)" />
             </InputAdornment>
           ),
         }}
@@ -72,7 +72,7 @@ export default function Header() {
       <div className="relative ml-[1rem]">
         {/* visible icon on mobile only */}
         <button aria-label="Select location" className="lg:hidden p-0 w-[2.5rem] h-[2.5rem] flex items-center justify-center bg-[#F2F2F2] rounded-[.5rem] lg:rounded-[1.25rem]">
-          <HugeiconsIcon icon={Location04Icon} color="black" />
+          <HugeiconsIcon icon={Location04Icon} color="var(--color-text)" />
         </button>
 
         <Select
@@ -81,7 +81,7 @@ export default function Header() {
           onChange={handleSelectChange}
           displayEmpty
           // overlay the select over the icon on mobile (captures clicks), normal on desktop
-          className="absolute inset-0 h-full opacity-0 lg:opacity-100 lg:static lg:w-[10rem] lg:h-[2.5rem] lg:bg-[#F2F2F2] rounded-[.5rem] lg:rounded-[1.25rem]"
+          className="absolute inset-0 h-full opacity-0 lg:opacity-100 lg:static lg:w-[10rem] lg:h-[2.5rem] lg:bg-[#F2F2F2] dark:lg:bg-gray-800 rounded-[.5rem] lg:rounded-[1.25rem]"
           sx={{
             '& .MuiOutlinedInput-notchedOutline': {
               border: 'none',
@@ -108,7 +108,7 @@ export default function Header() {
           renderValue={(value) => (
             <Box className="flex items-center gap-[.4rem] ml-[.8rem]">
               {/* small icon shown inside select for desktop; mobile icon is the visible button above */}
-              <HugeiconsIcon icon={Location04Icon} color="black" />
+              <HugeiconsIcon icon={Location04Icon} color="var(--color-text)" />
               <span className="hidden lg:inline">{value}</span>
             </Box>
           )}
@@ -130,11 +130,11 @@ export default function Header() {
       <IconButton>
         <HugeiconsIcon
           icon={MessageMultiple01Icon}
-          color="black"
+          color="var(--color-text)"
         />
       </IconButton>
       <IconButton className="mr-[1.6rem]">
-        <HugeiconsIcon icon={Notification02Icon} color="black" />
+        <HugeiconsIcon icon={Notification02Icon} color="var(--color-text)" />
       </IconButton>
       <Image width={10} height={10} src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
     </div>

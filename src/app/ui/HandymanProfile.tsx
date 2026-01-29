@@ -12,7 +12,7 @@ interface HandymanProfileProps {
 
 export default function HandymanProfile({ image, name, rating, reviews }: HandymanProfileProps) {
     return (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full p-6 bg-white rounded-[1.25rem] border border-[#EDEDED] shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full p-6 bg-[var(--color-white-bg)] rounded-[1.25rem] border border-[#EDEDED] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="flex items-center gap-5">
                 <Image
                     src={image}
@@ -32,7 +32,7 @@ export default function HandymanProfile({ image, name, rating, reviews }: Handym
             </div>
             <button
                 onClick={() => alert('Messaging feature coming soon!')}
-                className="mt-4 md:mt-0 px-6 py-2.5 bg-[#F7F7F7] rounded-2xl flex items-center gap-2 text-text font-semibold text-sm w-full md:w-auto justify-center hover:bg-[#E5E5E5] active:scale-95 transition-all duration-200"
+                className="mt-4 md:mt-0 px-6 py-2.5 bg-[#F7F7F7] dark:bg-gray-700 rounded-2xl flex items-center gap-2 text-text font-semibold text-sm w-full md:w-auto justify-center hover:bg-[#E5E5E5] dark:hover:bg-gray-600 active:scale-95 transition-all duration-200"
             >
                 <HugeiconsIcon icon={MessageMultiple01Icon} size={18} />
                 Message {name.split(' ')[0]}

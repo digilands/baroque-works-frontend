@@ -48,7 +48,7 @@ export default function BookingSidebar({ handymanName, services, onBookService, 
 
             {/* Selected Service Card */}
             {services.length > 0 && selectedService && (
-                <div className="bg-white p-1 rounded-2xl">
+                <div className="bg-[var(--color-white-bg)] p-1 rounded-2xl">
                     <h3 className="text-text font-semibold mb-3 text-base">Selected Service</h3>
                     <div className="relative w-full h-[10rem] rounded-[1rem] overflow-hidden mb-3 shadow-sm">
                         <Image src={selectedService.image} alt={selectedService.name} fill className="object-cover" />
@@ -59,7 +59,7 @@ export default function BookingSidebar({ handymanName, services, onBookService, 
             )}
 
             {/* Hourly Charge Info */}
-            <div className="bg-[#F7F7F7] p-4 rounded-xl flex items-start gap-3 border border-gray-100">
+            <div className="bg-[#F7F7F7] dark:bg-gray-800 p-4 rounded-xl flex items-start gap-3 border border-gray-100 dark:border-gray-700">
                 <div className="mt-0.5"><HugeiconsIcon icon={InformationCircleIcon} size={18} className="text-gray-text1" /></div>
                 <div>
                     <h5 className="text-text text-sm font-bold mb-1">Hourly charge</h5>
@@ -75,7 +75,7 @@ export default function BookingSidebar({ handymanName, services, onBookService, 
                 </div>
                 <button
                     onClick={onBookService}
-                    className="w-full bg-black text-white py-4 rounded-[1rem] text-base font-bold hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
+                    className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-[1rem] text-base font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
                 >
                     Book Service
                 </button>

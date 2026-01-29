@@ -3,7 +3,6 @@ import React from "react";
 import { Dialog, IconButton } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
-import Image from "next/image";
 import { BookingData } from "./ScheduleModal";
 
 interface ConfirmModalProps {
@@ -24,7 +23,7 @@ export default function ConfirmModal({
     onGoBack,
     bookingData,
     handymanName,
-    handymanImage,
+    // handymanImage,
     location
 }: ConfirmModalProps) {
     if (!bookingData) return null;
@@ -39,7 +38,8 @@ export default function ConfirmModal({
                 style: {
                     borderRadius: '1.5rem',
                     padding: '1.5rem',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    backgroundColor: 'var(--color-white-bg)'
                 }
             }}
         >
@@ -54,7 +54,7 @@ export default function ConfirmModal({
                 <h2 className="text-xl font-bold text-text mb-1">Confirm Request</h2>
                 <p className="text-sm text-gray-text1 mb-6">Please review all details carefully</p>
 
-                <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-5 mb-6">
+                <div className="bg-[var(--color-white-bg)] border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl p-5 mb-6">
                     <div className="text-center mb-6">
                         <div className="text-4xl font-bold text-text">${bookingData.price.toFixed(2)}</div>
                     </div>
@@ -80,8 +80,8 @@ export default function ConfirmModal({
 
                     <div className="mt-5 pt-5 border-t border-gray-100">
                         <div className="text-gray-text1 text-xs font-semibold mb-2">NOTE</div>
-                        <div className="text-gray-text3 text-sm italic bg-gray-50 p-3 rounded-lg border border-gray-100">
-                            "The handyman will meet you at the location"
+                        <div className="text-gray-text3 text-sm italic bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                            &quot;The handyman will meet you at the location&quot;
                         </div>
                     </div>
                 </div>
@@ -107,13 +107,13 @@ export default function ConfirmModal({
                 <div className="flex gap-4">
                     <button
                         onClick={onGoBack}
-                        className="flex-1 border border-gray-200 py-3.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors"
+                        className="flex-1 border border-gray-200 dark:border-gray-600 py-3.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                         Go back
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="flex-1 bg-black text-white py-3.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
+                        className="flex-1 bg-black dark:bg-white text-white dark:text-black py-3.5 rounded-xl text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
                     >
                         Proceed to pay
                     </button>

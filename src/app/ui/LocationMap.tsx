@@ -20,7 +20,7 @@ export default function LocationMap({ address }: LocationMapProps) {
                 </div>
 
                 {/* Location Pin Card Overlay */}
-                <div className="absolute bottom-2 left-2 right-2 bg-white p-2 rounded-lg flex items-center gap-2 shadow-sm">
+                <div className="absolute bottom-2 left-2 right-2 bg-[var(--color-white-bg)] p-2 rounded-lg flex items-center gap-2 shadow-sm">
                     <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs">📍</div>
                     <p className="text-text text-xs font-medium truncate">{address}</p>
                 </div>

@@ -19,11 +19,11 @@ export default function Button({
 
   const variants = {
     primary:
-      "bg-black text-white hover:bg-neutral-800 active:scale-[0.98] disabled:bg-gray-300 disabled:text-gray-500",
+      "bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-gray-100 active:scale-[0.98] disabled:bg-gray-300 disabled:text-gray-500",
     secondary:
-      "bg-white text-black border border-gray-300 hover:bg-gray-100 active:scale-[0.98]",
+      "bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-[0.98]",
     ghost:
-      "bg-transparent text-black hover:bg-gray-100 active:scale-[0.98]",
+      "bg-transparent text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-[0.98]",
   };
 
   return (

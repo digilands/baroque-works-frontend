@@ -36,7 +36,8 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                 style: {
                     borderRadius: '1.5rem',
                     padding: '1.5rem',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                    backgroundColor: 'var(--color-white-bg)'
                 }
             }}
         >
@@ -51,12 +52,12 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                 <h2 className="text-xl font-bold text-text mb-6">Payment Method</h2>
 
                 {/* Payment Method Tabs */}
-                <div className="flex gap-3 mb-8 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
+                <div className="flex gap-3 mb-8 bg-gray-50 dark:bg-gray-800 p-1.5 rounded-2xl border border-gray-100 dark:border-gray-700">
                     <button
                         onClick={() => setPaymentMethod('card')}
                         className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${paymentMethod === 'card'
-                            ? 'bg-black text-white shadow-md'
-                            : 'bg-transparent text-gray-500 hover:text-gray-900'
+                            ? 'bg-black dark:bg-white text-white dark:text-black shadow-md'
+                            : 'bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                             }`}
                     >
                         Credit Card
@@ -64,8 +65,8 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                     <button
                         onClick={() => setPaymentMethod('transfer')}
                         className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${paymentMethod === 'transfer'
-                            ? 'bg-black text-white shadow-md'
-                            : 'bg-transparent text-gray-500 hover:text-gray-900'
+                            ? 'bg-black dark:bg-white text-white dark:text-black shadow-md'
+                            : 'bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                             }`}
                     >
                         Bank Transfer
@@ -82,7 +83,7 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                                 placeholder="5301 4567 3349 1003"
                                 value={cardNumber}
                                 onChange={(e) => setCardNumber(e.target.value)}
-                                className="w-full p-4 border border-gray-200 rounded-xl text-sm font-medium tracking-wide focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all placeholder:text-gray-300"
+                                className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium tracking-wide focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-gray-600 bg-[var(--color-white-bg)]"
                             />
                             <div className="flex justify-end mt-1.5">
                                 <span className="text-orange-500 text-xs font-bold tracking-widest">VISA</span>
@@ -98,7 +99,7 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                                     placeholder="MM/YY"
                                     value={expiryDate}
                                     onChange={(e) => setExpiryDate(e.target.value)}
-                                    className="w-full p-4 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                                    className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all bg-[var(--color-white-bg)]"
                                 />
                             </div>
                             <div>
@@ -108,7 +109,7 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                                     placeholder="123"
                                     value={cvv}
                                     onChange={(e) => setCvv(e.target.value)}
-                                    className="w-full p-4 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                                    className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all bg-[var(--color-white-bg)]"
                                 />
                             </div>
                         </div>
@@ -131,7 +132,7 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                                 placeholder="Enter account number"
                                 value={accountNumber}
                                 onChange={(e) => setAccountNumber(e.target.value)}
-                                className="w-full p-4 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all"
+                                className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all bg-[var(--color-white-bg)]"
                             />
                         </div>
                     </div>
@@ -141,13 +142,13 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                 <div className="flex gap-4">
                     <button
                         onClick={onGoBack}
-                        className="flex-1 border border-gray-200 py-3.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors"
+                        className="flex-1 border border-gray-200 dark:border-gray-600 py-3.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                         Go back
                     </button>
                     <button
                         onClick={handlePayment}
-                        className="flex-1 bg-black text-white py-3.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
+                        className="flex-1 bg-black dark:bg-white text-white dark:text-black py-3.5 rounded-xl text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
                     >
                         Pay ${amount.toFixed(2)}
                     </button>

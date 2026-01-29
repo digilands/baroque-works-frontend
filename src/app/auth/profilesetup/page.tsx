@@ -136,7 +136,7 @@ interface UploadButtonProps {
 
 const UploadButton: React.FC<UploadButtonProps> = ({ text, iconName, clickHandler }) => {
   return (
-    <div onClick={clickHandler} className="flex flex-col items-center justify-center border border-gray-200 rounded-xl w-[11rem] h-[6rem] bg-[#F2F2F2] dark:bg-[#000000] hover:bg-gray-100 cursor-pointer transition">
+    <div onClick={clickHandler} className="flex flex-col items-center justify-center border border-gray-200 dark:border-gray-600 rounded-xl w-[11rem] h-[6rem] bg-[#F2F2F2] dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition">
       <HugeiconsIcon icon={iconName} className="text-black dark:text-white" />
       <p className="text-sm max-w-[6rem] text-center">{text}</p>
     </div>
