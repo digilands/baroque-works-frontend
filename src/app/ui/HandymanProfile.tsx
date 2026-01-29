@@ -30,9 +30,12 @@ export default function HandymanProfile({ image, name, rating, reviews }: Handym
                     </div>
                 </div>
             </div>
-            <button className="mt-4 md:mt-0 px-6 py-2 bg-[#F2F2F2] rounded-[1rem] flex items-center gap-2 text-text font-medium text-sm w-full md:w-auto justify-center">
+            <button
+                onClick={() => alert('Messaging feature coming soon!')}
+                className="mt-4 md:mt-0 px-6 py-2 bg-[#F2F2F2] rounded-[1rem] flex items-center gap-2 text-text font-medium text-sm w-full md:w-auto justify-center hover:bg-gray-200 transition-colors"
+            >
                 <HugeiconsIcon icon={MessageMultiple01Icon} size={18} />
-                Message Emeka
+                Message {name.split(' ')[0]}
             </button>
         </div>
     );

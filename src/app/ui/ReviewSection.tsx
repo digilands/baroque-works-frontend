@@ -24,7 +24,10 @@ export default function ReviewSection({ rating, count, review }: ReviewProps) {
                     <span className="font-bold text-text text-sm">{rating}</span>
                     <span className="text-gray-text1 text-sm">• {count} Reviews</span>
                 </div>
-                <button className="flex items-center text-text text-xs font-semibold gap-1">
+                <button
+                    onClick={() => alert('All reviews page coming soon!')}
+                    className="flex items-center text-text text-xs font-semibold gap-1 hover:underline"
+                >
                     see all review <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
                 </button>
             </div>

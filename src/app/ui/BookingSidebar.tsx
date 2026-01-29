@@ -13,9 +13,14 @@ interface OfferedService {
 interface BookingSidebarProps {
     handymanName: string;
     services: OfferedService[];
+    onBookService: () => void;
+    selectedServiceIndex: number;
+    onServiceSelect: (index: number) => void;
 }
 
-export default function BookingSidebar({ handymanName, services }: BookingSidebarProps) {
+export default function BookingSidebar({ handymanName, services, onBookService, selectedServiceIndex, onServiceSelect }: BookingSidebarProps) {
+    const selectedService = services[selectedServiceIndex] || services[0];
+
     return (
         <div className="w-full lg:w-[22rem] flex flex-col gap-6">
             {/* Services List */}
@@ -23,7 +28,12 @@ export default function BookingSidebar({ handymanName, services }: BookingSideba
                 <h3 className="text-text font-medium mb-3">Services by {handymanName.split(' ')[0]}</h3>
                 <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                     {services.length > 0 ? services.map((s, idx) => (
-                        <div key={idx} className="min-w-[8rem] h-[10rem] flex flex-col gap-2 cursor-pointer">
+                        <div
+                            key={idx}
+                            onClick={() => onServiceSelect(idx)}
+                            className={`min-w-[8rem] h-[10rem] flex flex-col gap-2 cursor-pointer transition-all ${selectedServiceIndex === idx ? 'ring-2 ring-black ring-offset-2 rounded-xl' : ''
+                                }`}
+                        >
                             <div className="relative w-full h-[6rem] rounded-xl overflow-hidden">
                                 <Image src={s.image} alt={s.name} fill className="object-cover" />
                             </div>
@@ -36,15 +46,15 @@ export default function BookingSidebar({ handymanName, services }: BookingSideba
                 </div>
             </div>
 
-            {/* Selected Service Card (Static for now as per design screenshot implies a selection state) */}
-            {services.length > 0 && (
+            {/* Selected Service Card */}
+            {services.length > 0 && selectedService && (
                 <div>
                     <h3 className="text-text font-medium mb-3">Selected Service</h3>
                     <div className="relative w-full h-[8rem] rounded-[1.25rem] overflow-hidden mb-2">
-                        <Image src={services[0].image} alt={services[0].name} fill className="object-cover" />
+                        <Image src={selectedService.image} alt={selectedService.name} fill className="object-cover" />
                     </div>
-                    <h4 className="text-text text-sm font-semibold">{services[0].name}</h4>
-                    <p className="text-text text-xs font-semibold">{services[0].rate} <span className="text-gray-text1 font-normal">• {services[0].rateType}</span></p>
+                    <h4 className="text-text text-sm font-semibold">{selectedService.name}</h4>
+                    <p className="text-text text-xs font-semibold">{selectedService.rate} <span className="text-gray-text1 font-normal">• {selectedService.rateType}</span></p>
                 </div>
             )}
 
@@ -60,7 +70,10 @@ export default function BookingSidebar({ handymanName, services }: BookingSideba
             {/* Total & Action */}
             <div>
                 <p className="text-text text-sm font-bold mb-3">$30.00 <span className="text-gray-text1 font-normal text-xs">• 2 hours minimum charge</span></p>
-                <button className="w-full bg-black text-white py-3 rounded-[0.75rem] text-sm font-medium hover:bg-gray-800 transition-colors">
+                <button
+                    onClick={onBookService}
+                    className="w-full bg-black text-white py-3 rounded-[0.75rem] text-sm font-medium hover:bg-gray-800 transition-colors"
+                >
                     Book Service
                 </button>
                 <p className="text-gray-text1 text-[0.65rem] text-center mt-2 leading-3 px-4">
