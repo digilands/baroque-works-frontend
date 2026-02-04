@@ -5,10 +5,11 @@ import { Notification02Icon, Menu01Icon } from "@hugeicons/core-free-icons";
 
 interface HeaderProps {
   onMenuClick: () => void;
+  onNotificationClick: () => void;
   title: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, title }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick, onNotificationClick, title }) => {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-transparent mb-6">
       <div className="flex items-center gap-4">
@@ -29,7 +30,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, title }) => {
            </div>
         </div>
 
-        <button className="relative p-2 text-gray-500 hover:text-text transition-colors">
+        <button 
+          onClick={onNotificationClick}
+          className="relative p-2 text-gray-500 hover:text-text transition-colors"
+        >
            <HugeiconsIcon icon={Notification02Icon} size={24} />
            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
         </button>

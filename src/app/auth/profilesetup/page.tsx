@@ -4,12 +4,17 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../ui/TextInput";
 import SelectInput from "../../ui/SelectInput";
-import Button from "../../ui/Button";
 import { SubTitle, Title } from "@/app/ui/Titles";
-import { HugeiconsIcon, IconSvgElement } from '@hugeicons/react';
-import SmileIcon from '@hugeicons/core-free-icons/SmileIcon';
-import MapsLocation01Icon from '@hugeicons/core-free-icons/MapsLocation01Icon';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { 
+  SmileIcon, 
+  MapsLocation01Icon, 
+  ArrowRight01Icon,
+  ImageAdd01Icon,
+  Location01Icon
+} from '@hugeicons/core-free-icons';
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const services = [
   "plumbing",
@@ -32,6 +37,7 @@ interface ProfileSetupValues {
 
 export default function SetupProfile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Full name is required"),
@@ -40,6 +46,7 @@ export default function SetupProfile() {
 
   const handleSubmit = (values: ProfileSetupValues) => {
     console.log(values);
+    router.push("/dashboard");
   };
 
   const handleImgSelect = () => {
@@ -52,18 +59,17 @@ export default function SetupProfile() {
       console.log("selected image: ", file)
     }
   }
+
   const handleLocationSelect = () => {
     console.log("Location selection clicked");
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-bg py-8">
-      <Title>
-        Setup profile
-      </Title>
-      <SubTitle>
-        Select services that you offer
-      </SubTitle>
+    <div className="min-h-screen flex flex-col items-center bg-white py-12 px-6">
+      <div className="max-w-2xl w-full text-center mb-10">
+        <Title>Setup profile</Title>
+        <SubTitle>Provide details that will help clients find and trust you.</SubTitle>
+      </div>
 
       <input
         type='file'
@@ -73,72 +79,98 @@ export default function SetupProfile() {
         onChange={handleFileChange}
       />
 
-      {/* Upload section */}
-      <div className="flex gap-2 mb-[1rem] max-w-md px-[1rem]">
-        <UploadButton text="Upload Profile picture" iconName={SmileIcon} clickHandler={handleImgSelect} />
-        <UploadButton text="Select location on map" iconName={MapsLocation01Icon} clickHandler={handleLocationSelect} />
+      <div className="w-full max-w-md space-y-8">
+        {/* Upload section */}
+        <div className="grid grid-cols-2 gap-4">
+          <UploadButton 
+            text="Upload Photo" 
+            subtext="Profile picture"
+            icon={ImageAdd01Icon} 
+            clickHandler={handleImgSelect} 
+          />
+          <UploadButton 
+            text="Set Location" 
+            subtext="Select on map"
+            icon={Location01Icon} 
+            clickHandler={handleLocationSelect} 
+          />
+        </div>
+
+        <Formik
+          initialValues={{
+            name: "",
+            profession: "",
+            bio: "",
+            address: "",
+            profilePhoto: null
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className="space-y-6">
+              <div className="space-y-4">
+                <TextInput
+                  label="Full Name"
+                  name="name"
+                  required
+                  placeholder="e.g. Emeka John"
+                />
+                <SelectInput
+                  label="Primary Profession"
+                  name="profession"
+                  options={services}
+                />
+                <TextInput
+                  label="Bio / Description"
+                  name="bio"
+                  multiline
+                  rows={4}
+                  placeholder="Tell clients about your experience and skills..."
+                />
+                <TextInput
+                  label="Service Address"
+                  name="address"
+                  placeholder="e.g. No 12, Wuse Str, Abuja"
+                />
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-gray-100 disabled:opacity-50 group"
+                >
+                  {isSubmitting ? "Saving..." : "Complete Setup"}
+                  <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
-
-      <Formik
-        initialValues={{
-          name: "",
-          profession: "",
-          bio: "",
-          address: "",
-          profilePhoto: null
-        }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form className="w-full max-w-md">
-            <TextInput
-              label="Full Name"
-              name="name"
-              required
-              placeholder="e.g. Emeka John"
-            />
-            <SelectInput
-              label="Profession"
-              name="profession"
-
-              options={services}
-            />
-            <TextInput
-              label="Enter Bio/Description"
-              name="bio"
-              multiline
-              rows={3}
-              placeholder="Write a short intro about your experience..."
-            />
-            <TextInput
-              label="Address"
-              name="address"
-              placeholder="Enter address (optional)"
-            />
-
-            <div className="pt-2 float-right">
-              <Button type="submit" >
-                {isSubmitting ? "Saving..." : "Next"}
-              </Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
     </div>
   );
 }
 
 interface UploadButtonProps {
-  text: string, iconName: IconSvgElement,
+  text: string;
+  subtext: string;
+  icon: any;
   clickHandler: React.MouseEventHandler<HTMLDivElement>;
 }
 
-const UploadButton: React.FC<UploadButtonProps> = ({ text, iconName, clickHandler }) => {
+const UploadButton: React.FC<UploadButtonProps> = ({ text, subtext, icon, clickHandler }) => {
   return (
-    <div onClick={clickHandler} className="flex flex-col items-center justify-center border border-gray-200 dark:border-gray-600 rounded-xl w-[11rem] h-[6rem] bg-[#F2F2F2] dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition">
-      <HugeiconsIcon icon={iconName} className="text-black dark:text-white" />
-      <p className="text-sm max-w-[6rem] text-center">{text}</p>
+    <div 
+      onClick={clickHandler} 
+      className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-100 rounded-[2rem] bg-gray-50 hover:bg-white hover:border-indigo-200 hover:shadow-lg cursor-pointer transition-all duration-300 group"
+    >
+      <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm border border-gray-50 group-hover:scale-110 transition-transform">
+        <HugeiconsIcon icon={icon} size={24} className="text-gray-400 group-hover:text-indigo-600 transition-colors" />
+      </div>
+      <p className="text-sm font-bold text-gray-900">{text}</p>
+      <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-1">{subtext}</p>
     </div>
   );
 }

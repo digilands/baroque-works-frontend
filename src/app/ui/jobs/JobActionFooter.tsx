@@ -10,7 +10,7 @@ interface JobActionFooterProps {
 
 export function JobActionFooter({ onAccept, onDecline, price }: JobActionFooterProps) {
   return (
-    <div className="sticky bottom-0 -mx-6 -mb-6 p-4 md:p-6 bg-white/90 backdrop-blur-md border-t border-gray-200 z-10 mt-8">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-8 mb-10 relative z-20">
       <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
         <div className="hidden sm:block">
            <p className="text-sm text-gray-500">Total Earnings</p>

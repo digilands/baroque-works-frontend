@@ -7,7 +7,7 @@ interface LocationCardProps {
 
 export function LocationCard({ location }: LocationCardProps) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-full">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
       <div className="flex items-center gap-2 mb-4">
         <MapPin className="w-5 h-5 text-indigo-600" />
         <h3 className="font-semibold text-gray-900">Location</h3>
