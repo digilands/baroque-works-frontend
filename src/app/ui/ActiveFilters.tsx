@@ -13,24 +13,21 @@ export default function ActiveFilters({ activeFilters, handleDelete }: ActiveFil
   if (activeFilters.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-3 py-2">
-      <div className="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">
-        <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full"></span>
-        Active Filters
-      </div>
+    <div className="flex flex-wrap items-center gap-4 py-2">
+      <span className="text-sm font-medium text-gray-500">Active filters</span>
       <div className="flex flex-wrap items-center gap-2">
         {activeFilters.map((filter) => (
           <div
             key={filter}
-            className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100/50 rounded-lg group animate-in zoom-in duration-300"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-full group animate-in zoom-in duration-300"
           >
-            <span className="text-[11px] font-bold text-indigo-600">{filter}</span>
+            <span className="text-[13px] font-medium text-gray-900">{filter}</span>
             <button
               onClick={() => handleDelete(filter)}
-              className="p-0.5 hover:bg-indigo-100 rounded-md transition-colors"
+              className="p-0.5 hover:bg-gray-100 rounded-full transition-colors"
               aria-label={`Remove ${filter} filter`}
             >
-              <HugeiconsIcon icon={Cancel01Icon} size={14} className="text-indigo-400 group-hover:text-indigo-600" />
+              <HugeiconsIcon icon={Cancel01Icon} size={14} className="text-gray-400 group-hover:text-gray-900" />
             </button>
           </div>
         ))}

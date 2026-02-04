@@ -20,6 +20,8 @@
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
     "@mui/material-nextjs": "^7.3.3",
+    "axios": "^1.13.4",
+    "cookies-next": "^6.1.1",
     "formik": "^2.4.6",
     "framer-motion": "^12.31.0",
     "keen-slider": "^6.8.6",

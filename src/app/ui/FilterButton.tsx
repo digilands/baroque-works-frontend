@@ -10,15 +10,15 @@ interface FilterButtonProps {
 
 export default function FilterButton({ numberOfFilters }: FilterButtonProps) {
   return (
-    <button className="flex items-center gap-2.5 px-5 py-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 hover:border-gray-200 transition-all shadow-sm group">
+    <button className="flex items-center gap-2.5 px-5 py-2.5 bg-white border border-gray-100 rounded-full hover:bg-gray-50 transition-all shadow-sm group">
       <HugeiconsIcon 
         icon={FilterIcon} 
         size={18} 
-        className="text-gray-400 group-hover:text-indigo-600 transition-colors" 
+        className="text-gray-500 group-hover:text-gray-900 transition-colors" 
       />
-      <span className="text-sm font-bold text-gray-700">Filter</span>
+      <span className="text-[15px] font-medium text-gray-700 group-hover:text-gray-900">Filter</span>
       {numberOfFilters > 0 && (
-        <span className="ml-1 w-5 h-5 bg-indigo-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-in zoom-in">
+        <span className="ml-1 w-5 h-5 bg-gray-100 text-gray-900 border border-gray-200 text-[10px] font-bold rounded-full flex items-center justify-center animate-in zoom-in">
           {numberOfFilters}
         </span>
       )}

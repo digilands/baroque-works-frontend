@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import ActiveFilters from "./ActiveFilters";
 import FilterButton from "./FilterButton";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { FilterIcon, Sorting05Icon } from '@hugeicons/core-free-icons';
+import { FilterIcon } from '@hugeicons/core-free-icons';
 import ServiceCategoryFilter from "./ServiceCategoryFilter";
 import Card from "./Card";
 import { handymen } from "@/utils/data";
@@ -20,8 +20,10 @@ interface ServicesSectionProps {
 export default function ServicesSection({ service }: ServicesSectionProps) {
   const [activeFilters, setActiveFilters] = useState<string[]>([
     "Available",
-    "Hourly Rate",
-    "Fixed Rate",
+    "4.0 +",
+    "$24 - $100",
+    "Hourly rate",
+    "Fixed rate"
   ]);
 
   const [category, setCategory] = useState<typeof handymen>([]);
@@ -47,32 +49,29 @@ export default function ServicesSection({ service }: ServicesSectionProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header & Meta */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight mb-1">{service.name}</h2>
-          <p className="text-sm font-medium text-gray-400">
-            Showing <span className="text-gray-900 font-bold">{category.length}</span> specialized handymen in your area
-          </p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      {/* Header Area */}
+      <div className="mb-6">
+        <div className="flex items-baseline gap-3 mb-6">
+          <h2 className="text-[28px] font-bold text-gray-900 tracking-tight">{service.name}</h2>
+          <span className="text-[15px] text-gray-500 font-medium">{category.length} result</span>
         </div>
         
-        <div className="flex items-center gap-2">
-           <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all shadow-sm">
-             <HugeiconsIcon icon={Sorting05Icon} size={18} className="text-gray-400" />
-             Sort by: Recommended
-           </button>
+        {/* Categories */}
+        <div className="mb-6 overflow-hidden">
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
+             <ServiceCategoryFilter sections={service.sections} onChange={handleSubCategoryChange} />
+          </div>
         </div>
-      </div>
 
-      {/* Filters Area */}
-      <div className="sticky top-20 z-30 bg-white/80 backdrop-blur-md py-4 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-gray-100 mb-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <ServiceCategoryFilter sections={service.sections} onChange={handleSubCategoryChange} />
-          <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto no-scrollbar">
+        {/* Filters Row */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-t border-gray-100 pt-4">
+          <div className="w-full md:w-auto overflow-x-auto no-scrollbar">
             <ActiveFilters activeFilters={activeFilters} handleDelete={handleDelete} />
-            <div className="h-6 w-px bg-gray-100 mx-1 hidden md:block"></div>
-            <FilterButton numberOfFilters={activeFilters.length} />
+          </div>
+          
+          <div className="shrink-0 ml-auto">
+            <FilterButton numberOfFilters={5} />
           </div>
         </div>
       </div>

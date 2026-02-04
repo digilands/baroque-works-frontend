@@ -14,7 +14,7 @@ const Footer = () => {
       </div>
 
       <p className="text-sm text-gray-text1 mb-8 max-w-md px-4">
-        &copy; 2023 Handymen Localized Marketplace.<br /> 
+        &copy; 2026 Handymen Localized Marketplace.<br /> 
         Built for the community, by the community.
       </p>
 

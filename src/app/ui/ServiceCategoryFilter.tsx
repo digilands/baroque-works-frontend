@@ -23,10 +23,10 @@ export default function ServiceCategoryFilter({ sections, onChange }: ServiceCat
           <button
             key={index}
             onClick={() => handleClick(index)}
-            className={`whitespace-nowrap px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300 border-2 ${
+            className={`whitespace-nowrap px-6 py-2.5 rounded-full text-[15px] font-medium transition-all duration-300 ${
               isSelected 
-                ? "bg-gray-900 border-gray-900 text-white shadow-lg shadow-gray-200" 
-                : "bg-gray-50 border-gray-50 text-gray-500 hover:border-gray-200 hover:text-gray-900"
+                ? "bg-black text-white" 
+                : "bg-transparent text-gray-500 hover:text-gray-900"
             }`}
           >
             {section}
