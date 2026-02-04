@@ -4,7 +4,7 @@ import axios from 'axios';
 // Note: For server-side calls (Route Handlers), we might need a separate instance or configuration
 // because cookies are handled differently.
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 // 1. Client-side Axios Instance (calls Next.js Internal API)
 export const internalApi = axios.create({
