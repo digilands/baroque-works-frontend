@@ -8,6 +8,7 @@ interface TextInputProps {
   multiline?: boolean;
   rows?: number;
   required?: boolean;
+  type?: string;
 }
 
 export default function TextInput({

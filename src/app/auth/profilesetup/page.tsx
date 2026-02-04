@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../ui/TextInput";
@@ -38,8 +40,11 @@ export default function SetupProfile() {
     profession: Yup.string().required("Profession is required"),
   })
 
+  const router = useRouter();
+
   const handleSubmit = (values: ProfileSetupValues) => {
     console.log(values);
+    router.push("/auth/additional-info");
   };
 
   const handleImgSelect = () => {
