@@ -5,81 +5,97 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import Image from "next/image";
-const services = [
-  { title: "House Section", image: "/illustrations/houseIcon.png" },
-  { title: "Plumbing", image: "/illustrations/plumbingIcon.png" },
-  { title: "General Maintenance", image: "/illustrations/gmIcon.png" },
-  { title: "Carpentry", image: "/illustrations/carpentryIcon.png" },
-  { title: "Electrical Work", image: "/illustrations/electricalIcon.png" },
-  { title: "House Section", image: "/illustrations/houseIcon.png" },
-  { title: "Plumbing", image: "/illustrations/plumbingIcon.png" },
-  { title: "General Maintenance", image: "/illustrations/gmIcon.png" },
-  { title: "Carpentry", image: "/illustrations/carpentryIcon.png" },
-  { title: "Electrical Work", image: "/illustrations/electricalIcon.png" },
 
+const slides = [
+  { title: "House Section", image: "/illustrations/houseIcon.png" },
+  { title: "Plumbing", image: "/illustrations/plumbingIcon.png" },
+  { title: "General Maintenance", image: "/illustrations/gmIcon.png" },
+  { title: "Carpentry", image: "/illustrations/carpentryIcon.png" },
+  { title: "Electrical Work", image: "/illustrations/electricalIcon.png" },
 ];
 
 export default function VerticalCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  return (
-    <div className="flex flex-col items-center">
-     
-      <Image
-      width={10} height={10}
-        src={services[activeIndex].image}
-        alt={services[activeIndex].title}
-        className="h-[12rem] w-[12rem] object-contain mb-[-4rem] mr-[20rem] transition-all duration-700 ease-in-out"
-      />
+  // Repeat items for smoother loop
+  const displayItems = [...slides, ...slides, ...slides];
 
-   
+  return (
+    <div className="relative flex flex-col items-center justify-center h-[500px] w-full overflow-hidden">
+      {/* Background Graphic Element */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-72 h-72 bg-indigo-50 rounded-full blur-3xl opacity-50 -z-10" />
+      
+      {/* Featured Large Image */}
+      <div className="absolute left-10 top-1/2 -translate-y-1/2 z-10 transition-all duration-700 ease-out transform">
+        <div className="relative w-64 h-64">
+           {slides.map((slide, idx) => (
+             <Image
+               key={idx}
+               src={slide.image}
+               alt={slide.title}
+               width={256}
+               height={256}
+               className={`absolute inset-0 object-contain transition-all duration-700 ${
+                 idx === activeIndex % slides.length 
+                   ? "opacity-100 scale-110 rotate-0 translate-x-0" 
+                   : "opacity-0 scale-75 rotate-12 translate-x-20"
+               }`}
+             />
+           ))}
+        </div>
+      </div>
+
       <Swiper
         direction="vertical"
         slidesPerView={5}
         loop={true}
         centeredSlides={true}
         autoplay={{
-          delay: 2000,
+          delay: 2500,
           disableOnInteraction: false,
         }}
         modules={[Autoplay]}
         onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-        className="h-[20rem] w-[100%] select-none "
+        className="h-full w-full select-none"
       >
-        {services.map((service, idx) => {
-              const diff = Math.abs(idx - activeIndex);
-          const scale =
-            diff === 0 ? "scale-125" : diff === 1 ? "scale-110" : "scale-95";
-         
-           const textSize =
-            diff === 0 ? "text-[2.5rem]" : diff === 1 ? "text-[1.5rem] " : "text-base";
-           
-            const color =
-            diff === 0 ? "text-[#5B5B5B]" : diff === 1 ? "text-[#8F8F8F]" : "text-[#A4A4A4]";
+        {displayItems.map((service, idx) => {
+          const realIdx = idx % slides.length;
+          const isActive = activeIndex === idx;
+          const isNeighbor = Math.abs(activeIndex - idx) === 1;
 
-              const translateX =
-            diff === 0
-              ? "translate-x-0 pb-[8rem]"
-              : diff === 1
-              ? "translate-x-12"
-              : "translate-x-24";
-
-              const imgSize = diff === 0 ? 60 : diff === 1 ? 35 : 20;
-
-            return (
-          <SwiperSlide key={idx}>
-            <div
-                className={`flex flex-row items-center float-right pr-30 transition-all duration-700 ease-in-out ${scale} ${translateX} `}
+          return (
+            <SwiperSlide key={idx}>
+              <div
+                className={`flex items-center justify-end pr-12 transition-all duration-500 ease-out ${
+                  isActive 
+                    ? "scale-125 opacity-100 translate-x-0" 
+                    : isNeighbor 
+                      ? "scale-100 opacity-40 translate-x-8" 
+                      : "scale-90 opacity-20 translate-x-16"
+                }`}
               >
-                <Image src={service.image} alt={service.title} width={imgSize} height={imgSize} />
-                <p
-                  className={` transition-all duration-700 ease-in-out ${textSize} ${color}`}
-                >
-                  {service.title}
-                </p>
+                <div className="flex items-center gap-6">
+                  <Image 
+                    src={service.image} 
+                    alt={service.title} 
+                    width={isActive ? 48 : 32} 
+                    height={isActive ? 48 : 32} 
+                    className="transition-all duration-500"
+                  />
+                  <p
+                    className={`font-bold transition-all duration-500 whitespace-nowrap ${
+                      isActive 
+                        ? "text-4xl text-gray-900" 
+                        : "text-2xl text-gray-400"
+                    }`}
+                  >
+                    {service.title}
+                  </p>
+                </div>
               </div>
-          </SwiperSlide>)
-})}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </div>
   );

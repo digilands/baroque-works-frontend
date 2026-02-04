@@ -1,4 +1,3 @@
-import { TextField } from "@mui/material";
 import { useField } from "formik";
 
 interface TextInputProps {
@@ -13,41 +12,49 @@ interface TextInputProps {
 
 export default function TextInput({
   label,
+  multiline,
+  rows = 3,
+  required,
   ...props
 }: TextInputProps) {
   const [field, meta] = useField(props.name);
 
   return (
-    <div className="w-full mb-4">
+    <div className="w-full">
       <label
         htmlFor={props.name}
-        className="block text-sm font-medium text-gray-800 mb-1"
+        className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1"
       >
         {label}
-        {props.required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-red-500 ml-1 font-bold">*</span>}
       </label>
-      <TextField
-        {...field}
-        {...props}
-        variant="outlined"
-        fullWidth
-        error={meta.touched && Boolean(meta.error)}
-        helperText={meta.touched && meta.error}
-        size="small"
-        InputProps={{
-          className:
-            "!bg-bg !text-text !rounded-lg",
-        }}
-
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            '&.Mui-focused fieldset': {
-              borderColor: 'var(--color-text)', // focused border color adapts to theme
-            }
-          },
-
-        }}
-      />
+      
+      {multiline ? (
+        <textarea
+          {...field}
+          {...(props as any)}
+          rows={rows}
+          className={`w-full px-5 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all resize-none ${
+            meta.touched && meta.error
+              ? "border-red-200 focus:ring-red-100/50"
+              : "border-gray-100 focus:border-indigo-600 focus:ring-indigo-100/50"
+          }`}
+        />
+      ) : (
+        <input
+          {...field}
+          {...props}
+          className={`w-full px-5 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
+            meta.touched && meta.error
+              ? "border-red-200 focus:ring-red-100/50"
+              : "border-gray-100 focus:border-indigo-600 focus:ring-indigo-100/50"
+          }`}
+        />
+      )}
+      
+      {meta.touched && meta.error && (
+        <p className="text-xs text-red-500 mt-1 ml-1 font-medium">{meta.error}</p>
+      )}
     </div>
   );
 }
