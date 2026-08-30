@@ -1,12 +1,13 @@
 # API Routes
 
-All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (Backend for Frontend) proxy, forwarding requests to the NestJS backend and managing cookies.
+All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (Backend for Frontend) proxy, forwarding requests to the NodeJS backend and managing cookies.
 
 ## POST `/api/auth/login`
 
 **Purpose:** Authenticate a user with email/password.
 
 **Request body:**
+
 ```json
 { "email": "string", "password": "string" }
 ```
@@ -14,6 +15,7 @@ All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (B
 **Backend call:** `POST /auth/login` on `NEXT_PUBLIC_API_URL`
 
 **Response (success):**
+
 ```json
 { "success": true, "user": { "_id", "email", "fullname", "role", "avatar" } }
 ```
@@ -31,6 +33,7 @@ All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (B
 **Purpose:** Register a new user account.
 
 **Request body:**
+
 ```json
 { "fullname": "string", "email": "string", "password": "string", "role": "Client" | "Handyman" }
 ```
@@ -38,6 +41,7 @@ All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (B
 **Backend call:** `POST /auth/signup` on `NEXT_PUBLIC_API_URL`
 
 **Response (success):**
+
 ```json
 { "success": true, "data": { ... } }
 ```
@@ -57,6 +61,7 @@ All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (B
 **Backend call:** None (cookie clearing only)
 
 **Response:**
+
 ```json
 { "success": true, "message": "Logged out successfully" }
 ```
@@ -76,14 +81,17 @@ All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (B
 **Backend call:** `GET /auth/me` with `Authorization: Bearer <token>` header
 
 **Response (success):**
+
 ```json
 { "user": { "_id", "email", "fullname", "role", "avatar" } }
 ```
 
 **Response (no token):**
+
 ```json
 { "user": null }
 ```
+
 Status: 401
 
 **File:** `src/app/api/auth/me/route.ts`
@@ -92,9 +100,10 @@ Status: 401
 
 ## GET `/api/auth/google/callback`
 
-**Purpose:** Handle the OAuth redirect from Google (via the NestJS backend). Extracts the token from query parameters and sets cookies.
+**Purpose:** Handle the OAuth redirect from Google (via the NodeJs backend). Extracts the token from query parameters and sets cookies.
 
 **Query parameters:**
+
 - `token` (required) — JWT access token
 - `refreshToken` (optional) — refresh token
 

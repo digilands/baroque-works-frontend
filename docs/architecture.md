@@ -4,7 +4,7 @@
 
 BaroqueWorks is a Next.js 15 App Router application that serves as the frontend for a handyman services marketplace. It connects clients with local trade professionals (electricians, plumbers, carpenters, etc.) across Nigeria.
 
-The frontend is a **client-rendered** application that communicates with an external **NestJS backend** via a BFF (Backend for Frontend) pattern using Next.js API Routes.
+The frontend is a **client-rendered** application that communicates with an external **NodeJS backend** via a BFF (Backend for Frontend) pattern using Next.js API Routes.
 
 ## Tech Stack
 
@@ -137,7 +137,7 @@ Client                Next.js API Routes         Nodejs Backend
 The app uses two Axios instances defined in `src/lib/auth.ts`:
 
 1. **`internalApi`** (client-side): `baseURL: '/api'` — calls Next.js Route Handlers
-2. **`backendApi`** (server-side, in Route Handlers): `baseURL: NEXT_PUBLIC_API_URL` — calls the NestJS backend
+2. **`backendApi`** (server-side, in Route Handlers): `baseURL: NEXT_PUBLIC_API_URL` — calls the NodeJS backend
 
 This keeps the backend URL server-side only and allows Next.js API Routes to act as a secure proxy.
 
@@ -156,7 +156,7 @@ Mock data lives in `src/utils/data.ts`:
 - `handymen`: Array of handyman profiles with ratings, reviews, offered services
 - `nigerianStates`: List of Nigerian states for the location selector
 
-This data is used for development/demo purposes. Production would fetch from the NestJS backend.
+This data is used for development/demo purposes. Production would fetch from the NodeJS backend.
 
 ## Deployment
 

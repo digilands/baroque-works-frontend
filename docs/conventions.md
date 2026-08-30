@@ -2,13 +2,13 @@
 
 ## File & Folder Naming
 
-| Location | Convention | Example |
-|----------|-----------|---------|
-| Route folders | kebab-case | `services/[id]/`, `profilesetup/` |
+| Location         | Convention | Example                                 |
+| ---------------- | ---------- | --------------------------------------- |
+| Route folders    | kebab-case | `services/[id]/`, `profilesetup/`       |
 | React components | PascalCase | `HeroSection.tsx`, `BookingSidebar.tsx` |
-| Utility files | camelCase | `cn.ts`, `data.ts` |
-| Type files | camelCase | `job.ts` |
-| Context files | PascalCase | `AuthContext.tsx`, `ThemeProvider.tsx` |
+| Utility files    | camelCase  | `cn.ts`, `data.ts`                      |
+| Type files       | camelCase  | `job.ts`                                |
+| Context files    | PascalCase | `AuthContext.tsx`, `ThemeProvider.tsx`  |
 
 ## Component Patterns
 
@@ -61,7 +61,7 @@
 
 - Two Axios instances in `src/lib/auth.ts`:
   - `internalApi` (client-side): calls `/api/*` routes
-  - `backendApi` (server-side in Route Handlers): calls NestJS backend
+  - `backendApi` (server-side in Route Handlers): calls NodeJS backend
 - All API calls wrapped in try/catch with error forwarding
 
 ## Git/CI
