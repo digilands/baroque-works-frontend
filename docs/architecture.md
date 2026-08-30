@@ -8,20 +8,20 @@ The frontend is a **client-rendered** application that communicates with an exte
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 15 (App Router) |
-| UI Library | React 19 |
-| Language | TypeScript (strict mode) |
-| Styling | Tailwind CSS v4 (CSS-first config) + MUI v7 |
-| Forms | Formik + Yup |
-| HTTP | Axios (two instances) |
-| Auth | JWT (HTTP-only cookies) + Google OAuth |
-| Animation | Framer Motion, CSS animations |
-| Charts | Recharts |
-| Icons | Hugeicons, Lucide React |
-| Theming | next-themes (class-based dark mode) |
-| Package Manager | pnpm |
+| Layer           | Technology                                  |
+| --------------- | ------------------------------------------- |
+| Framework       | Next.js 15 (App Router)                     |
+| UI Library      | React 19                                    |
+| Language        | TypeScript (strict mode)                    |
+| Styling         | Tailwind CSS v4 (CSS-first config) + MUI v7 |
+| Forms           | Formik + Yup                                |
+| HTTP            | Axios (two instances)                       |
+| Auth            | JWT (HTTP-only cookies) + Google OAuth      |
+| Animation       | Framer Motion, CSS animations               |
+| Charts          | Recharts                                    |
+| Icons           | Hugeicons, Lucide React                     |
+| Theming         | next-themes (class-based dark mode)         |
+| Package Manager | pnpm                                        |
 
 ## Directory Structure
 
@@ -77,22 +77,26 @@ src/
 ## Route Groups
 
 ### Landing (`/`)
+
 - `src/app/page.tsx` — Hero section, popular categories, trust section, footer
 - All client-rendered with Framer Motion animations
 
 ### Pages (`/(pages)/`)
+
 - Wrapped by a layout with the `Header` component (search bar, location selector, notifications)
 - **Home** (`/home`): Services carousel (keen-slider) + filterable grid of handymen
 - **Service Detail** (`/services/[id]`): Gallery, handyman profile, about section, reviews, location map, and a multi-step booking flow (Schedule → Confirm → Payment modals using MUI Dialog)
 - **Review** (`/review`): Star rating, tag selection, text review, photo upload
 
 ### Auth (`/auth/`)
+
 - Login with email/password + Google OAuth redirect
 - Signup with Formik form → redirects to login on success
 - Service selection (post-signup) → Profile setup (Formik + Yup) → Dashboard redirect
 - Middleware at `src/middleware.ts` redirects logged-in users away from auth pages
 
 ### Dashboard (`/dashboard`)
+
 - Sidebar navigation + header with notifications modal
 - Overview: stats cards, insights bar chart (Recharts), schedule widget, upcoming job, reviews, messages
 - Jobs list with tab filtering (all/pending/active/completed)
@@ -101,7 +105,7 @@ src/
 ## Authentication Flow
 
 ```
-Client                Next.js API Routes         NestJS Backend
+Client                Next.js API Routes         Nodejs Backend
   |                          |                          |
   |-- POST /api/auth/login ->|                          |
   |                          |-- POST /auth/login ----->|
@@ -116,12 +120,14 @@ Client                Next.js API Routes         NestJS Backend
 ```
 
 ### Cookie Management
+
 - `accessToken`: HTTP-only, secure, 7-day expiry, sameSite strict
 - `refreshToken`: HTTP-only, secure, 30-day expiry, sameSite strict
 - Set by API routes via `next/headers` cookies API
 - Cleared on logout
 
 ### Google OAuth
+
 - Frontend redirects to `NEXT_PUBLIC_API_URL/auth/google`
 - Backend processes OAuth, redirects to `/api/auth/google/callback?token=...`
 - Callback route extracts token from query params and sets cookies
@@ -138,12 +144,14 @@ This keeps the backend URL server-side only and allows Next.js API Routes to act
 ## Middleware
 
 `src/middleware.ts` runs on matched routes (`/dashboard/:path*`, `/auth/:path*`):
+
 - If user has `accessToken` and visits an auth page → redirect to `/dashboard`
 - Protected dashboard routes are currently commented out (available for future use)
 
 ## Static Data
 
 Mock data lives in `src/utils/data.ts`:
+
 - `services`: Array of service categories with images and sub-sections
 - `handymen`: Array of handyman profiles with ratings, reviews, offered services
 - `nigerianStates`: List of Nigerian states for the location selector
