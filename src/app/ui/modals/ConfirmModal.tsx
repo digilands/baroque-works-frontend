@@ -4,6 +4,7 @@ import { Dialog, IconButton } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import { BookingData } from "./ScheduleModal";
+import Image from "next/image";
 
 interface ConfirmModalProps {
     open: boolean;
@@ -23,7 +24,7 @@ export default function ConfirmModal({
     onGoBack,
     bookingData,
     handymanName,
-    // handymanImage,
+    handymanImage,
     location
 }: ConfirmModalProps) {
     if (!bookingData) return null;
@@ -59,11 +60,22 @@ export default function ConfirmModal({
                         <div className="text-4xl font-bold text-text">${bookingData.price.toFixed(2)}</div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-y-5 gap-x-4 text-sm">
-                        <div>
-                            <div className="text-gray-text1 text-xs mb-1.5 font-medium uppercase tracking-wide">Worker</div>
-                            <div className="font-bold text-text text-base">{handymanName.split(' ')[0]}</div>
+                    <div className="flex items-center gap-3 mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                            <Image 
+                                src={handymanImage} 
+                                alt={handymanName} 
+                                fill
+                                className="object-cover"
+                            />
                         </div>
+                        <div>
+                            <div className="text-gray-text1 text-xs font-medium uppercase tracking-wide">Worker</div>
+                            <div className="font-bold text-text text-base">{handymanName}</div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-y-5 gap-x-4 text-sm">
                         <div>
                             <div className="text-gray-text1 text-xs mb-1.5 font-medium uppercase tracking-wide">Requested service</div>
                             <div className="font-bold text-text text-base truncate">{bookingData.service}</div>

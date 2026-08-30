@@ -1,7 +1,12 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
 import InformationCircleIcon from '@hugeicons/core-free-icons/InformationCircleIcon';
+import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
+import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
+import Clock01Icon from '@hugeicons/core-free-icons/Clock01Icon';
 
 interface OfferedService {
     name: string;
@@ -20,68 +25,92 @@ interface BookingSidebarProps {
 
 export default function BookingSidebar({ handymanName, services, onBookService, selectedServiceIndex, onServiceSelect }: BookingSidebarProps) {
     const selectedService = services[selectedServiceIndex] || services[0];
+    const firstName = handymanName.split(' ')[0];
 
     return (
-        <div className="w-full lg:w-[22rem] flex flex-col gap-8">
+        <div className="w-full flex flex-col gap-10 bg-white">
             {/* Services List */}
             <div>
-                <h3 className="text-text font-semibold mb-4 text-base">Services by {handymanName.split(' ')[0]}</h3>
-                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-2 px-2">
-                    {services.length > 0 ? services.map((s, idx) => (
-                        <div
-                            key={idx}
-                            onClick={() => onServiceSelect(idx)}
-                            className={`min-w-[9rem] flex flex-col gap-2.5 cursor-pointer transition-all duration-200 hover:scale-[1.02] ${selectedServiceIndex === idx ? 'ring-2 ring-black ring-offset-2 rounded-xl' : 'opacity-80 hover:opacity-100'
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">Services by {firstName}</h3>
+                    <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-widest">{services.length} Total</span>
+                </div>
+                
+                <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2">
+                    {services.length > 0 ? services.map((s, idx) => {
+                        const isSelected = selectedServiceIndex === idx;
+                        return (
+                            <button
+                                key={idx}
+                                onClick={() => onServiceSelect(idx)}
+                                className={`group min-w-[10rem] text-left flex flex-col gap-3 transition-all duration-500 rounded-[1.5rem] p-2 border-2 ${
+                                    isSelected 
+                                    ? 'border-indigo-600 bg-indigo-50/30' 
+                                    : 'border-transparent hover:border-gray-100 hover:bg-gray-50'
                                 }`}
-                        >
-                            <div className="relative w-full h-[6.5rem] rounded-xl overflow-hidden shadow-sm">
-                                <Image src={s.image} alt={s.name} fill className="object-cover" />
-                            </div>
-                            <div>
-                                <h4 className="text-text text-sm font-semibold truncate">{s.name}</h4>
-                                <p className="text-text text-xs font-bold mt-0.5">{s.rate} <span className="text-gray-text1 font-normal">• {s.rateType}</span></p>
+                            >
+                                <div className="relative w-full aspect-square rounded-[1.25rem] overflow-hidden shadow-sm">
+                                    <Image src={s.image} alt={s.name} fill className={`object-cover transition-transform duration-700 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`} />
+                                    {isSelected && (
+                                        <div className="absolute top-2 right-2 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white border-2 border-white animate-in zoom-in">
+                                            <HugeiconsIcon icon={Tick02Icon} size={12} />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="px-1">
+                                    <h4 className={`text-xs font-extrabold truncate mb-0.5 ${isSelected ? 'text-indigo-600' : 'text-gray-900'}`}>{s.name}</h4>
+                                    <p className="text-[10px] font-bold text-gray-400 capitalize">{s.rate} • {s.rateType}</p>
+                                </div>
+                            </button>
+                        );
+                    }) : <p className="text-gray-400 text-sm italic py-4">No specific services listed.</p>}
+                </div>
+            </div>
+
+            {/* Price & Features */}
+            <div className="space-y-6">
+                <div className="p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="bg-white p-2.5 rounded-xl shadow-sm">
+                             <HugeiconsIcon icon={Clock01Icon} size={20} className="text-gray-400" />
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Rate</p>
+                            <div className="flex items-baseline justify-end gap-1">
+                                <span className="text-3xl font-extrabold text-gray-900">$30.00</span>
+                                <span className="text-xs font-bold text-gray-400">/hr</span>
                             </div>
                         </div>
-                    )) : <p className="text-gray-text1 text-sm">No specific services listed.</p>}
-                </div>
-            </div>
-
-            {/* Selected Service Card */}
-            {services.length > 0 && selectedService && (
-                <div className="bg-[var(--color-white-bg)] p-1 rounded-2xl">
-                    <h3 className="text-text font-semibold mb-3 text-base">Selected Service</h3>
-                    <div className="relative w-full h-[10rem] rounded-[1rem] overflow-hidden mb-3 shadow-sm">
-                        <Image src={selectedService.image} alt={selectedService.name} fill className="object-cover" />
                     </div>
-                    <h4 className="text-text text-lg font-bold mb-1">{selectedService.name}</h4>
-                    <p className="text-text text-sm font-semibold">{selectedService.rate} <span className="text-gray-text1 font-normal">• {selectedService.rateType}</span></p>
-                </div>
-            )}
 
-            {/* Hourly Charge Info */}
-            <div className="bg-[#F7F7F7] dark:bg-gray-800 p-4 rounded-xl flex items-start gap-3 border border-gray-100 dark:border-gray-700">
-                <div className="mt-0.5"><HugeiconsIcon icon={InformationCircleIcon} size={18} className="text-gray-text1" /></div>
-                <div>
-                    <h5 className="text-text text-sm font-bold mb-1">Hourly charge</h5>
-                    <p className="text-gray-text1 text-xs leading-5">Book by the hour. We&apos;ll start a timer when the job begins and charge you only for the time worked</p>
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-3 text-xs font-bold text-gray-600">
+                            <HugeiconsIcon icon={InformationCircleIcon} size={16} className="text-indigo-600" />
+                            <span>2 hours minimum booking</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs font-bold text-gray-600">
+                            <HugeiconsIcon icon={Calendar03Icon} size={16} className="text-indigo-600" />
+                            <span>Same-day availability</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            {/* Total & Action */}
-            <div className="pt-2">
-                <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-text text-3xl font-bold tracking-tight">$30.00</span>
-                    <span className="text-gray-text1 font-medium text-sm">• 2 hours minimum charge</span>
+                <div className="space-y-4">
+                    <button
+                        onClick={onBookService}
+                        className="w-full bg-gray-900 text-white py-5 rounded-[2rem] text-base font-bold hover:bg-black transition-all shadow-2xl shadow-gray-200 active:scale-[0.98] group relative overflow-hidden"
+                    >
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                           Book {firstName}
+                           <HugeiconsIcon icon={Tick02Icon} size={18} className="transition-transform group-hover:scale-125" />
+                        </span>
+                        <div className="absolute inset-0 bg-indigo-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                    </button>
+                    
+                    <p className="text-[10px] font-bold text-gray-400 text-center leading-relaxed px-4 uppercase tracking-tighter opacity-60">
+                        100% Refundable up to 24hrs before start
+                    </p>
                 </div>
-                <button
-                    onClick={onBookService}
-                    className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-[1rem] text-base font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
-                >
-                    Book Service
-                </button>
-                <p className="text-gray-text1 text-[0.7rem] text-center mt-3 leading-4 px-2">
-                    Cancellation and a full refund are available prior to the scheduled date.
-                </p>
             </div>
         </div>
     );

@@ -1,12 +1,19 @@
 'use client'
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import ThemeProvider from "@/contexts/ThemeProvider";
+import { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"], // Add necessary weights
 });
 
 const geistMono = Geist_Mono({
@@ -14,10 +21,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// const metadata: Metadata = {
-//   title: "BaroqueWorks",
-//   description: "product of imperium",
-// };
+const metadata: Metadata = {
+  title: "HandyMan",
+  description: "HandyMan",
+};
+
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
@@ -27,13 +36,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={` ${geistSans.variable} ${geistMono.variable} antialiased bg-bg`}
+        className={` ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased bg-bg font-sans`}
         suppressHydrationWarning
       >
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              {children}
+            </ThemeProvider>
+          </AuthProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

@@ -14,9 +14,11 @@ export default function LocationMap({ address }: LocationMapProps) {
             <div className="relative w-full h-[8rem] rounded-[1.25rem] overflow-hidden bg-gray-200 border border-[#E9E9E9]">
                 {/* Using a placeholder static map image or we can use a real map integration later */}
                 {/* For now, just a placeholder div visually representing a map */}
-                <div className="absolute inset-0 flex items-center justify-center bg-[#F2F4F7]">
-                    <span className="text-gray-400 text-xs">Map View Placeholder</span>
-                    <Image src="/map-placeholder.jpg" alt="Map" fill className="object-cover opacity-50" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#E5E7EB] bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center mb-1">
+                        <span className="text-lg">🗺️</span>
+                    </div>
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Map Preview</span>
                 </div>
 
                 {/* Location Pin Card Overlay */}

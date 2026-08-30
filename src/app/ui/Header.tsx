@@ -1,142 +1,113 @@
+"use client";
+
 import { nigerianStates } from "@/utils/data";
 import React, { useState } from "react";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import { Box, IconButton, InputAdornment, TextField } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import MessageMultiple01Icon from '@hugeicons/core-free-icons/MessageMultiple01Icon';
 import Notification02Icon from '@hugeicons/core-free-icons/Notification02Icon';
 import Search01Icon from '@hugeicons/core-free-icons/Search01Icon';
 import Location04Icon from '@hugeicons/core-free-icons/Location04Icon';
+import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 import Image from "next/image";
+import Link from "next/link";
+
 export default function Header() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [state, setState] = useState("Abuja")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [state, setState] = useState("Abuja");
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  }
+  return (
+    <header className="sticky top-0 z-50 bg-[#F7F7F0] pt-4 pb-2">
+      <div className="max-w-screen-2xl mx-auto px-6">
+        <div className="flex items-center justify-between gap-6">
+          
+          {/* Logo & Search Area */}
+          <div className="flex items-center gap-12 flex-1">
+            <Link href="/" className="shrink-0">
+              <span className="text-2xl font-bold text-gray-900 tracking-tight">HomeHero</span>
+            </Link>
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setState(event.target.value as string);
-  };
-  return <div className="flex flex-col lg:flex-row items-center justify-between w-full max-w-screen pt-[3.1rem]">
-    {/* Row 1 — HomeHero + right section */}
-    <div className="flex flex-row items-center justify-between w-full lg:w-auto">
-      {/* Item 1: HomeHero */}
-      <h1 className="text-text font-bold text-[1.5rem]">HomeHero</h1>
+            {/* Search Bar */}
+            <div className="hidden md:flex items-center gap-3 bg-[#f0f0e9] rounded-full px-5 py-3 flex-1 max-w-md transition-all hover:bg-gray-200/50">
+              <HugeiconsIcon icon={Search01Icon} size={20} className="text-gray-900" />
+              <input 
+                type="text" 
+                placeholder="What type of service do you want"
+                className="w-full bg-transparent border-none text-[15px] font-medium text-gray-900 focus:outline-none placeholder:text-gray-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
-      {/* Item 3: Right side — only visible on mobile here, visible on right for desktop */}
-      <div className="flex flex-row items-center lg:hidden">
-        <a href="../auth/signup" className="hidden">
-          <span className="text-gray-text1 hover:text-gray-text3 mr-[1.5rem] ">Become a Handyman</span>
-        </a>
-        <IconButton>
-          <HugeiconsIcon
-            icon={MessageMultiple01Icon}
-            color="var(--color-text)" />
-        </IconButton>
-        <IconButton className="mr-[1.6rem]">
-          <HugeiconsIcon icon={Notification02Icon} color="var(--color-text)" />
-        </IconButton>
-        <Image width={10} height={10} src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
+            {/* Location Selector */}
+            <div className="relative hidden md:block">
+              <button 
+                onClick={() => setIsLocationOpen(!isLocationOpen)}
+                className="flex items-center gap-2 bg-[#f0f0e9] rounded-full px-5 py-3 hover:bg-gray-200/50 transition-all font-medium text-[15px]"
+              >
+                <HugeiconsIcon icon={Location04Icon} size={20} className="text-gray-900" />
+                <span className="text-gray-700">{state}</span>
+                <HugeiconsIcon icon={ArrowDown01Icon} size={16} className="text-gray-500" />
+              </button>
+
+              {isLocationOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50 max-h-64 overflow-y-auto animate-in fade-in zoom-in-50 duration-200">
+                  {nigerianStates.map((s) => (
+                    <button
+                      key={s}
+                      className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                      onClick={() => {
+                        setState(s);
+                        setIsLocationOpen(false);
+                      }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* User Actions */}
+          <div className="flex items-center gap-8">
+            <Link 
+              href="/auth/signup" 
+              className="hidden lg:block text-[15px] font-medium text-gray-400 hover:text-gray-900 transition-colors"
+            >
+              Become a Handyman
+            </Link>
+
+            <div className="flex items-center gap-5">
+              <button className="text-gray-900 hover:text-gray-600 transition-colors">
+                <HugeiconsIcon icon={MessageMultiple01Icon} size={24} />
+              </button>
+              
+              <button className="text-gray-900 hover:text-gray-600 transition-colors">
+                <HugeiconsIcon icon={Notification02Icon} size={24} />
+              </button>
+
+              <button className="relative w-10 h-10 rounded-full bg-gray-200 overflow-hidden hover:opacity-90 transition-opacity">
+                 <Image src="/profile.png" alt="Profile" fill className="object-cover" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Search Bar (Only visible on mobile) */}
+        <div className="mt-4 md:hidden">
+          <div className="flex items-center gap-3 bg-[#f0f0e9] rounded-full px-5 py-3">
+            <HugeiconsIcon icon={Search01Icon} size={20} className="text-gray-900" />
+            <input 
+              type="text" 
+              placeholder="What type of service do you want"
+              className="w-full bg-transparent border-none text-[15px] font-medium text-gray-900 focus:outline-none placeholder:text-gray-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
-    </div>
-
-    {/* Item 2: Search + Select */}
-    <div className="flex flex-row w-full lg:w-auto mt-4 lg:mt-0">
-      <TextField
-        className="rounded-[.5rem] lg:rounded-[1.25rem] w-[23rem] h-[2.5rem] bg-[#F2F2F2] dark:bg-gray-800"
-        sx={{
-
-          '& .MuiOutlinedInput-root': {
-            height: '2.5rem',
-            '& fieldset': { border: 'none', borderRadius: '1.25rem' },
-            '&.Mui-focused fieldset': { borderColor: ' dark' },
-            '&:hover fieldset': { borderColor: '#666666' },
-          },
-        }}
-        placeholder="What type of service do you want"
-        value={searchTerm}
-        onChange={handleChange}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <HugeiconsIcon icon={Search01Icon} color="var(--color-text)" />
-            </InputAdornment>
-          ),
-        }}
-      />
-
-      {/* mobile icon + invisible select overlay; desktop shows normal Select */}
-      <div className="relative ml-[1rem]">
-        {/* visible icon on mobile only */}
-        <button aria-label="Select location" className="lg:hidden p-0 w-[2.5rem] h-[2.5rem] flex items-center justify-center bg-[#F2F2F2] rounded-[.5rem] lg:rounded-[1.25rem]">
-          <HugeiconsIcon icon={Location04Icon} color="var(--color-text)" />
-        </button>
-
-        <Select
-          id="demo-simple-select"
-          value={state}
-          onChange={handleSelectChange}
-          displayEmpty
-          // overlay the select over the icon on mobile (captures clicks), normal on desktop
-          className="absolute inset-0 h-full opacity-0 lg:opacity-100 lg:static lg:w-[10rem] lg:h-[2.5rem] lg:bg-[#F2F2F2] dark:lg:bg-gray-800 rounded-[.5rem] lg:rounded-[1.25rem]"
-          sx={{
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-              borderRadius: '1.25rem',
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: ' dark',
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#666666',
-            },
-            '& .MuiSelect-select': {
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              paddingLeft: 0,
-              overflow: 'visible',
-            },
-            '& .MuiSelect-icon': {
-              display: 'none',
-              '@media (min-width: 1024px)': { display: 'block' },
-            },
-          }}
-          renderValue={(value) => (
-            <Box className="flex items-center gap-[.4rem] ml-[.8rem]">
-              {/* small icon shown inside select for desktop; mobile icon is the visible button above */}
-              <HugeiconsIcon icon={Location04Icon} color="var(--color-text)" />
-              <span className="hidden lg:inline">{value}</span>
-            </Box>
-          )}
-        >
-          {nigerianStates.map((s) => (
-            <MenuItem key={s} value={s}>
-              {s}
-            </MenuItem>
-          ))}
-        </Select>
-      </div>
-    </div>
-
-    {/* Item 3: Right side (desktop view only) */}
-    <div className="hidden lg:flex flex-row items-center">
-      <a href="../auth/signup" className="hidden lg:block">
-        <span className="text-gray-text1 hover:text-gray-text3 mr-[1.5rem]">Become a Handyman</span>
-      </a>
-      <IconButton>
-        <HugeiconsIcon
-          icon={MessageMultiple01Icon}
-          color="var(--color-text)"
-        />
-      </IconButton>
-      <IconButton className="mr-[1.6rem]">
-        <HugeiconsIcon icon={Notification02Icon} color="var(--color-text)" />
-      </IconButton>
-      <Image width={10} height={10} src="/profile.png" alt="profile picture" className="w-[2rem] h-[2rem]" />
-    </div>
-  </div>
+    </header>
+  );
 }
