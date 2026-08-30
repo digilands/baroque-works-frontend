@@ -6,11 +6,21 @@ import TextInput from "../../ui/TextInput";
 import SelectInput from "../../ui/SelectInput";
 import { SubTitle, Title } from "@/app/ui/Titles";
 import { HugeiconsIcon } from '@hugeicons/react';
+<<<<<<< HEAD
 import SmileIcon from '@hugeicons/core-free-icons/SmileIcon';
 import MapsLocation01Icon from '@hugeicons/core-free-icons/MapsLocation01Icon';
 import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon';
 import ImageAdd01Icon from '@hugeicons/core-free-icons/ImageAdd01Icon';
 import Location01Icon from '@hugeicons/core-free-icons/Location01Icon';
+=======
+import {
+  SmileIcon,
+  MapsLocation01Icon,
+  ArrowRight01Icon,
+  ImageAdd01Icon,
+  Location01Icon
+} from '@hugeicons/core-free-icons';
+>>>>>>> 66c54f1f3fd41ac63c7062a206290f91b022890c
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 
@@ -44,7 +54,7 @@ export default function SetupProfile() {
 
   const handleSubmit = (values: ProfileSetupValues) => {
     console.log(values);
-    router.push("/dashboard");
+    router.push("/auth/additional-info");
   };
 
   const handleImgSelect = () => {
@@ -80,17 +90,17 @@ export default function SetupProfile() {
       <div className="w-full max-w-md space-y-8">
         {/* Upload section */}
         <div className="grid grid-cols-2 gap-4">
-          <UploadButton 
-            text="Upload Photo" 
+          <UploadButton
+            text="Upload Photo"
             subtext="Profile picture"
-            icon={ImageAdd01Icon} 
-            clickHandler={handleImgSelect} 
+            icon={ImageAdd01Icon}
+            clickHandler={handleImgSelect}
           />
-          <UploadButton 
-            text="Set Location" 
+          <UploadButton
+            text="Set Location"
             subtext="Select on map"
-            icon={Location01Icon} 
-            clickHandler={handleLocationSelect} 
+            icon={Location01Icon}
+            clickHandler={handleLocationSelect}
           />
         </div>
 
@@ -160,8 +170,8 @@ interface UploadButtonProps {
 
 const UploadButton: React.FC<UploadButtonProps> = ({ text, subtext, icon, clickHandler }) => {
   return (
-    <div 
-      onClick={clickHandler} 
+    <div
+      onClick={clickHandler}
       className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-100 rounded-[2rem] bg-gray-50 hover:bg-white hover:border-indigo-200 hover:shadow-lg cursor-pointer transition-all duration-300 group"
     >
       <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm border border-gray-50 group-hover:scale-110 transition-transform">
