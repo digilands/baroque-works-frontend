@@ -3,13 +3,11 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { 
-  ImageAdd01Icon, 
-  StarIcon, 
-  Tick02Icon, 
-  ArrowLeft01Icon,
-  Navigation03Icon
-} from '@hugeicons/core-free-icons';
+import ImageAdd01Icon from '@hugeicons/core-free-icons/ImageAdd01Icon';
+import StarIcon from '@hugeicons/core-free-icons/StarIcon';
+import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
+import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon';
+import Navigation03Icon from '@hugeicons/core-free-icons/Navigation03Icon';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 

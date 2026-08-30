@@ -3,13 +3,11 @@
 import React, { useState } from "react";
 import { Dialog, IconButton } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { 
-  Cancel01Icon, 
-  Calendar03Icon,
-  ArrowDown01Icon,
-  MinusSignIcon,
-  PlusSignIcon
-} from '@hugeicons/core-free-icons';
+import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
+import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
+import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
+import MinusSignIcon from '@hugeicons/core-free-icons/MinusSignIcon';
+import PlusSignIcon from '@hugeicons/core-free-icons/PlusSignIcon';
 
 interface ScheduleModalProps {
     open: boolean;

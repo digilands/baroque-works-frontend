@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { FilterIcon } from '@hugeicons/core-free-icons';
+import FilterIcon from '@hugeicons/core-free-icons/FilterIcon';
 
 interface FilterButtonProps {
   numberOfFilters: number;

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import ActiveFilters from "./ActiveFilters";
 import FilterButton from "./FilterButton";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { FilterIcon } from '@hugeicons/core-free-icons';
+import FilterIcon from '@hugeicons/core-free-icons/FilterIcon';
 import ServiceCategoryFilter from "./ServiceCategoryFilter";
 import Card from "./Card";
 import { handymen } from "@/utils/data";

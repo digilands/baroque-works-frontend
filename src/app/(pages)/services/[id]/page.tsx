@@ -13,7 +13,10 @@ import ScheduleModal, { BookingData } from "@/app/ui/modals/ScheduleModal";
 import ConfirmModal from "@/app/ui/modals/ConfirmModal";
 import PaymentModal from "@/app/ui/modals/PaymentModal";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading01Icon, ArrowLeft01Icon, Share01Icon, FavouriteIcon } from '@hugeicons/core-free-icons';
+import Loading01Icon from '@hugeicons/core-free-icons/Loading01Icon';
+import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon';
+import Share01Icon from '@hugeicons/core-free-icons/Share01Icon';
+import FavouriteIcon from '@hugeicons/core-free-icons/FavouriteIcon';
 import { useRouter } from "next/navigation";
 
 export default function ServiceDetailsPage() {

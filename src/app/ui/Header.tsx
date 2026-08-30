@@ -3,13 +3,11 @@
 import { nigerianStates } from "@/utils/data";
 import React, { useState } from "react";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { 
-  MessageMultiple01Icon,
-  Notification02Icon,
-  Search01Icon,
-  Location04Icon,
-  ArrowDown01Icon,
-} from '@hugeicons/core-free-icons';
+import MessageMultiple01Icon from '@hugeicons/core-free-icons/MessageMultiple01Icon';
+import Notification02Icon from '@hugeicons/core-free-icons/Notification02Icon';
+import Search01Icon from '@hugeicons/core-free-icons/Search01Icon';
+import Location04Icon from '@hugeicons/core-free-icons/Location04Icon';
+import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 import Image from "next/image";
 import Link from "next/link";
 

@@ -3,7 +3,10 @@
 import React from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { InformationCircleIcon, Tick02Icon, Calendar03Icon, Clock01Icon } from '@hugeicons/core-free-icons';
+import InformationCircleIcon from '@hugeicons/core-free-icons/InformationCircleIcon';
+import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
+import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
+import Clock01Icon from '@hugeicons/core-free-icons/Clock01Icon';
 
 interface OfferedService {
     name: string;

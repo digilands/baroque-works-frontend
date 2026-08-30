@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Cancel01Icon } from '@hugeicons/core-free-icons';
+import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 
 interface ActiveFiltersProps {
   activeFilters: string[];
