@@ -27,6 +27,7 @@ const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/context/AuthContext";
+import Providers from "@/components/Providers";
 
 export default function RootLayout({
   children,
@@ -39,13 +40,15 @@ export default function RootLayout({
         className={` ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased bg-bg font-sans`}
         suppressHydrationWarning
       >
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <AuthProvider>
-            <ThemeProvider>
-              {children}
-            </ThemeProvider>
-          </AuthProvider>
-        </AppRouterCacheProvider>
+        <Providers>
+          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+            <AuthProvider>
+              <ThemeProvider>
+                {children}
+              </ThemeProvider>
+            </AuthProvider>
+          </AppRouterCacheProvider>
+        </Providers>
       </body>
     </html>
   );

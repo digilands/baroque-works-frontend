@@ -6,13 +6,6 @@ import TextInput from "../../ui/TextInput";
 import SelectInput from "../../ui/SelectInput";
 import { SubTitle, Title } from "@/app/ui/Titles";
 import { HugeiconsIcon } from '@hugeicons/react';
-<<<<<<< HEAD
-import SmileIcon from '@hugeicons/core-free-icons/SmileIcon';
-import MapsLocation01Icon from '@hugeicons/core-free-icons/MapsLocation01Icon';
-import ArrowRight01Icon from '@hugeicons/core-free-icons/ArrowRight01Icon';
-import ImageAdd01Icon from '@hugeicons/core-free-icons/ImageAdd01Icon';
-import Location01Icon from '@hugeicons/core-free-icons/Location01Icon';
-=======
 import {
   SmileIcon,
   MapsLocation01Icon,
@@ -20,7 +13,6 @@ import {
   ImageAdd01Icon,
   Location01Icon
 } from '@hugeicons/core-free-icons';
->>>>>>> 66c54f1f3fd41ac63c7062a206290f91b022890c
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 

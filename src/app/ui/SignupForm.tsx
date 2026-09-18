@@ -4,26 +4,25 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { 
-  Mail01Icon, 
+import {
+  Mail01Icon,
   GoogleIcon,
   ArrowRight01Icon,
   UserIcon,
   LockPasswordIcon
 } from "@hugeicons/core-free-icons";
-import { internalApi } from "@/lib/auth";
-import { useState } from "react";
+import { useSignup } from "@/hooks/useAuth";
 
 export default function SignupForm() {
   const router = useRouter();
-  const [error, setError] = useState("");
+  const signupMutation = useSignup();
 
   const formik = useFormik({
     initialValues: {
       fullname: "",
       email: "",
       password: "",
-      role: "Client",
+      role: "Client" as const,
     },
     validationSchema: Yup.object({
       fullname: Yup.string().required("Full name is required"),
@@ -31,14 +30,11 @@ export default function SignupForm() {
       password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
     }),
     onSubmit: async (values) => {
-      setError("");
       try {
-        const response = await internalApi.post('/auth/signup', values);
-        if (response.data.success) {
-          router.push("/auth/login?registered=true");
-        }
+        await signupMutation.mutateAsync(values);
+        router.push("/auth/login?registered=true");
       } catch (err: any) {
-        setError(err.response?.data?.message || "Registration failed. Please try again.");
+        formik.setFieldError("fullname", err.message || "Registration failed. Please try again.");
       }
     },
   });
@@ -56,9 +52,9 @@ export default function SignupForm() {
         </p>
       </div>
 
-      {error && (
+      {signupMutation.isError && (
         <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-xl text-center font-medium">
-          {error}
+          {signupMutation.error.message || "Registration failed. Please try again."}
         </div>
       )}
 
@@ -152,10 +148,10 @@ export default function SignupForm() {
 
         <button
           type="submit"
-          disabled={formik.isSubmitting}
+          disabled={formik.isSubmitting || signupMutation.isPending}
           className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-gray-200 active:scale-[0.98] disabled:opacity-70"
         >
-          {formik.isSubmitting ? "Creating..." : "Continue"}
+          {signupMutation.isPending ? "Creating..." : "Continue"}
           <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
         </button>
       </form>

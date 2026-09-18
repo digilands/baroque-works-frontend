@@ -28,9 +28,6 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    // Redirect to backend Google Auth endpoint
-    // The backend should redirect back to /api/auth/google/callback on frontend
-    // ensure backend is configured to redirect to FRONTEND_URL/api/auth/google/callback
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/google`;
   };
 
