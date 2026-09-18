@@ -11,6 +11,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           queries: {
             retry: false,
             refetchOnWindowFocus: false,
+            // Fresh enough for marketplace lists; cached across navigation.
+            staleTime: 5 * 60 * 1000,
+            gcTime: 10 * 60 * 1000,
           },
         },
       })

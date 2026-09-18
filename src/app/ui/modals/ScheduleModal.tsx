@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Dialog, IconButton } from "@mui/material";
+import { Dialog } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
@@ -19,6 +19,7 @@ interface ScheduleModalProps {
 
 export interface BookingData {
     date: string;
+    dateISO: string;
     service: string;
     description: string;
     time: string;
@@ -39,6 +40,7 @@ export default function ScheduleModal({ open, onClose, onConfirm, services }: Sc
     const handleConfirm = () => {
         onConfirm({
             date: selectedDate.toLocaleDateString(),
+            dateISO: selectedDate.toISOString(),
             service: selectedService,
             description,
             time: selectedTime,

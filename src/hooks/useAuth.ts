@@ -3,14 +3,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { getMe, login as loginFn, logout as logoutFn, signup as signupFn } from '@/lib/api';
-import type { LoginCredentials, SignupCredentials } from '@/lib/auth';
 
 export function useUser() {
   return useQuery({
     queryKey: ['user'],
     queryFn: getMe,
     retry: false,
-    staleTime: Infinity,
+    // Revalidate in the background so role/profile changes (e.g. after
+    // onboarding) propagate without a hard reload.
+    staleTime: 5 * 60 * 1000,
   });
 }
 

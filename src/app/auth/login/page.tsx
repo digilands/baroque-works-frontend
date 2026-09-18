@@ -20,8 +20,9 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid credentials");
+    } catch (err: unknown) {
+      const apiError = err as { response?: { data?: { message?: string } } };
+      setError(apiError.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }

@@ -8,7 +8,6 @@ import StarIcon from '@hugeicons/core-free-icons/StarIcon';
 import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
 import ArrowLeft01Icon from '@hugeicons/core-free-icons/ArrowLeft01Icon';
 import Navigation03Icon from '@hugeicons/core-free-icons/Navigation03Icon';
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ReviewPage() {

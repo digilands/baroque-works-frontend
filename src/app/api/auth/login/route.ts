@@ -46,11 +46,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, user });
 
-  } catch (error: any) {
-    console.error('Login error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string }; status?: number }; message?: string };
+    console.error('Login error:', err.response?.data || err.message);
     return NextResponse.json(
-      { message: error.response?.data?.message || 'Login failed' }, 
-      { status: error.response?.status || 500 }
+      { message: err.response?.data?.message || 'Login failed' },
+      { status: err.response?.status || 500 }
     );
   }
 }

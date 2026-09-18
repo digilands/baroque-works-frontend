@@ -1,30 +1,50 @@
 'use client';
-import React, { useState } from "react";
+import React from "react";
 import { Dialog, IconButton } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
+import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
+import { useCreateServiceBooking } from "@/hooks/useBooking";
+import { redirectToMonnify, resolveMonnifyTarget } from "@/lib/monnify";
+import type { CreateServiceBookingInput } from "@/lib/api";
 
 interface PaymentModalProps {
     open: boolean;
     onClose: () => void;
-    onConfirm: () => void;
     onGoBack: () => void;
+    /** Fully-built booking payload; null until the schedule step completes. */
+    bookingInput: CreateServiceBookingInput | null;
     amount: number;
+    onBooked: (bookingId?: string) => void;
 }
 
-export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amount }: PaymentModalProps) {
-    const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer'>('card');
-    const [cardNumber, setCardNumber] = useState('');
-    const [expiryDate, setExpiryDate] = useState('');
-    const [cvv, setCvv] = useState('');
-    const [accountNumber, setAccountNumber] = useState('');
+/**
+ * Monnify payment step: creates the booking (the backend creates the
+ * payment intent) then redirects to Monnify's hosted checkout.
+ * When the backend returns no payment target, the booking is shown as
+ * confirmed with payment pending instead of redirecting.
+ */
+export default function PaymentModal({ open, onClose, onGoBack, bookingInput, amount, onBooked }: PaymentModalProps) {
+    const booking = useCreateServiceBooking();
+    const [confirmedWithoutPayment, setConfirmedWithoutPayment] = React.useState<string | undefined>(undefined);
 
-    const handlePayment = () => {
-        // Simulate payment processing
-        setTimeout(() => {
-            onConfirm();
-        }, 500);
+    const handlePay = () => {
+        if (!bookingInput) return;
+        setConfirmedWithoutPayment(undefined);
+        booking.mutate(bookingInput, {
+            onSuccess: (result) => {
+                const target = resolveMonnifyTarget(result.raw);
+                if (target) {
+                    redirectToMonnify(target);
+                } else {
+                    setConfirmedWithoutPayment(result.bookingId);
+                    onBooked(result.bookingId);
+                }
+            },
+        });
     };
+
+    const isBusy = booking.isPending;
 
     return (
         <Dialog
@@ -49,109 +69,69 @@ export default function PaymentModal({ open, onClose, onConfirm, onGoBack, amoun
                     <HugeiconsIcon icon={Cancel01Icon} size={24} />
                 </IconButton>
 
-                <h2 className="text-xl font-bold text-text mb-6">Payment Method</h2>
+                <h2 className="text-xl font-bold text-text mb-2">Payment</h2>
+                <p className="text-sm text-gray-500 mb-6">
+                    Secured by Monnify — you&apos;ll complete payment on their checkout page.
+                </p>
 
-                {/* Payment Method Tabs */}
-                <div className="flex gap-3 mb-8 bg-gray-50 dark:bg-gray-800 p-1.5 rounded-2xl border border-gray-100 dark:border-gray-700">
-                    <button
-                        onClick={() => setPaymentMethod('card')}
-                        className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${paymentMethod === 'card'
-                            ? 'bg-black dark:bg-white text-white dark:text-black shadow-md'
-                            : 'bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                            }`}
-                    >
-                        Credit Card
-                    </button>
-                    <button
-                        onClick={() => setPaymentMethod('transfer')}
-                        className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all ${paymentMethod === 'transfer'
-                            ? 'bg-black dark:bg-white text-white dark:text-black shadow-md'
-                            : 'bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                            }`}
-                    >
-                        Bank Transfer
-                    </button>
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 mb-6 text-center">
+                    <div className="text-4xl font-bold text-text">${amount.toFixed(2)}</div>
+                    <div className="text-xs text-gray-500 mt-1">Total due now</div>
                 </div>
 
-                {paymentMethod === 'card' ? (
-                    <div className="space-y-5 mb-8">
-                        {/* Card Number */}
-                        <div>
-                            <label className="block text-sm font-bold mb-2">Enter Card Number</label>
-                            <input
-                                type="text"
-                                placeholder="5301 4567 3349 1003"
-                                value={cardNumber}
-                                onChange={(e) => setCardNumber(e.target.value)}
-                                className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium tracking-wide focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-gray-600 bg-[var(--color-white-bg)]"
-                            />
-                            <div className="flex justify-end mt-1.5">
-                                <span className="text-orange-500 text-xs font-bold tracking-widest">VISA</span>
-                            </div>
-                        </div>
-
-                        {/* Expiry and CVV */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-bold mb-2">Expiry Date</label>
-                                <input
-                                    type="text"
-                                    placeholder="MM/YY"
-                                    value={expiryDate}
-                                    onChange={(e) => setExpiryDate(e.target.value)}
-                                    className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all bg-[var(--color-white-bg)]"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-bold mb-2">CVV</label>
-                                <input
-                                    type="text"
-                                    placeholder="123"
-                                    value={cvv}
-                                    onChange={(e) => setCvv(e.target.value)}
-                                    className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all bg-[var(--color-white-bg)]"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Secure verification notice */}
-                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                            <div className="text-blue-600 mt-0.5">🔒</div>
-                            <div className="text-xs text-blue-800">
-                                <div className="font-bold mb-1">Secure Verification</div>
-                                <div className="leading-tight opacity-90">Your money is saved in an Escrow Wallet and paid to the handyman when work is complete</div>
-                            </div>
-                        </div>
+                {booking.isError && (
+                    <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-xl text-center font-medium">
+                        {booking.error.message || "Booking failed. Please try again."}
                     </div>
-                ) : (
-                    <div className="space-y-5 mb-8">
-                        <div>
-                            <label className="block text-sm font-bold mb-2">Account Number</label>
-                            <input
-                                type="text"
-                                placeholder="Enter account number"
-                                value={accountNumber}
-                                onChange={(e) => setAccountNumber(e.target.value)}
-                                className="w-full p-4 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent outline-none transition-all bg-[var(--color-white-bg)]"
-                            />
+                )}
+
+                {confirmedWithoutPayment !== undefined && (
+                    <div className="mb-6 p-4 bg-green-50 border border-green-100 rounded-xl flex items-start gap-3">
+                        <HugeiconsIcon icon={Tick02Icon} size={20} className="text-green-600 mt-0.5" />
+                        <div className="text-sm text-green-800">
+                            <div className="font-bold mb-1">Booking confirmed</div>
+                            <div className="opacity-90">
+                                No online payment was required. Your pro will be notified.
+                                {confirmedWithoutPayment ? ` Ref: ${confirmedWithoutPayment.slice(-6)}` : ""}
+                            </div>
                         </div>
                     </div>
                 )}
+
+                {/* Secure verification notice */}
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 mb-8">
+                    <div className="text-blue-600 mt-0.5">🔒</div>
+                    <div className="text-xs text-blue-800">
+                        <div className="font-bold mb-1">Secure Verification</div>
+                        <div className="leading-tight opacity-90">Your money is saved in an Escrow Wallet and paid to the handyman when work is complete</div>
+                    </div>
+                </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-4">
                     <button
                         onClick={onGoBack}
-                        className="flex-1 border border-gray-200 dark:border-gray-600 py-3.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        disabled={isBusy}
+                        className="flex-1 border border-gray-200 dark:border-gray-600 py-3.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
                     >
                         Go back
                     </button>
-                    <button
-                        onClick={handlePayment}
-                        className="flex-1 bg-black dark:bg-white text-white dark:text-black py-3.5 rounded-xl text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10"
-                    >
-                        Pay ${amount.toFixed(2)}
-                    </button>
+                    {confirmedWithoutPayment !== undefined ? (
+                        <button
+                            onClick={onClose}
+                            className="flex-1 bg-black dark:bg-white text-white dark:text-black py-3.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-black/10"
+                        >
+                            Done
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handlePay}
+                            disabled={isBusy || !bookingInput}
+                            className="flex-1 bg-black dark:bg-white text-white dark:text-black py-3.5 rounded-xl text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all active:scale-[0.98] shadow-lg shadow-black/10 disabled:opacity-50"
+                        >
+                            {isBusy ? "Creating booking…" : `Pay $${amount.toFixed(2)}`}
+                        </button>
+                    )}
                 </div>
             </div>
         </Dialog>

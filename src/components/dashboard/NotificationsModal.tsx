@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { 
-  Cancel01Icon, 
-  Message01Icon, 
-  Wallet01Icon, 
-  Briefcase01Icon, 
-  Notification02Icon,
-  CircleArrowRight01Icon
+import {
+  Cancel01Icon,
+  Message01Icon,
+  Wallet01Icon,
+  Briefcase01Icon,
+  Notification02Icon
 } from "@hugeicons/core-free-icons";
 
 interface NotificationItem {

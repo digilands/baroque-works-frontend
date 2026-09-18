@@ -1,68 +1,111 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../ui/TextInput";
 import SelectInput from "../../ui/SelectInput";
 import { SubTitle, Title } from "@/app/ui/Titles";
 import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  SmileIcon,
-  MapsLocation01Icon,
-  ArrowRight01Icon,
-  ImageAdd01Icon,
-  Location01Icon
-} from '@hugeicons/core-free-icons';
-import { useRef } from "react";
+import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
 import { useRouter } from "next/navigation";
+import { nigerianStates } from "@/utils/data";
+import AvatarUpload from "@/components/ui/AvatarUpload";
+import LocationPicker, { type PickedLocation } from "@/components/ui/LocationPicker";
+import { useCreateHandyman, useUpdateMe } from "@/hooks/useOnboarding";
+import { useUser } from "@/hooks/useAuth";
+import type { UploadedFile } from "@/lib/api";
+import type { ExperienceLevel } from "@/lib/api";
+import { ONBOARDING_CATEGORIES_KEY } from "../serviceselection/page";
 
-const services = [
-  "plumbing",
-  "electrical",
-  "carpentry",
-  "painting",
-  "general maintenance",
-  "landscaping",
-  "assembly",
-  "house section"
-]
+const EXPERIENCE_OPTIONS: ExperienceLevel[] = ["beginner", "intermediate", "expert"];
 
 interface ProfileSetupValues {
   name: string;
-  profession: string;
+  experienceLevel: ExperienceLevel | "";
   bio: string;
   address: string;
-  profilePhoto: File | null;
+}
+
+function loadCategoryIds(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(
+      window.sessionStorage.getItem(ONBOARDING_CATEGORIES_KEY) ?? "[]",
+    );
+    return Array.isArray(parsed) ? parsed.filter((v) => typeof v === "string") : [];
+  } catch {
+    return [];
+  }
 }
 
 export default function SetupProfile() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { data: sessionUser } = useUser();
+  const createHandyman = useCreateHandyman();
+  const updateMe = useUpdateMe();
+
+  const [categoryIds] = useState<string[]>(loadCategoryIds);
+  const [avatar, setAvatar] = useState<UploadedFile | null>(null);
+  const [picked, setPicked] = useState<PickedLocation | null>(null);
+  const [showMap, setShowMap] = useState(false);
+  const [stateName, setStateName] = useState("Lagos");
+  const [lga, setLga] = useState("");
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    if (categoryIds.length === 0) router.replace("/auth/serviceselection");
+  }, [categoryIds.length, router]);
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Full name is required"),
-    profession: Yup.string().required("Profession is required"),
-  })
+    experienceLevel: Yup.string()
+      .oneOf(EXPERIENCE_OPTIONS, "Select your experience level")
+      .required("Experience level is required"),
+  });
 
-  const handleSubmit = (values: ProfileSetupValues) => {
-    console.log(values);
-    router.push("/auth/additional-info");
+  const handleSubmit = async (values: ProfileSetupValues) => {
+    setFormError("");
+    try {
+      const experienceLevel = values.experienceLevel as ExperienceLevel;
+      await createHandyman.mutateAsync({
+        categoryId: categoryIds.map((type) => ({ type, experienceLevel })),
+        ...(picked
+          ? {
+              location: {
+                coordinates: [picked.longitude, picked.latitude] as [number, number],
+                state: stateName,
+                ...(lga.trim() ? { lga: lga.trim() } : {}),
+              },
+            }
+          : {}),
+      });
+
+      const profileUpdate = {
+        ...(values.name.trim() ? { fullname: values.name.trim() } : {}),
+        ...(values.bio.trim() ? { bio: values.bio.trim() } : {}),
+        ...(values.address.trim() ? { address: values.address.trim() } : {}),
+        ...(avatar ? { image: { url: avatar.secureUrl || avatar.url, public_id: avatar.publicId } } : {}),
+      };
+      if (Object.keys(profileUpdate).length > 0) {
+        await updateMe.mutateAsync(profileUpdate);
+      }
+
+      try {
+        window.sessionStorage.removeItem(ONBOARDING_CATEGORIES_KEY);
+      } catch {
+        // ignore
+      }
+      router.push("/auth/additional-info");
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Setup failed. Please try again.");
+    }
   };
 
-  const handleImgSelect = () => {
-    fileInputRef.current?.click()
-  }
+  if (categoryIds.length === 0) return null;
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      console.log("selected image: ", file)
-    }
-  }
-
-  const handleLocationSelect = () => {
-    console.log("Location selection clicked");
-  }
+  const isBusy = createHandyman.isPending || updateMe.isPending;
+  const mutationError = createHandyman.error ?? updateMe.error;
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white py-12 px-6">
@@ -71,39 +114,25 @@ export default function SetupProfile() {
         <SubTitle>Provide details that will help clients find and trust you.</SubTitle>
       </div>
 
-      <input
-        type='file'
-        accept="image/*"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
       <div className="w-full max-w-md space-y-8">
-        {/* Upload section */}
-        <div className="grid grid-cols-2 gap-4">
-          <UploadButton
-            text="Upload Photo"
-            subtext="Profile picture"
-            icon={ImageAdd01Icon}
-            clickHandler={handleImgSelect}
-          />
-          <UploadButton
-            text="Set Location"
-            subtext="Select on map"
-            icon={Location01Icon}
-            clickHandler={handleLocationSelect}
-          />
+        <div className="flex justify-center">
+          <AvatarUpload folder="user-profiles" onUploaded={setAvatar} />
         </div>
+
+        {(formError || mutationError) && (
+          <div className="p-3 bg-red-50 text-red-600 text-sm rounded-xl text-center font-medium">
+            {formError || mutationError?.message}
+          </div>
+        )}
 
         <Formik
           initialValues={{
-            name: "",
-            profession: "",
+            name: sessionUser?.fullname ?? "",
+            experienceLevel: "" as ExperienceLevel | "",
             bio: "",
             address: "",
-            profilePhoto: null
           }}
+          enableReinitialize
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -117,9 +146,9 @@ export default function SetupProfile() {
                   placeholder="e.g. Emeka John"
                 />
                 <SelectInput
-                  label="Primary Profession"
-                  name="profession"
-                  options={services}
+                  label="Experience Level (applies to all selected categories)"
+                  name="experienceLevel"
+                  options={EXPERIENCE_OPTIONS}
                 />
                 <TextInput
                   label="Bio / Description"
@@ -133,15 +162,63 @@ export default function SetupProfile() {
                   name="address"
                   placeholder="e.g. No 12, Wuse Str, Abuja"
                 />
+
+                {/* Location */}
+                <div className="space-y-3">
+                  <p className="text-sm font-bold text-gray-700">Work location</p>
+                  {!showMap ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowMap(true)}
+                      className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl text-sm font-bold text-gray-500 hover:border-indigo-400 hover:text-gray-900 transition-all"
+                    >
+                      {picked
+                        ? `${picked.label.slice(0, 48)} — change`
+                        : "Pin your location on the map"}
+                    </button>
+                  ) : (
+                    <LocationPicker
+                      initial={picked}
+                      onConfirm={(loc) => {
+                        setPicked(loc);
+                        setShowMap(false);
+                      }}
+                      onCancel={() => setShowMap(false)}
+                    />
+                  )}
+                  <div className="grid grid-cols-2 gap-3">
+                    <label className="block">
+                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">State</span>
+                      <select
+                        value={stateName}
+                        onChange={(e) => setStateName(e.target.value)}
+                        className="mt-1 w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:outline-none"
+                      >
+                        {nigerianStates.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">LGA</span>
+                      <input
+                        value={lga}
+                        onChange={(e) => setLga(e.target.value)}
+                        placeholder="e.g. Ikeja"
+                        className="mt-1 w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:outline-none placeholder:text-gray-300"
+                      />
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div className="pt-4">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isBusy}
                   className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl shadow-gray-100 disabled:opacity-50 group"
                 >
-                  {isSubmitting ? "Saving..." : "Complete Setup"}
+                  {isBusy || isSubmitting ? "Saving..." : "Complete Setup"}
                   <HugeiconsIcon icon={ArrowRight01Icon} size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -149,28 +226,6 @@ export default function SetupProfile() {
           )}
         </Formik>
       </div>
-    </div>
-  );
-}
-
-interface UploadButtonProps {
-  text: string;
-  subtext: string;
-  icon: any;
-  clickHandler: React.MouseEventHandler<HTMLDivElement>;
-}
-
-const UploadButton: React.FC<UploadButtonProps> = ({ text, subtext, icon, clickHandler }) => {
-  return (
-    <div
-      onClick={clickHandler}
-      className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-100 rounded-[2rem] bg-gray-50 hover:bg-white hover:border-indigo-200 hover:shadow-lg cursor-pointer transition-all duration-300 group"
-    >
-      <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm border border-gray-50 group-hover:scale-110 transition-transform">
-        <HugeiconsIcon icon={icon} size={24} className="text-gray-400 group-hover:text-indigo-600 transition-colors" />
-      </div>
-      <p className="text-sm font-bold text-gray-900">{text}</p>
-      <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest mt-1">{subtext}</p>
     </div>
   );
 }

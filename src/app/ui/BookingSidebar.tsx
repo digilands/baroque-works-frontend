@@ -24,7 +24,6 @@ interface BookingSidebarProps {
 }
 
 export default function BookingSidebar({ handymanName, services, onBookService, selectedServiceIndex, onServiceSelect }: BookingSidebarProps) {
-    const selectedService = services[selectedServiceIndex] || services[0];
     const firstName = handymanName.split(' ')[0];
 
     return (

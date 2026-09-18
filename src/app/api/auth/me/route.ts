@@ -21,8 +21,9 @@ export async function GET() {
     const user = response.data.user || response.data; // Handle potential wrapper
 
     return NextResponse.json({ user });
-  } catch (error: any) {
-    console.error('Fetch user error:', error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Fetch user error:', message);
     return NextResponse.json({ user: null }, { status: 401 });
   }
 }

@@ -22,7 +22,6 @@ export default function SignupForm() {
       fullname: "",
       email: "",
       password: "",
-      role: "Client" as const,
     },
     validationSchema: Yup.object({
       fullname: Yup.string().required("Full name is required"),
@@ -32,9 +31,10 @@ export default function SignupForm() {
     onSubmit: async (values) => {
       try {
         await signupMutation.mutateAsync(values);
-        router.push("/auth/login?registered=true");
-      } catch (err: any) {
-        formik.setFieldError("fullname", err.message || "Registration failed. Please try again.");
+        // Signup sets session cookies — continue straight to role selection.
+        router.push("/auth/role-selection");
+      } catch (err: unknown) {
+        formik.setFieldError("fullname", err instanceof Error ? err.message : "Registration failed. Please try again.");
       }
     },
   });

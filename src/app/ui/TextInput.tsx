@@ -32,7 +32,9 @@ export default function TextInput({
       {multiline ? (
         <textarea
           {...field}
-          {...(props as any)}
+          placeholder={props.placeholder}
+          name={props.name}
+          required={required}
           rows={rows}
           className={`w-full px-5 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all resize-none ${
             meta.touched && meta.error

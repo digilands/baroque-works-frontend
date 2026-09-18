@@ -1,9 +1,7 @@
-'use client'
+import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import ThemeProvider from "@/contexts/ThemeProvider";
-import { Metadata } from "next";
+import ClientProviders from "@/components/ClientProviders";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,13 +19,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const metadata: Metadata = {
-  title: "HandyMan",
-  description: "HandyMan",
+export const metadata: Metadata = {
+  title: {
+    default: "BaroqueWorks — Trusted local trade professionals",
+    template: "%s · BaroqueWorks",
+  },
+  description:
+    "Find vetted electricians, plumbers, carpenters, painters, and more across Nigeria. Book trusted local pros in minutes.",
 };
-
-import { AuthProvider } from "@/context/AuthContext";
-import Providers from "@/components/Providers";
 
 export default function RootLayout({
   children,
@@ -40,15 +39,7 @@ export default function RootLayout({
         className={` ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased bg-bg font-sans`}
         suppressHydrationWarning
       >
-        <Providers>
-          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-            <AuthProvider>
-              <ThemeProvider>
-                {children}
-              </ThemeProvider>
-            </AuthProvider>
-          </AppRouterCacheProvider>
-        </Providers>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

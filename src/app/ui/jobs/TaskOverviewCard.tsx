@@ -26,7 +26,7 @@ export function TaskOverviewCard({ description, photos, instructions }: TaskOver
              <FileText className="w-4 h-4 text-yellow-600" />
              <p className="text-xs font-semibold text-yellow-700 uppercase tracking-wide">Special Instructions</p>
            </div>
-           <p className="text-sm text-gray-700 italic pl-6 border-l-2 border-yellow-200">"{instructions}"</p>
+            <p className="text-sm text-gray-700 italic pl-6 border-l-2 border-yellow-200">&quot;{instructions}&quot;</p>
         </div>
       )}
 
