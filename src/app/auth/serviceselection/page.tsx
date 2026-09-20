@@ -8,17 +8,21 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Tick02Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { useOnboardingCategories } from "@/hooks/useOnboarding";
 
-export const ONBOARDING_CATEGORIES_KEY = "bw:onboarding:categories";
+/** Unified onboarding draft key — persists the full profile-setup state. */
+export const ONBOARDING_DRAFT_KEY = "bw:onboarding:draft";
+
 const MAX_SELECTION = 3;
 const FALLBACK_IMAGE = "https://placehold.co/600x400?text=BaroqueWorks";
 
-function loadSelected(): string[] {
+function loadDraftCategoryIds(): string[] {
   if (typeof window === "undefined") return [];
   try {
-    const parsed = JSON.parse(
-      window.sessionStorage.getItem(ONBOARDING_CATEGORIES_KEY) ?? "[]",
-    );
-    return Array.isArray(parsed) ? parsed.filter((v) => typeof v === "string") : [];
+    const raw = window.sessionStorage.getItem(ONBOARDING_DRAFT_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed?.categoryIds)
+      ? parsed.categoryIds.filter((v: unknown) => typeof v === "string")
+      : [];
   } catch {
     return [];
   }
@@ -27,7 +31,7 @@ function loadSelected(): string[] {
 export default function ServicesPage() {
   const router = useRouter();
   const { data: categories = [], isLoading, isError, refetch } = useOnboardingCategories();
-  const [selected, setSelected] = useState<string[]>(loadSelected);
+  const [selected, setSelected] = useState<string[]>(loadDraftCategoryIds);
 
   const toggleService = (id: string) => {
     setSelected((prev) =>
@@ -41,7 +45,13 @@ export default function ServicesPage() {
 
   const handleNext = () => {
     try {
-      window.sessionStorage.setItem(ONBOARDING_CATEGORIES_KEY, JSON.stringify(selected));
+      // Merge into the existing draft so any previously-saved profile data
+      // (avatar, location, etc.) is preserved when navigating back.
+      const existing = loadDraft();
+      window.sessionStorage.setItem(
+        ONBOARDING_DRAFT_KEY,
+        JSON.stringify({ ...existing, categoryIds: selected }),
+      );
     } catch {
       // storage unavailable — step 2 will redirect back here
     }
@@ -132,4 +142,60 @@ export default function ServicesPage() {
       </div>
     </div>
   );
+}
+
+// ── Draft helpers (shared with profile setup) ────────────────────────────
+
+export interface OnboardingDraft {
+  categoryIds: string[];
+  experiences: Record<string, string>;
+  avatar?: { publicId: string; url: string; secureUrl: string } | null;
+  picked?: { latitude: number; longitude: number; label: string } | null;
+  stateName?: string;
+  lga?: string;
+  name?: string;
+  bio?: string;
+  address?: string;
+}
+
+export function loadDraft(): OnboardingDraft {
+  if (typeof window === "undefined") return { categoryIds: [], experiences: {} };
+  try {
+    const raw = window.sessionStorage.getItem(ONBOARDING_DRAFT_KEY);
+    if (!raw) return { categoryIds: [], experiences: {} };
+    const parsed = JSON.parse(raw);
+    return {
+      categoryIds: Array.isArray(parsed?.categoryIds) ? parsed.categoryIds : [],
+      experiences: parsed?.experiences && typeof parsed.experiences === "object" ? parsed.experiences : {},
+      avatar: parsed?.avatar ?? null,
+      picked: parsed?.picked ?? null,
+      stateName: parsed?.stateName,
+      lga: parsed?.lga,
+      name: parsed?.name,
+      bio: parsed?.bio,
+      address: parsed?.address,
+    };
+  } catch {
+    return { categoryIds: [], experiences: {} };
+  }
+}
+
+export function saveDraft(patch: Partial<OnboardingDraft>) {
+  try {
+    const prev = loadDraft();
+    window.sessionStorage.setItem(
+      ONBOARDING_DRAFT_KEY,
+      JSON.stringify({ ...prev, ...patch }),
+    );
+  } catch {
+    // ignore — storage unavailable
+  }
+}
+
+export function clearDraft() {
+  try {
+    window.sessionStorage.removeItem(ONBOARDING_DRAFT_KEY);
+  } catch {
+    // ignore
+  }
 }

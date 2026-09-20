@@ -33,14 +33,14 @@ export default function AdditionalInfo() {
                     // permission prompt dismissed — non-blocking
                 }
             }
-            router.push("/dashboard");
+            router.push(sessionUser?.role === "handyman" ? "/dashboard/jobs" : "/dashboard");
         } catch (err) {
             setFormError(err instanceof Error ? err.message : "Update failed. Please try again.");
         }
     };
 
     const handleSkip = () => {
-        router.push("/dashboard");
+        router.push(sessionUser?.role === "handyman" ? "/dashboard/jobs" : "/dashboard");
     };
 
     return (

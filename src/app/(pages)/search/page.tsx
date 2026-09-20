@@ -25,6 +25,7 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<{
     tab?: string;
+    query?: string;
     category?: string;
     pricingModel?: string;
     minPrice?: string;
@@ -39,6 +40,7 @@ export default async function SearchPage({
 }) {
   const sp = await searchParams;
   const tab = sp.tab === "pros" ? "pros" : "services";
+  const query = sp.query?.trim().toLowerCase() ?? "";
 
   const latitude = toNumber(sp.lat);
   const longitude = toNumber(sp.lng);
@@ -76,7 +78,24 @@ export default async function SearchPage({
     }),
   ]);
 
-  const proCards = pros.handymen.map(mapHandymanToProCard);
+  const proCards = pros.handymen
+    .filter((handyman) => {
+      if (!query) return true;
+      const haystack = [handyman.user?.fullname, handyman.user?.email]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(query);
+    })
+    .map(mapHandymanToProCard);
+  const serviceItems = feed.items.filter((item) => {
+    if (!query) return true;
+    return [item.description, item.handyman?.fullname]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+      .includes(query);
+  });
   const pins: MapPin[] = pros.handymen
     .filter((h) => Array.isArray(h.location?.coordinates) && h.location.coordinates.length === 2)
     .map((h) => ({
@@ -110,7 +129,7 @@ export default async function SearchPage({
         <div className="flex-1 min-w-0">
           <SearchResults
             tab={tab}
-            serviceCards={feed.items.map(mapServiceItemToCard)}
+            serviceCards={serviceItems.map(mapServiceItemToCard)}
             pros={proCards}
             pins={pins}
             servicesUnauthorized={feed.unauthorized}

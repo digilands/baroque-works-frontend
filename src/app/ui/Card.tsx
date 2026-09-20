@@ -40,6 +40,7 @@ export default memo(function Card({ id, image, title, rate, rateType, profile }:
             alt={title}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
+            unoptimized={image.includes("thispersondoesnotexist.com")}
           />
         </div>
 
@@ -65,6 +66,7 @@ export default memo(function Card({ id, image, title, rate, rateType, profile }:
                   alt={profile.name}
                   fill
                   className="rounded-full object-cover border border-gray-100"
+                  unoptimized={profile.profilePic.includes("thispersondoesnotexist.com")}
                 />
               </div>
               

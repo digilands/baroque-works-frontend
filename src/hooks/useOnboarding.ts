@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createHandymanProfile,
   createHirerProfile,
@@ -29,8 +29,13 @@ export function useCreateHandyman() {
 
 /** Update the session user's record (avatar, bio, address, phone). */
 export function useUpdateMe() {
+  const queryClient = useQueryClient();
+
   return useMutation<unknown, Error, UpdateMyUserInput>({
     mutationFn: updateMyUser,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
   });
 }
 

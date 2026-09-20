@@ -1,58 +1,62 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { backendApi } from '@/lib/auth';
 
 /**
  * POST /api/auth/signup — register a new user.
  *
- * The backend sets accessToken/refreshToken cookies on 201 AND returns the
- * user body. axios drops Set-Cookie, so this route uses fetch to forward
- * them — a fresh signup lands authenticated and flows straight into
+ * The backend returns tokens in the JSON body but does NOT set cookies,
+ * so this route sets the session cookies itself (mirrors the login route).
+ * A fresh signup lands authenticated and flows straight into
  * /auth/role-selection instead of bouncing through login.
  */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const baseURL =
-      backendApi.defaults.baseURL ??
-      process.env.NEXT_PUBLIC_API_URL ??
-      'http://localhost:3000';
 
-    const backendRes = await fetch(`${baseURL}/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    // Call Backend API
+    const response = await backendApi.post('/auth/signup', body);
+    const { accessToken, refreshToken, user } = response.data ?? {};
 
-    const data = await backendRes.json().catch(() => ({}));
-
-    if (!backendRes.ok || data?.success === false) {
+    if (!response.data?.success) {
       return NextResponse.json(
-        { message: data?.message || 'Signup failed' },
-        { status: backendRes.status || 500 },
+        { message: response.data?.message || 'Signup failed' },
+        { status: response.status || 400 },
       );
     }
 
-    const response = NextResponse.json(
-      { success: true, data },
-      { status: backendRes.status },
-    );
+    // Set Cookies (backend does not set them on signup)
+    if (accessToken || refreshToken) {
+      const cookieStore = await cookies();
 
-    // Forward any session cookies the backend set (fetch exposes them via
-    // getSetCookie() on the server; fall back to a combined header).
-    const forwarded: string[] =
-      typeof backendRes.headers.getSetCookie === 'function'
-        ? backendRes.headers.getSetCookie()
-        : backendRes.headers.get('set-cookie')
-          ? [backendRes.headers.get('set-cookie') as string]
-          : [];
-    for (const cookie of forwarded) {
-      response.headers.append('Set-Cookie', cookie);
+      if (accessToken) {
+        cookieStore.set('accessToken', accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24 * 7,
+          path: '/',
+        });
+      }
+
+      if (refreshToken) {
+        cookieStore.set('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+          path: '/',
+        });
+      }
     }
 
-    return response;
+    return NextResponse.json({ success: true, data: response.data, user });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Signup failed';
-    console.error('Signup error:', message);
-    return NextResponse.json({ message }, { status: 500 });
+    const err = error as { response?: { data?: { message?: string }; status?: number }; message?: string };
+    console.error('Signup error:', err.response?.data || err.message);
+    return NextResponse.json(
+      { message: err.response?.data?.message || 'Signup failed' },
+      { status: err.response?.status || 500 }
+    );
   }
 }

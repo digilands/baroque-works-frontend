@@ -8,6 +8,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export interface PopularCategory {
+  id?: string;
   title: string;
   image: string;
   subtitle?: string;
@@ -16,7 +17,8 @@ export interface PopularCategory {
 const ICONS = [SolarPanel01Icon, ElectricHome01Icon, PaintBoardIcon, Wrench01Icon];
 
 export default function PopularCategories({ categories }: { categories: PopularCategory[] }) {
-  if (categories.length === 0) return null;
+  const visible = categories.filter((c) => c.image);
+  if (visible.length === 0) return null;
 
   return (
     <section className="py-16 px-4 md:px-12 bg-[#FDFCF8]">
@@ -33,8 +35,8 @@ export default function PopularCategories({ categories }: { categories: PopularC
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {categories.map((cat, index) => (
-          <div key={cat.title} className="group cursor-pointer">
+        {visible.map((cat, index) => (
+          <div key={cat.id ?? `cat-${index}`} className="group cursor-pointer">
             <div className="relative h-48 w-full rounded-2xl overflow-hidden mb-4">
               <img
                 src={cat.image}

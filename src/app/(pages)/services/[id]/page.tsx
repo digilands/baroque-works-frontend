@@ -70,6 +70,11 @@ export default async function ServiceDetailsPage({
       experience={experience}
       categoryName={categoryName}
       location={location || "Nigeria"}
+      locationCoordinates={
+        handyman.location?.coordinates?.length === 2
+          ? [handyman.location.coordinates[0]!, handyman.location.coordinates[1]!]
+          : undefined
+      }
       offeredServices={feed.items.map((item) => ({
         id: item._id ?? service._id ?? id,
         name: (item.description ?? "Service").slice(0, 42),

@@ -42,6 +42,7 @@ interface ServiceDetailViewProps {
   experience: string;
   categoryName: string;
   location: string;
+  locationCoordinates?: [number, number];
   offeredServices: OfferedServiceView[];
 }
 
@@ -57,6 +58,7 @@ export default function ServiceDetailView({
   experience,
   categoryName,
   location,
+  locationCoordinates,
   offeredServices,
 }: ServiceDetailViewProps) {
   const router = useRouter();
@@ -155,7 +157,7 @@ export default function ServiceDetailView({
                 review={null}
               />
 
-              <LocationMap address={location} />
+              <LocationMap address={location} coordinates={locationCoordinates} />
             </div>
           </div>
 

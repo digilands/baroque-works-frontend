@@ -15,9 +15,10 @@ export async function POST(request: Request) {
     // Docs say: 200 OK -> "Login successful" (Wait, docs are vague on response body)
     // Assuming standard JWT response structure: { token: string, user: ... } based on `/auth/google/mobile` example
     
-    const { token, user, refreshToken } = response.data;
+    const { accessToken, token, user, refreshToken } = response.data ?? {};
+    const sessionToken = accessToken ?? token;
 
-    if (!token) {
+    if (!sessionToken) {
       return NextResponse.json({ message: 'Authentication failed' }, { status: 401 });
     }
 
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     
     // Access Token (HTTPOnly)
-    cookieStore.set('accessToken', token, {
+    cookieStore.set('accessToken', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',

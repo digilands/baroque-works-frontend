@@ -40,11 +40,18 @@ export interface Pagination {
   nextCursor?: string | null;
 }
 
-function asArray<T>(data: unknown, key: string): T[] {
+/**
+ * Backend list endpoints use inconsistent envelopes (`categories`, `items`,
+ * `data`, or a bare array depending on the endpoint), so try each key.
+ * Exported for unit testing.
+ */
+export function asArray<T>(data: unknown, ...keys: string[]): T[] {
   if (Array.isArray(data)) return data as T[];
   if (data && typeof data === "object") {
-    const value = (data as Record<string, unknown>)[key];
-    if (Array.isArray(value)) return value as T[];
+    const record = data as Record<string, unknown>;
+    for (const key of keys) {
+      if (Array.isArray(record[key])) return record[key] as T[];
+    }
   }
   return [];
 }
@@ -64,7 +71,7 @@ export async function getSessionUser(): Promise<ApiUser> {
 export async function getCategories(): Promise<ServiceCategory[]> {
   try {
     const data = await backendGet<unknown>("/categories?isActive=true");
-    return asArray<ServiceCategory>(data, "categories");
+    return asArray<ServiceCategory>(data, "categories", "items", "data");
   } catch {
     return [];
   }
@@ -78,7 +85,7 @@ export async function getSubcategories(
     const data = await backendGet<unknown>(
       `/categories/subcategories?categoryId=${encodeURIComponent(categoryId)}&isActive=true`,
     );
-    return asArray<ProfessionSubCategory>(data, "subcategories");
+    return asArray<ProfessionSubCategory>(data, "subcategories", "items", "data");
   } catch {
     return [];
   }
@@ -88,7 +95,7 @@ export async function getSubcategories(
 export async function getAllSubcategories(): Promise<ProfessionSubCategory[]> {
   try {
     const data = await backendGet<unknown>("/categories/subcategories");
-    return asArray<ProfessionSubCategory>(data, "subcategories");
+    return asArray<ProfessionSubCategory>(data, "subcategories", "items", "data");
   } catch {
     return [];
   }
@@ -98,7 +105,7 @@ export async function getAllSubcategories(): Promise<ProfessionSubCategory[]> {
 export async function getAllTags(): Promise<ApiTag[]> {
   try {
     const data = await backendGet<unknown>("/categories/tags");
-    return asArray<ApiTag>(data, "tags");
+    return asArray<ApiTag>(data, "tags", "items", "data");
   } catch {
     return [];
   }

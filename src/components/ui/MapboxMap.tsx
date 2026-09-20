@@ -30,6 +30,43 @@ interface MapboxMapProps {
   className?: string;
 }
 
+function addDraggableMarker(
+  map: mapboxgl.Map,
+  coords: MapCoords,
+  markerRef: React.MutableRefObject<mapboxgl.Marker | null>,
+  callbacksRef: React.MutableRefObject<{ onDragPin?: (coords: MapCoords) => void; onMapClick?: (coords: MapCoords) => void }>,
+) {
+  const element = document.createElement("div");
+  element.style.width = "42px";
+  element.style.height = "42px";
+  element.style.borderRadius = "9999px";
+  element.style.overflow = "hidden";
+  element.style.border = "3px solid white";
+  element.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+  element.style.background = "white";
+  element.style.cursor = "grab";
+
+  const image = document.createElement("img");
+  image.src = "/handyman-logo.svg";
+  image.alt = "Selected location";
+  image.style.width = "100%";
+  image.style.height = "100%";
+  image.style.objectFit = "cover";
+  element.appendChild(image);
+
+  const marker = new mapboxgl.Marker({ draggable: true, element })
+    .setLngLat([coords.longitude, coords.latitude]);
+  marker.on("dragend", () => {
+    const lngLat = marker.getLngLat();
+    callbacksRef.current.onDragPin?.({
+      latitude: lngLat.lat,
+      longitude: lngLat.lng,
+    });
+  });
+  markerRef.current = marker;
+  marker.addTo(map);
+}
+
 const DEFAULT_PIN_IMAGE = "/handyman-logo.svg";
 
 /**
@@ -78,7 +115,12 @@ export default function MapboxMap({
       });
     });
     mapRef.current = map;
+    if (draggablePin) {
+      addDraggableMarker(map, draggablePin, dragMarkerRef, callbacksRef);
+    }
     return () => {
+      dragMarkerRef.current?.remove();
+      dragMarkerRef.current = null;
       map.remove();
       mapRef.current = null;
     };
@@ -135,16 +177,8 @@ export default function MapboxMap({
       return;
     }
     if (!dragMarkerRef.current) {
-      const marker = new mapboxgl.Marker({ draggable: true, color: "#4F46E5" });
-      marker.on("dragend", () => {
-        const lngLat = marker.getLngLat();
-        callbacksRef.current.onDragPin?.({
-          latitude: lngLat.lat,
-          longitude: lngLat.lng,
-        });
-      });
-      marker.addTo(map);
-      dragMarkerRef.current = marker;
+      addDraggableMarker(map, { latitude: dragLat, longitude: dragLng }, dragMarkerRef, callbacksRef);
+      return;
     }
     dragMarkerRef.current.setLngLat([dragLng, dragLat]);
   }, [dragLat, dragLng]);

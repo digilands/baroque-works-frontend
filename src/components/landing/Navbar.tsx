@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Menu01Icon, Wrench01Icon } from "@hugeicons/core-free-icons";
+import { Menu01Icon } from "@hugeicons/core-free-icons";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -13,10 +14,8 @@ const Navbar = () => {
     <nav className="w-full flex items-center justify-between py-4 px-4 md:px-12 bg-transparent border-b border-gray-200 relative z-50">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center text-white">
-            <HugeiconsIcon icon={Wrench01Icon} size={18} strokeWidth={2} className="text-white" />
-        </div>
-        <span className="text-xl font-bold text-text dark:text-white">Handymen</span>
+        <Image src="/handyman-logo.svg" alt="BaroqueWorks" width={32} height={32} />
+        <span className="text-xl font-bold text-text dark:text-white">BaroqueWorks</span>
       </Link>
 
       {/* Desktop Links */}

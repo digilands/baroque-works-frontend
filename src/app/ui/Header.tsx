@@ -14,6 +14,7 @@ import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import Image from "next/image";
 import Link from "next/link";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import ProfileMenu from "@/components/ui/ProfileMenu";
 
 export default function Header() {
   const router = useRouter();
@@ -22,6 +23,15 @@ export default function Header() {
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const { position, status, requestLocation, clearLocation } = useGeolocation();
   const pendingNavigate = useRef(false);
+
+  useEffect(() => {
+    const value = searchTerm.trim();
+    if (!value) return;
+    const timer = window.setTimeout(() => {
+      router.push(`/search?tab=services&query=${encodeURIComponent(value)}`);
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [router, searchTerm]);
 
   // After the user grants location, jump to the geo-filtered feed once.
   useEffect(() => {
@@ -54,7 +64,10 @@ export default function Header() {
           {/* Logo & Search Area */}
           <div className="flex items-center gap-12 flex-1">
             <Link href="/" className="shrink-0">
-              <span className="text-2xl font-bold text-gray-900 tracking-tight">HomeHero</span>
+              <span className="flex items-center gap-2 text-2xl font-bold text-gray-900 tracking-tight">
+                <Image src="/handyman-logo.svg" alt="BaroqueWorks" width={32} height={32} />
+                BaroqueWorks
+              </span>
             </Link>
 
             {/* Search Bar */}
@@ -140,9 +153,7 @@ export default function Header() {
                 <HugeiconsIcon icon={Notification02Icon} size={24} />
               </button>
 
-              <button className="relative w-10 h-10 rounded-full bg-gray-200 overflow-hidden hover:opacity-90 transition-opacity">
-                 <Image src="/profile.png" alt="Profile" fill className="object-cover" />
-              </button>
+              <ProfileMenu />
             </div>
           </div>
         </div>

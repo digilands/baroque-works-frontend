@@ -15,6 +15,7 @@ import {
   Cancel01Icon
 } from "@hugeicons/core-free-icons";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 // Defining the props type
 interface SidebarProps {
@@ -71,10 +72,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           {/* Logo */}
           <div className="flex items-center justify-between mb-8">
             <Link href="/" className="flex items-center gap-2">
-               <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center text-white">
-                  <HugeiconsIcon icon={Wrench01Icon} size={18} strokeWidth={2} className="text-white" />
-              </div>
-              <span className="text-xl font-bold text-text">HomeHero</span>
+               <Image src="/handyman-logo.svg" alt="BaroqueWorks" width={32} height={32} />
+              <span className="text-xl font-bold text-text">BaroqueWorks</span>
             </Link>
             <button onClick={onClose} className="md:hidden text-gray-500">
               <HugeiconsIcon icon={Cancel01Icon} size={24} />

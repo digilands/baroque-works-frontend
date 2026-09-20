@@ -74,6 +74,7 @@ const ServiceCard = memo(function ServiceCard({
         className={`object-cover transition-transform duration-700 ${
           selected ? "scale-110" : "group-hover:scale-110"
         }`}
+        unoptimized={service.image.includes("thispersondoesnotexist.com")}
       />
 
       {/* Overlay */}

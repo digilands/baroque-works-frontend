@@ -167,6 +167,7 @@ export async function createHandymanProfile(input: CreateHandymanInput): Promise
 
 export interface UpdateMyUserInput {
   fullname?: string;
+  role?: 'client' | 'handyman';
   phone?: string;
   bio?: string;
   address?: string;
@@ -197,7 +198,10 @@ export async function getCategorySummaries(): Promise<ServiceCategorySummary[]> 
     const { data } = await internalApi.get("/categories", {
       params: { isActive: true },
     });
-    const list = Array.isArray(data) ? data : (data?.categories ?? []);
+    // Backend envelopes vary by endpoint (`categories` | `items` | `data`).
+    const list = Array.isArray(data)
+      ? data
+      : (data?.categories ?? data?.items ?? data?.data ?? []);
     return (list as ServiceCategorySummary[]).filter((c) => c && c._id);
   } catch (error) {
     throw toApiError(error, "Failed to load categories");

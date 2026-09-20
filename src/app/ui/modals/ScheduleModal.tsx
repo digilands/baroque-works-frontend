@@ -121,8 +121,8 @@ export default function ScheduleModal({ open, onClose, onConfirm, services }: Sc
                     </div>
 
                     <div className="grid grid-cols-7 gap-1 text-center mb-4">
-                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => (
-                            <div key={day} className="text-xs font-medium text-gray-400">{day}</div>
+                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+                            <div key={`${day}-${index}`} className="text-xs font-medium text-gray-400">{day}</div>
                         ))}
                     </div>
 

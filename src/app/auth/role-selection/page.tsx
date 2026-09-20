@@ -1,17 +1,29 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubTitle, Title } from "@/app/ui/Titles";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { UserIcon, Wrench01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { useUpdateMe } from "@/hooks/useOnboarding";
 
 /**
- * First-time signup landing: the user picks a role before onboarding.
- * TODO (Phase 3): persist the choice via PUT /users/{id} so user.role
- * is set even before a handyman/hirer profile exists.
+ * First-time signup landing: persist the selected role before onboarding.
  */
 export default function RoleSelectionPage() {
   const router = useRouter();
+  const updateMe = useUpdateMe();
+  const [error, setError] = useState("");
+
+  const chooseRole = async (role: "client" | "handyman", destination: string) => {
+    setError("");
+    try {
+      await updateMe.mutateAsync({ role });
+      router.push(destination);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save your role. Please try again.");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-white text-gray-900 px-6 py-12">
@@ -20,9 +32,12 @@ export default function RoleSelectionPage() {
         <SubTitle>Choose the experience that fits you. You can switch later.</SubTitle>
       </div>
 
+      {error && <p className="mb-6 text-sm font-medium text-red-600">{error}</p>}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl w-full">
         <button
-          onClick={() => router.push("/auth/onboarding/client")}
+          onClick={() => chooseRole("client", "/auth/onboarding/client")}
+          disabled={updateMe.isPending}
           className="group text-left rounded-[2rem] border-2 border-gray-100 hover:border-indigo-600 hover:shadow-xl p-8 transition-all duration-300 bg-white"
         >
           <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -39,7 +54,8 @@ export default function RoleSelectionPage() {
         </button>
 
         <button
-          onClick={() => router.push("/auth/serviceselection")}
+          onClick={() => chooseRole("handyman", "/auth/serviceselection")}
+          disabled={updateMe.isPending}
           className="group text-left rounded-[2rem] border-2 border-gray-100 hover:border-indigo-600 hover:shadow-xl p-8 transition-all duration-300 bg-white"
         >
           <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">

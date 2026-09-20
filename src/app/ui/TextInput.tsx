@@ -8,6 +8,7 @@ interface TextInputProps {
   rows?: number;
   required?: boolean;
   type?: string;
+  maxLength?: number;
 }
 
 export default function TextInput({
@@ -36,6 +37,7 @@ export default function TextInput({
           name={props.name}
           required={required}
           rows={rows}
+          maxLength={props.maxLength}
           className={`w-full px-5 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all resize-none ${
             meta.touched && meta.error
               ? "border-red-200 focus:ring-red-100/50"

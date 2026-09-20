@@ -6,7 +6,18 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "placehold.co",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        // Backend still emits plain-http Cloudinary URLs on some records.
+        protocol: "http",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
       {
@@ -27,6 +38,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "api.mapbox.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "thispersondoesnotexist.com",
         pathname: "/**",
       },
     ],

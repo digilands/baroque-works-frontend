@@ -18,6 +18,7 @@ export default async function Home() {
       <HeroSection />
       <PopularCategories
         categories={categories.slice(0, 4).map((c) => ({
+          id: c._id,
           title: c.displayName ?? "Services",
           image: c.image?.url ?? "",
           subtitle: c.description,

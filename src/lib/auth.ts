@@ -73,6 +73,10 @@ export interface User {
   fullname: string;
   role: 'admin' | 'handyman' | 'client';
   avatar?: string;
+  phone?: string;
+  bio?: string;
+  address?: string;
+  image?: { url?: string; public_id?: string }[];
   // Add other fields as needed
 }
 
