@@ -51,13 +51,13 @@ export default function ProfileMenu() {
     <div className="relative">
       <button
         type="button"
-        aria-label={`Profile completeness ${completion}%`}
+        aria-label={completion < 100 ? `Profile completeness ${completion}%` : "Open profile menu"}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="relative w-11 h-11 rounded-full p-[3px] bg-[conic-gradient(#D4A556_var(--progress),#E5E7EB_0)] hover:scale-105 transition-transform"
-        style={{ "--progress": `${completion}%` } as React.CSSProperties}
+        className={`relative w-11 h-11 rounded-full hover:scale-105 transition-transform ${completion < 100 ? "p-[3px] bg-[conic-gradient(#D4A556_var(--progress),#E5E7EB_0)]" : "border border-gray-200"}`}
+        style={completion < 100 ? ({ "--progress": `${completion}%` } as React.CSSProperties) : undefined}
       >
-        <span className="flex items-center justify-center w-full h-full rounded-full bg-white overflow-hidden">
+        <span className="relative flex items-center justify-center w-full h-full rounded-full bg-white overflow-hidden">
           {image ? (
             <Image src={image} alt="Profile" fill className="object-cover" sizes="44px" unoptimized={image.includes("thispersondoesnotexist.com")} />
           ) : (

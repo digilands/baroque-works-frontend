@@ -58,16 +58,18 @@ export default function ProfileEditForm({ initial }: ProfileEditFormProps) {
   }) => {
     setFormError("");
     setSaved(false);
+    const location = {
+      ...(values.state.trim() ? { state: values.state.trim() } : {}),
+      ...(values.lga.trim() ? { lga: values.lga.trim() } : {}),
+    };
+    const locationUpdate = Object.keys(location).length > 0 ? { location } : {};
     try {
       await updateMe.mutateAsync({
         ...(values.fullname.trim() ? { fullname: values.fullname.trim() } : {}),
         ...(values.phone.trim() ? { phone: values.phone.trim() } : {}),
         ...(values.bio.trim() ? { bio: values.bio.trim() } : {}),
         ...(values.address.trim() ? { address: values.address.trim() } : {}),
-        location: {
-          state: values.state,
-          ...(values.lga.trim() ? { lga: values.lga.trim() } : {}),
-        },
+        ...locationUpdate,
         ...(avatar
           ? { image: { url: avatar.secureUrl || avatar.url, public_id: avatar.publicId } }
           : {}),
@@ -75,10 +77,7 @@ export default function ProfileEditForm({ initial }: ProfileEditFormProps) {
       if (isHandyman) {
         await updateHandyman.mutateAsync({
           availability: { status: values.availability },
-          location: {
-            state: values.state,
-            ...(values.lga.trim() ? { lga: values.lga.trim() } : {}),
-          },
+          ...locationUpdate,
         });
       }
       setSaved(true);

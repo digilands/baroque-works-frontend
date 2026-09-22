@@ -16,6 +16,8 @@ import {
   useUpdateJob,
 } from "@/hooks/useMarketplace";
 import type { JobUrgency } from "@/lib/api";
+import ImageUploader from "@/components/ui/ImageUploader";
+import type { UploadedFile } from "@/lib/api";
 
 const URGENCY_OPTIONS: JobUrgency[] = ["URGENT", "NORMAL", "FLEXIBLE"];
 
@@ -76,6 +78,8 @@ export default function JobCreateForm({
   );
   const [showMap, setShowMap] = useState(false);
   const [formError, setFormError] = useState("");
+  const [images, setImages] = useState<UploadedFile[]>([]);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
   const isEdit = Boolean(jobId);
   const isBusy = createJob.isPending || updateJob.isPending;
   const mutationError = createJob.error ?? updateJob.error;
@@ -94,6 +98,12 @@ export default function JobCreateForm({
       category: values.category,
       budget: { min: Number(values.minBudget), max: Number(values.maxBudget) },
       urgency: values.urgency as JobUrgency,
+      ...(images.length > 0 && {
+        image: images.map((file) => ({
+          url: file.secureUrl || file.url,
+          public_id: file.publicId,
+        })),
+      }),
       location: {
         coordinates: [picked.longitude, picked.latitude] as [number, number],
       },
@@ -103,11 +113,8 @@ export default function JobCreateForm({
         await updateJob.mutateAsync({ id: jobId, input: payload });
         router.push(`/dashboard/jobs/${jobId}`);
       } else {
-        await createJob.mutateAsync(payload);
-        // The create response is successful, but the deployed backend can
-        // briefly return 404 for the immediately-following detail lookup.
-        // Return to the authoritative jobs feed instead.
-        router.push("/dashboard/jobs");
+        const created = await createJob.mutateAsync(payload);
+        router.push(created.id ? `/dashboard/jobs/${created.id}` : "/dashboard/jobs");
       }
     } catch (err) {
       setFormError(
@@ -176,6 +183,10 @@ export default function JobCreateForm({
                   : [],
               )}
             />
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-700">Photos (up to 3)</p>
+              <ImageUploader folder="user-jobs" max={3} onChange={setImages} onUploadingChange={setIsUploadingImages} />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <TextInput
                 label="Min budget (₦)"
@@ -238,7 +249,7 @@ export default function JobCreateForm({
               <Button
                 type="submit"
                 className="flex-1"
-                loading={isSubmitting || isBusy}
+                loading={isSubmitting || isBusy || isUploadingImages}
               >
                 {isEdit ? "Save changes" : "Post job"}
               </Button>

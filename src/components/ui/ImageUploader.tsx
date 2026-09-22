@@ -12,10 +12,11 @@ interface ImageUploaderProps {
   folder: UploadFolder;
   max?: number;
   onChange: (files: UploadedFile[]) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
 /** Multi-image picker (max 10) with previews, for services/jobs/disputes. */
-export default function ImageUploader({ folder, max = 10, onChange }: ImageUploaderProps) {
+export default function ImageUploader({ folder, max = 10, onChange, onUploadingChange }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const upload = useUploadImages(folder);
@@ -30,8 +31,13 @@ export default function ImageUploader({ folder, max = 10, onChange }: ImageUploa
     const remaining = max - files.length;
     const batch = Array.from(selected).slice(0, Math.max(remaining, 0));
     if (batch.length === 0) return;
+    onUploadingChange?.(true);
     upload.mutate(batch, {
-      onSuccess: (uploaded) => update([...files, ...uploaded].slice(0, max)),
+      onSuccess: (uploaded) => {
+        update([...files, ...uploaded].slice(0, max));
+        onUploadingChange?.(false);
+      },
+      onError: () => onUploadingChange?.(false),
     });
   };
 

@@ -240,6 +240,7 @@ export interface CreateJobInput {
   category: string;
   budget: { min: number; max: number };
   urgency?: JobUrgency;
+  image?: { url: string; public_id: string }[];
   location: { coordinates: [number, number] };
 }
 

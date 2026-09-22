@@ -21,7 +21,7 @@ export default function HandymanDashboard() {
        {/* Welcome Section (Handled in Header mostly, but we can add more here if needed) */}
        
        {/* Stats Row */}
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           <ErrorBoundary fallback={<div className="h-40 bg-red-50 rounded-2xl flex items-center justify-center text-red-500">Error loading stats</div>}>
             <Suspense fallback={<StatsSkeleton />}>
                 <StatsCard 
@@ -58,9 +58,9 @@ export default function HandymanDashboard() {
        </div>
 
        {/* Main Content Area */}
-       <div className="flex flex-col lg:flex-row gap-6">
+       <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_20rem] gap-6 min-w-0">
           {/* Left Column */}
-          <div className="flex-1 space-y-6">
+          <div className="min-w-0 space-y-6">
               {/* Insights Chart */}
               <ErrorBoundary fallback={<div className="h-[300px] bg-red-50 rounded-2xl flex items-center justify-center text-red-500">Error loading chart</div>}>
                  <Suspense fallback={<ChartSkeleton />}>
@@ -69,7 +69,7 @@ export default function HandymanDashboard() {
               </ErrorBoundary>
 
               {/* Reviews & Messages */}
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 min-w-0">
                  <ErrorBoundary fallback={<div className="h-[200px] bg-red-50 rounded-2xl flex items-center justify-center text-red-500">Error loading reviews</div>}>
                     <ReviewsList />
                  </ErrorBoundary>
@@ -80,7 +80,7 @@ export default function HandymanDashboard() {
           </div>
 
           {/* Right Column (Sidebar Widgets) */}
-          <div className="w-full lg:w-auto flex flex-col gap-6">
+          <div className="min-w-0 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-1 gap-6">
                <ErrorBoundary fallback={<div className="h-[300px] bg-red-50 rounded-2xl flex items-center justify-center text-red-500">Error loading schedule</div>}>
                  <Suspense fallback={<WidgetSkeleton />}>
                     <ScheduleWidget />

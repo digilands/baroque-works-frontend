@@ -58,15 +58,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={onClose}
         />
       )}
 
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-gray-50 border-r border-gray-200 z-50 transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 h-dvh w-64 bg-gray-50 border-r border-gray-200 z-50 transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 md:static md:h-screen
+        lg:translate-x-0 lg:static lg:h-dvh
       `}>
         <div className="flex flex-col h-full p-6">
           {/* Logo */}
@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                <Image src="/handyman-logo.svg" alt="BaroqueWorks" width={32} height={32} />
               <span className="text-xl font-bold text-text">BaroqueWorks</span>
             </Link>
-            <button onClick={onClose} className="md:hidden text-gray-500">
+            <button onClick={onClose} aria-label="Close navigation" className="lg:hidden text-gray-500">
               <HugeiconsIcon icon={Cancel01Icon} size={24} />
             </button>
           </div>
@@ -119,18 +119,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                <span>Logout</span>
              </button>
 
-             {/* User Profile Mini */}
-             <div className="mt-6 flex items-center gap-3 px-4">
-                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                   <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 text-sm font-bold">
-                     {(user?.fullname?.[0] ?? "?").toUpperCase()}
-                   </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                   <p className="text-sm font-bold text-text truncate">{user?.fullname ?? "Account"}</p>
-                   <p className="text-xs text-gray-400 truncate">{user?.email ?? ""}</p>
-                </div>
-             </div>
           </div>
         </div>
       </aside>

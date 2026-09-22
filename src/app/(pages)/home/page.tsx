@@ -1,5 +1,6 @@
 import dynamicImport from "next/dynamic";
-import ServicesGrid from "../../ui/ServicesGrid";
+import HomeServicesGrid from "../../ui/HomeServicesGrid";
+import HomeLocationInitializer from "../../ui/HomeLocationInitializer";
 import {
   getCategories,
   getServicesFeed,
@@ -47,14 +48,15 @@ export default async function HomePage({
   const searchRadius = toNumber(radius) ?? 10;
 
   const categories = await getCategories();
-  const selected =
-    categories.find((c) => (c._id ?? c.code) === category) ?? categories[0];
+  const selected = category
+    ? categories.find((c) => (c._id ?? c.code) === category)
+    : undefined;
   const selectedId = selected ? (selected._id ?? selected.code ?? "") : "";
 
   const [subcategories, feed] = await Promise.all([
     selectedId ? getSubcategories(selectedId) : Promise.resolve([]),
     getServicesFeed({
-      category: selectedId || undefined,
+      category: category ? selectedId || undefined : undefined,
       limit: 24,
       latitude: geoActive ? latitude : undefined,
       longitude: geoActive ? longitude : undefined,
@@ -71,15 +73,37 @@ export default async function HomePage({
 
   return (
     <div>
+      <HomeLocationInitializer
+        category={selectedId || undefined}
+        radius={searchRadius}
+        geoActive={geoActive}
+      />
       <ServicesCarousel items={carouselItems} selectedCategory={selectedId} />
       <div className="mt-6">
-        <ServicesGrid
+        <HomeServicesGrid
           title={selected?.displayName ?? "Services"}
           subtitle={
             geoActive ? `Within ${searchRadius}km of your location` : undefined
           }
           cards={feed.items.map(mapServiceItemToCard)}
           authGated={feed.unauthorized}
+          params={{
+            category: category ? selectedId || undefined : undefined,
+            latitude: geoActive ? latitude : undefined,
+            longitude: geoActive ? longitude : undefined,
+            radius: geoActive ? searchRadius : undefined,
+            limit: 24,
+          }}
+          nearby={
+            geoActive
+              ? {
+                  latitude: latitude!,
+                  longitude: longitude!,
+                  radius: searchRadius,
+                  category: selectedId,
+                }
+              : undefined
+          }
         />
       </div>
     </div>

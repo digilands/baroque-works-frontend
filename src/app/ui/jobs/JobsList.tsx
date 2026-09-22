@@ -18,6 +18,7 @@ import { useSSE } from "@/hooks/useSSE";
 
 interface JobsListProps {
   jobs: JobListItem[];
+  categoryNames: Record<string, string>;
 }
 
 const TABS = ["all", "pending", "active", "completed"] as const;
@@ -37,14 +38,14 @@ function statusStyles(status: string): string {
   return "bg-gray-100 text-gray-600";
 }
 
-export default function JobsList({ jobs }: JobsListProps) {
+export default function JobsList({ jobs, categoryNames }: JobsListProps) {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [query, setQuery] = useState("");
   // Live job list via SSE; falls back to the server-rendered list.
   const [liveJobs, setLiveJobs] = useState(jobs);
   useSSE("jobs", (data) => {
     const list = (data as { jobs?: ApiJob[] })?.jobs;
-    if (Array.isArray(list)) setLiveJobs(list.map(mapJobToListItem));
+    if (Array.isArray(list)) setLiveJobs(list.map((job) => mapJobToListItem(job, categoryNames[job.category])));
   });
 
   const visible = liveJobs.filter((job) => {
@@ -80,12 +81,12 @@ export default function JobsList({ jobs }: JobsListProps) {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-100">
+      <div className="flex overflow-x-auto border-b border-gray-100">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 text-sm font-medium capitalize transition-all border-b-2 ${
+            className={`shrink-0 px-4 sm:px-6 py-3 text-sm font-medium capitalize transition-all border-b-2 ${
               activeTab === tab
                 ? "border-indigo-600 text-indigo-600"
                 : "border-transparent text-gray-500 hover:text-gray-700"
@@ -113,11 +114,11 @@ export default function JobsList({ jobs }: JobsListProps) {
             <Link
               key={job.id}
               href={`/dashboard/jobs/${job.id}`}
-              className="group block bg-white border border-gray-100 rounded-2xl p-6 hover:border-indigo-200 hover:shadow-md transition-all shadow-sm"
+              className="group block min-w-0 bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 hover:border-indigo-200 hover:shadow-md transition-all shadow-sm"
             >
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex flex-wrap items-center gap-3 mb-2">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusStyles(job.status)}`}>
                       {job.status.replace("_", " ")}
                     </span>
@@ -128,7 +129,7 @@ export default function JobsList({ jobs }: JobsListProps) {
                     {job.title}
                   </h3>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                     <div className="flex items-center gap-2 text-gray-500 text-sm">
                       <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-gray-400" />
                       {job.date}

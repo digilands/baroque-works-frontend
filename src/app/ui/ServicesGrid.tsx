@@ -11,9 +11,21 @@ interface ServicesGridProps {
   cards: ServiceCardData[];
   /** Backend demanded a session: prompt sign-in instead of an empty grid. */
   authGated?: boolean;
+  loading?: boolean;
+  nearby?: { latitude: number; longitude: number; radius: number; category: string };
 }
 
-export default function ServicesGrid({ title, subtitle, cards, authGated }: ServicesGridProps) {
+export default function ServicesGrid({ title, subtitle, cards, authGated, loading, nearby }: ServicesGridProps) {
+  const nextRadius = nearby ? Math.min(Math.max(nearby.radius * 2, 25), 100) : 0;
+  const canExpandRadius = Boolean(nearby && nextRadius > nearby.radius);
+  const expandedParams = nearby
+    ? new URLSearchParams({
+        lat: String(nearby.latitude),
+        lng: String(nearby.longitude),
+        radius: String(nextRadius),
+        ...(nearby.category ? { category: nearby.category } : {}),
+      })
+    : null;
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
       <div className="mb-6">
@@ -30,7 +42,11 @@ export default function ServicesGrid({ title, subtitle, cards, authGated }: Serv
         </div>
       </div>
 
-      {cards.length > 0 ? (
+      {loading ? (
+        <div role="status" className="py-20 text-center text-sm font-medium text-gray-500">
+          Reconnecting to your session…
+        </div>
+      ) : cards.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {cards.map((item) => (
             <div key={item.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -58,8 +74,18 @@ export default function ServicesGrid({ title, subtitle, cards, authGated }: Serv
           </div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">No services found</h3>
           <p className="text-gray-400 max-w-sm">
-            We couldn&apos;t find any services in this category yet. Try another category.
+            {nearby
+              ? `There are no services within ${nearby.radius}km yet. Try increasing your search radius to find more providers.`
+              : "We couldn't find any services in this category yet. Try another category."}
           </p>
+          {canExpandRadius && expandedParams && (
+            <Link
+              href={`/home?${expandedParams.toString()}`}
+              className="mt-5 inline-flex items-center justify-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-700 transition-colors"
+            >
+              Search within {nextRadius}km
+            </Link>
+          )}
         </div>
       )}
     </div>

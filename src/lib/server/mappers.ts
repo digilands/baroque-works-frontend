@@ -109,13 +109,13 @@ export interface JobListItem {
 }
 
 /** Backend job -> dashboard jobs list row. */
-export function mapJobToListItem(job: ApiJob): JobListItem {
+export function mapJobToListItem(job: ApiJob, categoryName?: string): JobListItem {
   const distanceMeters = job.distance ?? 0;
   return {
     id: job._id ?? "",
     title: job.title ?? "Untitled job",
     status: (job.status ?? "OPEN").toLowerCase(),
-    category: job.category ?? "General",
+    category: categoryName ?? (job.category && !/^[\da-f]{24}$/i.test(job.category) ? job.category : "Service request"),
     urgency: job.urgency ?? "NORMAL",
     budget: formatNaira(job.budget?.max ?? job.budget?.min ?? 0),
     date: formatDate(job.createdAt),

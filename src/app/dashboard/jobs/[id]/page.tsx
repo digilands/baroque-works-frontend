@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { ApiError } from "@/lib/api-errors";
 import { JobHeader } from "@/app/ui/jobs/JobHeader";
 import { LocationCard } from "@/app/ui/jobs/LocationCard";
 import { TaskOverviewCard } from "@/app/ui/jobs/TaskOverviewCard";
@@ -30,8 +31,13 @@ export default async function JobRequestPage({
   const user = await getSessionUser().catch(() => null);
   if (!user) redirect("/auth/login");
 
-  const job = await getJobById(id).catch(() => null);
-  if (!job) notFound();
+  let job;
+  try {
+    job = await getJobById(id);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  }
 
   // Hirer -> user chain for the client card (best effort; card hidden on failure).
   const hirer = job.hirerId
@@ -71,7 +77,7 @@ export default async function JobRequestPage({
         <div className="lg:col-span-2">
           <TaskOverviewCard
             description={job.description ?? "No description provided."}
-            photos={[]}
+            photos={job.image?.map((image) => image.url).filter((url): url is string => Boolean(url)) ?? []}
             instructions={undefined}
           />
 
