@@ -30,5 +30,5 @@ export async function resolvePostAuthDestination(
   }
 
   const hirer = await getMyHirerProfile();
-  return hirer ? "/dashboard" : "/auth/onboarding/client";
+  return hirer?.profile_completed ? "/dashboard" : "/auth/onboarding/client";
 }

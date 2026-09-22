@@ -73,9 +73,16 @@ describe("resolvePostAuthDestination", () => {
   });
 
   it("sends clients with a hirer profile to the dashboard", async () => {
-    mockedHirer.mockResolvedValue({ _id: "h1" });
+    mockedHirer.mockResolvedValue({ _id: "h1", profile_completed: true });
     await expect(
       resolvePostAuthDestination(userWithRole("client")),
     ).resolves.toBe("/dashboard");
+  });
+
+  it("sends clients with an incomplete hirer profile back to onboarding", async () => {
+    mockedHirer.mockResolvedValue({ _id: "h1", profile_completed: false });
+    await expect(
+      resolvePostAuthDestination(userWithRole("client")),
+    ).resolves.toBe("/auth/onboarding/client");
   });
 });

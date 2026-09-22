@@ -9,7 +9,10 @@ export type ProfessionSubCategory =
   components["schemas"]["ProfessionSubCategory"];
 export type ApiTag = components["schemas"]["Tag"];
 export type ApiHandyman = components["schemas"]["Handyman"];
-export type ApiHirer = components["schemas"]["Hirer"];
+export type ApiHirer = components["schemas"]["Hirer"] & {
+  /** Set by the backend when client onboarding creates the hirer profile. */
+  profile_completed?: boolean;
+};
 export type ApiJob = components["schemas"]["Job"];
 export type ApiBooking = components["schemas"]["Booking"];
 export type ApiService = components["schemas"]["Service"];

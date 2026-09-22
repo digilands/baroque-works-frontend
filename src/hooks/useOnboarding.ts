@@ -41,7 +41,15 @@ export function useUpdateMe() {
 
 /** Create the hirer profile (client onboarding). */
 export function useCreateHirer() {
+  const queryClient = useQueryClient();
+
   return useMutation<unknown, Error, CreateHirerInput>({
     mutationFn: createHirerProfile,
+    onSuccess: () => {
+      // The backend marks the hirer profile complete when this succeeds.
+      // Refresh the session before any guarded dashboard/job navigation.
+      void queryClient.invalidateQueries({ queryKey: ["user"] });
+      void queryClient.invalidateQueries({ queryKey: ["hirer-profile"] });
+    },
   });
 }

@@ -39,13 +39,13 @@ export default function SelectInput({
           <option value="" disabled>
             {placeholder || "Select an option..."}
           </option>
-          {options.map((opt) => {
+          {options.map((opt, index) => {
             const value = typeof opt === "string" ? opt : opt.value;
             const label = typeof opt === "string"
               ? opt.charAt(0).toUpperCase() + opt.slice(1)
               : opt.label;
             return (
-              <option key={value} value={value}>
+              <option key={`${value}-${index}`} value={value}>
                 {label}
               </option>
             );

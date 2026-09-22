@@ -104,7 +104,7 @@ export async function GET(request: Request) {
       .then((r) => r.data?.hirer ?? r.data?.data?.hirer ?? null)
       .catch(() => null);
     return NextResponse.redirect(
-      new URL(hirer ? '/dashboard' : '/auth/onboarding/client', request.url),
+      new URL(hirer?.profile_completed ? '/dashboard' : '/auth/onboarding/client', request.url),
     );
   } catch {
     return NextResponse.redirect(new URL('/auth/login?error=oauth_failed', request.url));
