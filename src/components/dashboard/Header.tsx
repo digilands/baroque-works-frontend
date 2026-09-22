@@ -2,6 +2,7 @@
 import React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Notification02Icon, Menu01Icon } from "@hugeicons/core-free-icons";
+import ProfileMenu from "@/components/ui/ProfileMenu";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -37,6 +38,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onNotificationClick, title
            <HugeiconsIcon icon={Notification02Icon} size={24} />
            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
         </button>
+        <ProfileMenu />
       </div>
     </header>
   );

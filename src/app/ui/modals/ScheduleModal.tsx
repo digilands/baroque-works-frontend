@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Dialog, IconButton } from "@mui/material";
+import { Dialog } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
@@ -19,6 +19,7 @@ interface ScheduleModalProps {
 
 export interface BookingData {
     date: string;
+    dateISO: string;
     service: string;
     description: string;
     time: string;
@@ -39,6 +40,7 @@ export default function ScheduleModal({ open, onClose, onConfirm, services }: Sc
     const handleConfirm = () => {
         onConfirm({
             date: selectedDate.toLocaleDateString(),
+            dateISO: selectedDate.toISOString(),
             service: selectedService,
             description,
             time: selectedTime,
@@ -119,8 +121,8 @@ export default function ScheduleModal({ open, onClose, onConfirm, services }: Sc
                     </div>
 
                     <div className="grid grid-cols-7 gap-1 text-center mb-4">
-                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => (
-                            <div key={day} className="text-xs font-medium text-gray-400">{day}</div>
+                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+                            <div key={`${day}-${index}`} className="text-xs font-medium text-gray-400">{day}</div>
                         ))}
                     </div>
 

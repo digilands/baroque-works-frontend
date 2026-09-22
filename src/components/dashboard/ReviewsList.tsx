@@ -41,7 +41,7 @@ const ReviewsList = () => {
         </div>
 
         <p className="text-sm text-gray-600 mb-6 leading-relaxed bg-gray-50/50 p-4 rounded-xl">
-          "{review.comment}"
+          &quot;{review.comment}&quot;
         </p>
 
         <div className="flex items-center justify-between bg-gray-50 p-3 rounded-xl">

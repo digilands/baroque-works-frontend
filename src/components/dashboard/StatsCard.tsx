@@ -8,11 +8,11 @@ interface StatsCardProps {
   value: string | number;
   subtitle?: string; // e.g., "Last month", "234 ratings"
   subtext?: string; // e.g., "8 out of 12"
-  icon?: any; // Optional icon
+  icon?: React.ReactNode; // Optional icon
   type?: "earnings" | "rating" | "jobs";
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({ title, value, subtitle, subtext, icon, type = "default" }) => {
+const StatsCard: React.FC<StatsCardProps> = ({ title, value, subtitle, subtext, type = "default" }) => {
   return (
     <div className="flex flex-col h-32 md:h-40 rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
       <div className="bg-gray-50/80 px-6 py-4 flex justify-between items-start">

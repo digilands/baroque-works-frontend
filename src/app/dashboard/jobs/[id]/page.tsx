@@ -1,110 +1,114 @@
-import React from 'react';
-import { JobHeader } from '@/app/ui/jobs/JobHeader';
-import { LocationCard } from '@/app/ui/jobs/LocationCard';
-import { TaskOverviewCard } from '@/app/ui/jobs/TaskOverviewCard';
-import { ClientCard } from '@/app/ui/jobs/ClientCard';
-import { SchedulePayCard } from '@/app/ui/jobs/SchedulePayCard';
-import { JobActionFooter } from '@/app/ui/jobs/JobActionFooter';
-import { JobRequest } from '@/types/job';
+import { notFound, redirect } from "next/navigation";
+import { JobHeader } from "@/app/ui/jobs/JobHeader";
+import { LocationCard } from "@/app/ui/jobs/LocationCard";
+import { TaskOverviewCard } from "@/app/ui/jobs/TaskOverviewCard";
+import { ClientCard } from "@/app/ui/jobs/ClientCard";
+import { SchedulePayCard } from "@/app/ui/jobs/SchedulePayCard";
+import { JobActionFooter } from "@/app/ui/jobs/JobActionFooter";
+import JobOwnerActions from "@/app/ui/jobs/JobOwnerActions";
+import {
+  getHirerById,
+  getJobById,
+  getSessionUser,
+  getUserById,
+} from "@/lib/server/queries";
+import {
+  formatNaira,
+  mapHirerToClient,
+  mapJobToDetailBlocks,
+} from "@/lib/server/mappers";
 
-// Mock Data Fetcher
-async function getJobRequest(id: string): Promise<JobRequest> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  return {
-    id: id,
-    title: "Fix leaking pipe in kitchen",
-    status: 'pending',
-    requestedDate: "Oct 24, 2025",
-    requestedTime: "10:00 AM",
-    description: "The pipe under the kitchen sink is leaking water. I've tried tightening it but it still drips. Need someone to fix it ASAP.",
-    instructions: "Please enter through the side gate. The code is 1234.",
-    photos: [
-      "https://images.unsplash.com/photo-1584622050111-993a426fbf0a?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80"
-    ],
-    client: {
-      id: "c1",
-      name: "Sarah Johnson",
-      avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
-      rating: 4.8,
-      totalJobs: 12,
-      isVerified: true,
-      isRepeatClient: true,
-      memberSince: "Aug 2023"
-    },
-    location: {
-      address: "123 Maple Avenue",
-      city: "Lagos",
-      state: "Lagos",
-      distance: "2.5km",
-      coordinates: { lat: 6.5244, lng: 3.3792 }
-    },
-    financials: {
-      subtotal: 15000,
-      serviceFee: 1500,
-      tax: 1200,
-      total: 17700,
-      paymentStatus: 'pending'
-    },
-    createdAt: "2025-10-23T14:00:00Z"
-  };
-}
+// Backend-driven: always render per request, never prerender at build.
+export const dynamic = "force-dynamic";
 
-export default async function JobRequestPage({ params }: { params: { id: string } }) {
-  const job = await getJobRequest(params.id);
+export default async function JobRequestPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const user = await getSessionUser().catch(() => null);
+  if (!user) redirect("/auth/login");
 
-  // In a real app, these would be Server Actions
+  const job = await getJobById(id).catch(() => null);
+  if (!job) notFound();
+
+  // Hirer -> user chain for the client card (best effort; card hidden on failure).
+  const hirer = job.hirerId
+    ? await getHirerById(job.hirerId).catch(() => null)
+    : null;
+  const client = await (async () => {
+    if (!hirer) return null;
+    const userId = typeof hirer.user === "string" ? hirer.user : "";
+    if (!userId) return null;
+    const hirerUser = await getUserById(userId).catch(() => null);
+    return hirerUser ? mapHirerToClient(hirer, hirerUser) : null;
+  })();
+
+  const isOwner =
+    user.role === "client" && hirer !== null && hirer._id === job.hirerId;
+
+  const blocks = mapJobToDetailBlocks(job);
+
+  // TODO (Phase 3): wire accept/decline to the proposal flow once the
+  // backend contract for handyman job responses is confirmed.
   async function handleAccept() {
-    'use server';
-    console.log('Accepted job', params.id);
+    "use server";
+    console.log("Accepted job", id);
   }
 
   async function handleDecline() {
-    'use server';
-    console.log('Declined job', params.id);
+    "use server";
+    console.log("Declined job", id);
   }
 
   return (
     <div className="max-w-5xl mx-auto pb-20">
-      <JobHeader title={job.title} requestId={job.id} />
-      
+      <JobHeader title={job.title ?? "Job request"} requestId={(job._id ?? id).slice(-6)} />
+
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Main Content Info */}
         <div className="lg:col-span-2">
-          <TaskOverviewCard 
-             description={job.description} 
-             photos={job.photos} 
-             instructions={job.instructions}
+          <TaskOverviewCard
+            description={job.description ?? "No description provided."}
+            photos={[]}
+            instructions={undefined}
           />
-          
-          <div className="block lg:hidden mb-8">
-             <ClientCard client={job.client} />
-          </div>
 
-          <LocationCard location={job.location} />
+          {client && (
+            <div className="block lg:hidden mb-8">
+              <ClientCard client={client} />
+            </div>
+          )}
+
+          <LocationCard location={blocks.location} />
         </div>
 
         {/* Sidebar Info */}
         <div className="space-y-8">
-          <div className="hidden lg:block">
-            <ClientCard client={job.client} />
-          </div>
-          
-          <SchedulePayCard 
-             requestedDate={job.requestedDate} 
-             requestedTime={job.requestedTime}
-             financials={job.financials}
+          {client && (
+            <div className="hidden lg:block">
+              <ClientCard client={client} />
+            </div>
+          )}
+
+          <SchedulePayCard
+            requestedDate={blocks.requestedDate}
+            requestedTime="—"
+            financials={blocks.financials}
           />
         </div>
       </div>
 
-      <JobActionFooter 
-        price={`₦${job.financials.total.toLocaleString()}`}
-        onAccept={handleAccept}
-        onDecline={handleDecline}
-      />
+      {isOwner ? (
+        <JobOwnerActions jobId={job._id ?? id} />
+      ) : (
+        <JobActionFooter
+          price={formatNaira(blocks.financials.total)}
+          onAccept={handleAccept}
+          onDecline={handleDecline}
+        />
+      )}
     </div>
   );
 }

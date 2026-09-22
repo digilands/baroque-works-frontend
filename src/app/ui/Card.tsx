@@ -2,18 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { memo } from "react";
+import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { StarIcon } from "@hugeicons/core-free-icons";
 
 interface CardProps {
-  id: number;
+  id: string;
   image: string;
   title: string;
   rate: string;
   rateType: string;
-  category: string;
-  subcategory: string;
   profile: {
     profilePic: string;
     name: string;
@@ -22,17 +21,26 @@ interface CardProps {
   }
 }
 
-export default function Card({ id, image, title, rate, rateType, profile }: CardProps) {
+const FALLBACK_IMAGE = "https://placehold.co/600x400?text=BaroqueWorks";
+const FALLBACK_AVATAR = "https://placehold.co/100x100?text=BW";
+
+export default memo(function Card({ id, image, title, rate, rateType, profile }: CardProps) {
+  const router = useRouter();
   return (
-    <Link href={`/services/${id}`} className="group block w-full cursor-pointer">
+    <Link
+      href={`/services/${id}`}
+      onMouseEnter={() => router.prefetch(`/services/${id}`)}
+      className="group block w-full cursor-pointer"
+    >
       <div className="flex flex-col gap-3">
         {/* Main Image */}
         <div className="relative w-full aspect-[16/11] rounded-2xl overflow-hidden bg-gray-100">
           <Image
-            src={image}
+            src={image || FALLBACK_IMAGE}
             alt={title}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
+            unoptimized={image.includes("thispersondoesnotexist.com")}
           />
         </div>
 
@@ -54,10 +62,11 @@ export default function Card({ id, image, title, rate, rateType, profile }: Card
             <div className="flex items-center gap-2.5">
               <div className="relative w-6 h-6 shrink-0">
                 <Image
-                  src={profile.profilePic}
+                  src={profile.profilePic || FALLBACK_AVATAR}
                   alt={profile.name}
                   fill
                   className="rounded-full object-cover border border-gray-100"
+                  unoptimized={profile.profilePic.includes("thispersondoesnotexist.com")}
                 />
               </div>
               
@@ -85,4 +94,4 @@ export default function Card({ id, image, title, rate, rateType, profile }: Card
       </div>
     </Link>
   );
-}
+});

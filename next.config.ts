@@ -3,11 +3,21 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "placehold.co",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        // Backend still emits plain-http Cloudinary URLs on some records.
+        protocol: "http",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
       {
@@ -20,6 +30,26 @@ const nextConfig: NextConfig = {
         hostname: "plus.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.mapbox.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "thispersondoesnotexist.com",
+        pathname: "/**",
+      },
     ],
   },
   webpack(config) {
@@ -28,6 +58,14 @@ const nextConfig: NextConfig = {
       use: ["@svgr/webpack"],
     });
     return config;
+  },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
   },
 };
 

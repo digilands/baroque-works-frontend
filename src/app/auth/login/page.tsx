@@ -20,17 +20,15 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid credentials");
+    } catch (err: unknown) {
+      const apiError = err as { response?: { data?: { message?: string } } };
+      setError(apiError.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    // Redirect to backend Google Auth endpoint
-    // The backend should redirect back to /api/auth/google/callback on frontend
-    // ensure backend is configured to redirect to FRONTEND_URL/api/auth/google/callback
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/google`;
   };
 

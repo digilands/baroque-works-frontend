@@ -160,7 +160,8 @@ This data is used for development/demo purposes. Production would fetch from the
 
 ## Deployment
 
-- GitHub Actions CI/CD on push to `main` or `dev`
-- Builds Next.js as a static export (`next build` → `out/`)
-- Deploys to GitHub Pages via `actions/deploy-pages@v4`
-- Node 20, pnpm detected automatically
+- Hosted on **Vercel** (SSR + API routes + Image Optimization enabled)
+- Git integration: pushes to `main` deploy to production, branches get preview URLs
+- Required env vars: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_MAPBOX_TOKEN`,
+  `GOOGLE_WEB_CLIENT_ID`, `GOOGLE_WEB_CLIENT_SECRET`, `GOOGLE_WEB_REDIRECT_URI`
+- `pnpm build` must pass (type-check + route collection); `pnpm lint` must exit 0

@@ -12,7 +12,6 @@ import {
   Globe02Icon,
   StarIcon
 } from "@hugeicons/core-free-icons";
-import Image from "next/image";
 
 const HeroSection = () => {
   return (

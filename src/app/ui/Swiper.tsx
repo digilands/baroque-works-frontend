@@ -59,7 +59,6 @@ export default function VerticalCarousel() {
         className="h-full w-full select-none"
       >
         {displayItems.map((service, idx) => {
-          const realIdx = idx % slides.length;
           const isActive = activeIndex === idx;
           const isNeighbor = Math.abs(activeIndex - idx) === 1;
 

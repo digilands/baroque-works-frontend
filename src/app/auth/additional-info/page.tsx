@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import Button from "../../ui/Button";
 import TextInput from "../../ui/TextInput";
 import { Formik, Form } from "formik";
+import * as Yup from "yup";
+import { useUser } from "@/hooks/useAuth";
+import { useUpdateMe } from "@/hooks/useOnboarding";
 
 export default function AdditionalInfo() {
     const router = useRouter();
-    const [email] = useState("imadejohn@gmail.com");
+    const { data: sessionUser } = useUser();
+    const updateMe = useUpdateMe();
     const [pushNotification, setPushNotification] = useState(false);
+    const [formError, setFormError] = useState("");
 
     const validationSchema = Yup.object({
         phoneNumber: Yup.string()
@@ -19,17 +22,25 @@ export default function AdditionalInfo() {
             .matches(/^\+?\d{10,14}$/, "Enter a valid phone number"),
     });
 
-    const handleSubmit = (values: { phoneNumber: string }) => {
-        console.log("Additional Info:", {
-            email,
-            pushNotification,
-            phoneNumber: values.phoneNumber
-        });
-        router.push("/");
+    const handleSubmit = async (values: { phoneNumber: string }) => {
+        setFormError("");
+        try {
+            await updateMe.mutateAsync({ phone: values.phoneNumber });
+            if (pushNotification && typeof window !== "undefined" && "Notification" in window) {
+                try {
+                    await Notification.requestPermission();
+                } catch {
+                    // permission prompt dismissed — non-blocking
+                }
+            }
+            router.push(sessionUser?.role === "handyman" ? "/dashboard/jobs" : "/dashboard");
+        } catch (err) {
+            setFormError(err instanceof Error ? err.message : "Update failed. Please try again.");
+        }
     };
 
     const handleSkip = () => {
-        router.push("/");
+        router.push(sessionUser?.role === "handyman" ? "/dashboard/jobs" : "/dashboard");
     };
 
     return (
@@ -40,8 +51,14 @@ export default function AdditionalInfo() {
                     Additional info
                 </h1>
                 <p className="text-center text-muted-foreground mb-8 text-sm">
-                    Select Services that you offer
+                    Add a phone number so clients can reach you
                 </p>
+
+                {(formError || updateMe.error) && (
+                    <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center font-medium">
+                        {formError || updateMe.error?.message}
+                    </div>
+                )}
 
                 <Formik
                     initialValues={{
@@ -52,13 +69,10 @@ export default function AdditionalInfo() {
                 >
                     {({ isSubmitting }) => (
                         <Form>
-                            {/* Email Field with Edit Button */}
+                            {/* Email (from session, read-only here) */}
                             <div className="mb-6">
                                 <div className="flex items-center justify-between bg-input border border-border rounded-lg px-4 py-3">
-                                    <span className="text-text">{email}</span>
-                                    <button type="button" className="text-muted-foreground hover:text-text text-sm">
-                                        Edit
-                                    </button>
+                                    <span className="text-text">{sessionUser?.email ?? "…"}</span>
                                 </div>
                             </div>
 
@@ -106,9 +120,9 @@ export default function AdditionalInfo() {
                                 <Button
                                     type="submit"
                                     className="flex-1"
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || updateMe.isPending}
                                 >
-                                    {isSubmitting ? "Submitting..." : "Next"}
+                                    {isSubmitting || updateMe.isPending ? "Submitting..." : "Next"}
                                 </Button>
                             </div>
                         </Form>
