@@ -13,10 +13,10 @@ import {
   getJobById,
   getMyHandymanProfile,
   getMyHirerProfile,
-  getSessionUser,
   getUserById,
   type ApiBooking,
 } from "@/lib/server/queries";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
@@ -182,7 +182,7 @@ function clientStats(
  * post-auth resolver, then renders the unified role-aware dashboard.
  */
 export default async function DashboardPage() {
-  const user = await getSessionUser().catch(() => null);
+  const user = await requireSessionUser("/dashboard");
   const destination = await resolvePostAuthDestination(user);
   if (destination !== "/dashboard") redirect(destination);
 

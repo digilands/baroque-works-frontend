@@ -27,9 +27,8 @@ export function proxy(request: NextRequest) {
     if (!token && !isAdminLogin) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
-    if (token && isAdminLogin) {
-      return NextResponse.redirect(new URL('/admin', request.url));
-    }
+    // Do NOT bounce cookie holders away from /admin/login: non-admin
+    // sessions get sent here by /admin, and bouncing back would loop.
     return NextResponse.next();
   }
 
@@ -48,8 +47,12 @@ export function proxy(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Logged-in users should not see login/signup
-    if (token) {
+    // Logged-in users should not see login/signup — EXCEPT when they arrive
+    // with ?next= (recovery path after a failed /auth/me on /dashboard).
+    // Unconditional bounce here is what created the
+    // /dashboard -> /auth/login -> /dashboard redirect loop.
+    const hasNext = request.nextUrl.searchParams.has('next');
+    if (token && !hasNext) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }

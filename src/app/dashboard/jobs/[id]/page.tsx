@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { ApiError } from "@/lib/api-errors";
 import { JobHeader } from "@/app/ui/jobs/JobHeader";
 import { LocationCard } from "@/app/ui/jobs/LocationCard";
@@ -10,7 +10,6 @@ import JobOwnerActions from "@/app/ui/jobs/JobOwnerActions";
 import {
   getHirerById,
   getJobById,
-  getSessionUser,
   getUserById,
 } from "@/lib/server/queries";
 import {
@@ -18,6 +17,7 @@ import {
   mapHirerToClient,
   mapJobToDetailBlocks,
 } from "@/lib/server/mappers";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
@@ -28,8 +28,7 @@ export default async function JobRequestPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getSessionUser().catch(() => null);
-  if (!user) redirect("/auth/login");
+  const user = await requireSessionUser(`/dashboard/jobs/${id}`);
 
   let job;
   try {

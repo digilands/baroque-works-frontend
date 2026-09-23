@@ -4,16 +4,15 @@ import {
   getMyHandymanProfile,
   getServiceById,
   getServicesFeed,
-  getSessionUser,
   type ServiceFeedItem,
 } from "@/lib/server/queries";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
 
 export default async function MyServicesPage() {
-  const user = await getSessionUser().catch(() => null);
-  if (!user) redirect("/auth/login");
+  const user = await requireSessionUser("/dashboard/services");
   if (user.role !== "handyman") redirect("/dashboard");
 
   const profile = await getMyHandymanProfile();
