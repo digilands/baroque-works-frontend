@@ -59,7 +59,7 @@ export default function ImageUploader({ folder, max = 10, onChange, onUploadingC
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
         {files.map((file, i) => (
           <div key={`${file.publicId}-${i}`} className="relative aspect-square rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
-            <Image src={file.secureUrl || file.url} alt={`Upload ${i + 1}`} fill className="object-cover" />
+            <Image src={file.secureUrl || file.url} alt={`Upload ${i + 1}`} fill sizes="(max-width: 640px) 33vw, 25vw" className="object-cover" />
             <button
               type="button"
               onClick={() => removeAt(i)}

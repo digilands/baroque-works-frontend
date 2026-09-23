@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 
 function mockGeolocation(
@@ -52,7 +52,7 @@ describe("useGeolocation", () => {
     expect(result.current.position).toBeNull();
   });
 
-  it("restores a fresh cached position", () => {
+  it("restores a fresh cached position after mount", async () => {
     window.localStorage.setItem(
       "bw:geo",
       JSON.stringify({
@@ -62,7 +62,8 @@ describe("useGeolocation", () => {
       }),
     );
     const { result } = renderHook(() => useGeolocation());
-    expect(result.current.status).toBe("granted");
+    // Cache is loaded on a 0ms timer so SSR and first client paint match.
+    await waitFor(() => expect(result.current.status).toBe("granted"));
     expect(result.current.position).toMatchObject({ latitude: 9.0579 });
   });
 });

@@ -24,6 +24,10 @@ export interface ServiceFeedItem {
   price?: number;
   pricingModel?: string;
   distance?: number;
+  subCategory?: string;
+  category?: string;
+  /** Service gallery images — preferred over the handyman profile photo on cards. */
+  image?: { public_id?: string; url?: string }[];
   handyman?: {
     _id?: string;
     fullname?: string;

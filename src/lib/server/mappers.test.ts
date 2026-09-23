@@ -70,6 +70,28 @@ describe("mapServiceItemToCard", () => {
     expect(card.profile.name).toBe("Tunde");
     expect(card.profile.rating).toBe(4.9);
   });
+
+  it("prefers the service gallery image over the handyman profile photo", () => {
+    const card = mapServiceItemToCard({
+      _id: "svc2",
+      description: "Fix pipe",
+      price: 8000,
+      image: [{ url: "https://cdn/service.jpg", public_id: "s1" }],
+      handyman: { fullname: "Tunde", image: [{ url: "https://cdn/profile.jpg" }] },
+    });
+    expect(card.image).toBe("https://cdn/service.jpg");
+    expect(card.profile.profilePic).toBe("https://cdn/profile.jpg");
+  });
+
+  it("falls back to the handyman photo when the service has no image", () => {
+    const card = mapServiceItemToCard({
+      _id: "svc3",
+      description: "No photo",
+      image: [],
+      handyman: { fullname: "Tunde", image: [{ url: "https://cdn/profile.jpg" }] },
+    });
+    expect(card.image).toBe("https://cdn/profile.jpg");
+  });
 });
 
 describe("mapJobToListItem", () => {

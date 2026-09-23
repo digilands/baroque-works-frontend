@@ -5,9 +5,9 @@ import { Dialog } from "@mui/material";
 import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
-import ArrowDown01Icon from '@hugeicons/core-free-icons/ArrowDown01Icon';
 import MinusSignIcon from '@hugeicons/core-free-icons/MinusSignIcon';
 import PlusSignIcon from '@hugeicons/core-free-icons/PlusSignIcon';
+import StyledSelect from "@/components/ui/StyledSelect";
 
 interface ScheduleModalProps {
     open: boolean;
@@ -153,22 +153,17 @@ export default function ScheduleModal({ open, onClose, onConfirm, services }: Sc
                 {/* Services */}
                 <div className="mb-6">
                     <label className="block text-[15px] font-medium mb-3">Services</label>
-                    <div className="relative">
-                        <select
-                            value={selectedService}
-                            onChange={(e) => setSelectedService(e.target.value)}
-                            className="w-full p-4 bg-gray-50 border-none rounded-2xl text-[13px] font-bold appearance-none cursor-pointer focus:ring-0"
-                        >
-                            {services.map((service, idx) => (
-                                <option key={idx} value={service.name}>
-                                    {service.name} &nbsp; {service.rate} • {service.rateType === 'Hourly' ? 'hour' : 'fixed'}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                             <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
-                        </div>
-                    </div>
+                    <StyledSelect
+                        value={selectedService}
+                        onChange={setSelectedService}
+                        options={services.map((service) => ({
+                            value: service.name,
+                            label: `${service.name}  ${service.rate} • ${service.rateType === 'Hourly' ? 'hour' : 'fixed'}`,
+                        }))}
+                        aria-label="Service"
+                        className="w-full"
+                        triggerClassName="px-4 py-4 bg-gray-50 border-none rounded-2xl text-[13px] font-bold"
+                    />
                 </div>
 
                 {/* Description */}

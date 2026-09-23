@@ -10,6 +10,7 @@ import Location01Icon from "@hugeicons/core-free-icons/Location01Icon";
 import Card from "@/app/ui/Card";
 import type { MapPin } from "@/components/ui/MapboxMap";
 import type { ProCardData, ServiceCardData } from "@/lib/server/mappers";
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 const MapboxMap = dynamic(() => import("@/components/ui/MapboxMap"), { ssr: false });
 const HireModal = dynamic(() => import("@/app/ui/search/HireModal"), { ssr: false });
@@ -29,6 +30,7 @@ interface SearchResultsProps {
 const FALLBACK_AVATAR = "https://placehold.co/100x100?text=BW";
 
 const ProCard = memo(function ProCard({ pro, hireFor, onHire }: { pro: ProCardData; hireFor?: string; onHire?: (pro: ProCardData) => void }) {
+  const avatarSrc = normalizeImageSrc(pro.avatar, FALLBACK_AVATAR);
   return (
     <Link
       href={`/search?tab=services&handymanId=${pro.id}`}
@@ -37,10 +39,12 @@ const ProCard = memo(function ProCard({ pro, hireFor, onHire }: { pro: ProCardDa
       <div className="flex items-center gap-4">
         <div className="relative w-14 h-14 shrink-0">
           <Image
-            src={pro.avatar || FALLBACK_AVATAR}
+            src={avatarSrc}
             alt={pro.name}
             fill
+            sizes="56px"
             className="rounded-full object-cover border border-gray-100"
+            unoptimized={isUnoptimizedSrc(avatarSrc)}
           />
         </div>
         <div className="flex-1 min-w-0">

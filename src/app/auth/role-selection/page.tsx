@@ -28,7 +28,7 @@ export default function RoleSelectionPage() {
   return (
     <div className="flex flex-col items-center min-h-screen bg-white text-gray-900 px-6 py-12">
       <div className="max-w-2xl w-full text-center mb-12">
-        <Title>How will you use BaroqueWorks?</Title>
+        <Title>How will you use Handyman?</Title>
         <SubTitle>Choose the experience that fits you. You can switch later.</SubTitle>
       </div>
 

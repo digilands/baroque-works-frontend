@@ -26,7 +26,7 @@ export async function resolvePostAuthDestination(
 
   if (user.role === "handyman") {
     const profile = await getMyHandymanProfile();
-    return profile ? "/dashboard/jobs" : "/auth/serviceselection";
+    return profile ? "/dashboard" : "/auth/serviceselection";
   }
 
   const hirer = await getMyHirerProfile();

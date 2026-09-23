@@ -6,15 +6,18 @@ import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
 import Image from "next/image";
 import type { CarouselItem } from "@/lib/server/mappers";
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 interface Props {
   items: CarouselItem[];
   selectedCategory: string;
+  /** Query string to preserve when navigating between category tiles (geo, radius…). */
+  baseQuery?: string;
 }
 
-const FALLBACK_IMAGE = "https://placehold.co/600x400?text=BaroqueWorks";
+const FALLBACK_IMAGE = "https://placehold.co/600x400?text=Handyman";
 
-export default function ServicesCarousel({ items, selectedCategory }: Props) {
+export default function ServicesCarousel({ items, selectedCategory, baseQuery = "" }: Props) {
   const [sliderRef] = useKeenSlider<HTMLDivElement>({
     slides: {
       perView: 6.5,
@@ -43,6 +46,7 @@ export default function ServicesCarousel({ items, selectedCategory }: Props) {
             <ServiceCard
               service={service}
               selected={selectedCategory === service.category}
+              baseQuery={baseQuery}
             />
           </div>
         ))}
@@ -54,13 +58,22 @@ export default function ServicesCarousel({ items, selectedCategory }: Props) {
 const ServiceCard = memo(function ServiceCard({
   service,
   selected,
+  baseQuery = "",
 }: {
   service: CarouselItem;
   selected: boolean;
+  baseQuery?: string;
 }) {
+  const href = (() => {
+    const params = new URLSearchParams(baseQuery);
+    params.set("category", service.category);
+    return `/home?${params.toString()}`;
+  })();
+  const imageSrc = normalizeImageSrc(service.image, FALLBACK_IMAGE);
+
   return (
     <Link
-      href={`/home?category=${encodeURIComponent(service.category)}`}
+      href={href}
       className={`group relative h-32 cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 border-2 block ${
         selected
           ? "border-indigo-600 ring-4 ring-indigo-50 shadow-lg scale-105 z-10"
@@ -68,13 +81,14 @@ const ServiceCard = memo(function ServiceCard({
       }`}
     >
       <Image
-        src={service.image || FALLBACK_IMAGE}
+        src={imageSrc}
         alt={service.name}
         fill
+        sizes="(max-width: 480px) 45vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 200px"
         className={`object-cover transition-transform duration-700 ${
           selected ? "scale-110" : "group-hover:scale-110"
         }`}
-        unoptimized={service.image.includes("thispersondoesnotexist.com")}
+        unoptimized={isUnoptimizedSrc(imageSrc)}
       />
 
       {/* Overlay */}

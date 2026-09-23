@@ -7,6 +7,7 @@ import InformationCircleIcon from '@hugeicons/core-free-icons/InformationCircleI
 import Tick02Icon from '@hugeicons/core-free-icons/Tick02Icon';
 import Calendar03Icon from '@hugeicons/core-free-icons/Calendar03Icon';
 import Clock01Icon from '@hugeicons/core-free-icons/Clock01Icon';
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 interface OfferedService {
     name: string;
@@ -38,6 +39,7 @@ export default function BookingSidebar({ handymanName, services, onBookService, 
                 <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2">
                     {services.length > 0 ? services.map((s, idx) => {
                         const isSelected = selectedServiceIndex === idx;
+                        const imageSrc = normalizeImageSrc(s.image);
                         return (
                             <button
                                 key={idx}
@@ -49,7 +51,7 @@ export default function BookingSidebar({ handymanName, services, onBookService, 
                                 }`}
                             >
                                 <div className="relative w-full aspect-square rounded-[1.25rem] overflow-hidden shadow-sm">
-                                    <Image src={s.image} alt={s.name} fill className={`object-cover transition-transform duration-700 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`} />
+                                    <Image src={imageSrc} alt={s.name} fill sizes="160px" unoptimized={isUnoptimizedSrc(imageSrc)} className={`object-cover transition-transform duration-700 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`} />
                                     {isSelected && (
                                         <div className="absolute top-2 right-2 w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center text-white border-2 border-white animate-in zoom-in">
                                             <HugeiconsIcon icon={Tick02Icon} size={12} />

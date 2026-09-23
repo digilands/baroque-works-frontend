@@ -3,7 +3,8 @@
 ## Prerequisites
 
 - Node.js 20+
-- pnpm (package manager)
+- pnpm
+- A running NestJS backend (see [Required Backend](#required-backend))
 
 ## Install
 
@@ -17,37 +18,36 @@ pnpm install
 
 Copy `.env.example` to `.env.local` and fill in the values:
 
-| Variable                   | Description                                                 | Default                                          |
-| -------------------------- | ----------------------------------------------------------- | ------------------------------------------------ |
-| `GOOGLE_WEB_CLIENT_ID`     | Google OAuth client ID                                      | —                                                |
-| `GOOGLE_WEB_CLIENT_SECRET` | Google OAuth client secret                                  | —                                                |
-| `GOOGLE_WEB_REDIRECT_URI`  | Google OAuth redirect URI                                   | `http://localhost:3000/api/auth/callback/google` |
-| `NEXT_PUBLIC_API_URL`      | NodeJS backend URL (used by login page for Google redirect) | `http://localhost:8000`                          |
+| Variable                   | Description                                             | Default                                                    |
+| -------------------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`      | Backend base URL — **required**; missing causes loopbacks | `https://baroque-works-backend.onrender.com/api/v1`         |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Mapbox public token (maps, geocoding, location picker)  | —                                                          |
+| `GOOGLE_WEB_CLIENT_ID`     | Google OAuth client ID                                  | —                                                          |
+| `GOOGLE_WEB_CLIENT_SECRET` | Google OAuth client secret                              | —                                                          |
+| `GOOGLE_WEB_REDIRECT_URI`  | Google OAuth redirect URI                               | `http://localhost:3000/api/auth/google/callback`           |
 
-The backend URL used by API route handlers is also `NEXT_PUBLIC_API_URL` (set in `src/lib/auth.ts`).
+> `NEXT_PUBLIC_API_URL` must be set. Without it, server backend calls loop back to this app (HTML 404s or self-recursion) — `src/lib/server/backend.ts` logs a loud warning on first miss.
 
-## Development
+## Commands
 
-```bash
-pnpm dev
-```
+| Command            | Description                                              |
+| ------------------ | -------------------------------------------------------- |
+| `pnpm dev`         | Dev server at `http://localhost:3000` (Turbopack)        |
+| `pnpm build`       | Production build (`prebuild` clears `.next` first)       |
+| `pnpm start`       | Run the production build                                 |
+| `pnpm lint`        | ESLint 9 flat config (`eslint.config.mjs`)               |
+| `pnpm test`        | Vitest unit tests (jsdom, `src/**/*.test.ts(x)`)         |
+| `pnpm test:watch`  | Vitest watch mode                                        |
+| `pnpm test:e2e`    | Playwright E2E (`e2e/`, boots `pnpm dev`)                |
+| `pnpm gen:types`   | Regenerate `src/types/api.d.ts` from `context/swagger.yaml` |
+| `pnpm make`        | Interactive scaffolder (components, utils, pages)        |
 
-Runs at `http://localhost:3000`.
+## Testing
 
-## Build & Start
+- **Unit** (Vitest): colocated `*.test.ts` under `src/`; setup at `src/test/setup.ts`.
+- **E2E** (Playwright): specs in `e2e/`; `global-setup.ts` warms the backend (Render cold starts). Runs against `http://localhost:3000` (`PLAYWRIGHT_BASE_URL` overrides).
 
-```bash
-pnpm build
-pnpm start
-```
-
-## Lint
-
-```bash
-pnpm lint
-```
-
-Uses ESLint 9 with flat config (`eslint.config.mjs`). Extends `next/core-web-vitals` and `next/typescript`.
+See [docs/testing.md](testing.md).
 
 ## Scaffolding
 
@@ -55,7 +55,7 @@ Uses ESLint 9 with flat config (`eslint.config.mjs`). Extends `next/core-web-vit
 pnpm make
 ```
 
-Interactive CLI to generate:
+Generates:
 
 - UI Component → `src/app/ui/<Name>.tsx`
 - Utility Function → `src/utils/<name>.ts`
@@ -63,10 +63,12 @@ Interactive CLI to generate:
 
 ## Required Backend
 
-This frontend requires a running NodeJS backend at `NEXT_PUBLIC_API_URL`. The backend handles:
+This frontend requires the NestJS backend at `NEXT_PUBLIC_API_URL`. The backend handles authentication, users, categories, jobs, services, bookings, disputes, uploads, and payments. Swagger source lives in `context/swagger.yaml`.
 
-- Authentication (login, signup, Google OAuth)
-- User management
-- Service/job data
+Without the backend the app still renders, but data pages show empty/error states and auth flows fail.
 
-Without the backend, the app runs but login/signup will fail. Mock data in `src/utils/data.ts` is used for the service browsing UI.
+## Troubleshooting
+
+- **Turbopack "Cache corruption" / compaction errors**: delete `.next` and `node_modules/.cache`, then rerun `pnpm dev`.
+- **Backend calls return HTML/404 or loop**: `NEXT_PUBLIC_API_URL` is unset — fix `.env.local`.
+- **Stale `.next` type-check crashes on build**: already handled by `prebuild` (`rimraf .next`).

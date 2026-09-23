@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Dialog, IconButton } from "@mui/material";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Cancel01Icon from "@hugeicons/core-free-icons/Cancel01Icon";
+import DateTimePicker from "@/components/ui/DateTimePicker";
 import { useAcceptJobBid } from "@/hooks/useMarketplace";
 
 interface HireModalProps {
@@ -86,12 +87,14 @@ export default function HireModal({ open, onClose, jobId, handymanId, handymanNa
           </label>
           <label className="block">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Start date (optional)</span>
-            <input
-              type="datetime-local"
-              value={scheduledDate}
-              onChange={(e) => setScheduledDate(e.target.value)}
-              className="mt-1 w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:outline-none"
-            />
+            <div className="mt-1">
+              <DateTimePicker
+                withTime
+                value={scheduledDate}
+                onChange={setScheduledDate}
+                placeholder="Pick a start date"
+              />
+            </div>
           </label>
         </div>
 

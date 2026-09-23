@@ -1,6 +1,6 @@
 import { internalApi } from './auth';
 import type { User, LoginCredentials, SignupCredentials } from './auth';
-import { ApiError, toApiError } from './api-errors';
+import { ApiError, pickErrorMessage, toApiError } from './api-errors';
 
 export async function getMe(): Promise<User> {
   try {
@@ -166,12 +166,14 @@ export async function createHandymanProfile(input: CreateHandymanInput): Promise
 }
 
 export interface UpdateMyUserInput {
+  email?: string;
   fullname?: string;
   role?: 'client' | 'handyman';
   phone?: string;
   bio?: string;
   address?: string;
-  image?: { url: string; public_id: string };
+  /** Backend User.image is an array of {url, public_id}. */
+  image?: { url: string; public_id: string }[];
   location?: { state?: string; lga?: string };
 }
 
@@ -267,6 +269,7 @@ export interface CreateServiceInput {
   pricingModel: PricingModel;
   date: string;
   schedule?: { estimatedTime?: string; estimatedDuration?: string };
+  /** Owner reference — required on create for ownership + geo denormalization. */
   handyman_id?: string;
   image?: { url: string; public_id: string }[];
   materials_included?: boolean;
@@ -277,7 +280,12 @@ export async function createService(input: CreateServiceInput): Promise<{ id?: s
   try {
     const { data } = await internalApi.post("/services", input);
     if (!data?.success) {
-      throw new ApiError(400, "SERVICE_CREATE_FAILED", data?.message || "Service creation failed");
+      throw new ApiError(
+        400,
+        "SERVICE_CREATE_FAILED",
+        pickErrorMessage(data, "Service creation failed"),
+        data,
+      );
     }
     const service = data.service as { _id?: string } | undefined;
     return { id: service?._id, raw: data };
@@ -443,12 +451,78 @@ export async function updateService(id: string, input: Partial<CreateServiceInpu
   try {
     const { data } = await internalApi.put(`/services/${encodeURIComponent(id)}`, input);
     if (!data?.success) {
-      throw new ApiError(400, "SERVICE_UPDATE_FAILED", data?.message || "Service update failed");
+      throw new ApiError(
+        400,
+        "SERVICE_UPDATE_FAILED",
+        pickErrorMessage(data, "Service update failed"),
+        data,
+      );
     }
     return data.service ?? data;
   } catch (error) {
     throw toApiError(error, "Service update failed");
   }
+}
+
+/**
+ * Remove one gallery image by public_id. PUT /services/{id} requires the full
+ * Service body, so load the doc first and rewrite `image` with the rest kept.
+ * An empty remaining list sends `image: []` so the backend clears the gallery.
+ */
+export async function removeServiceImage(
+  serviceId: string,
+  publicId: string,
+): Promise<unknown> {
+  let service: {
+    category?: string;
+    subCategory?: string;
+    description?: string;
+    price?: number;
+    pricingModel?: PricingModel;
+    date?: string;
+    materials_included?: boolean;
+    schedule?: CreateServiceInput["schedule"];
+    image?: { url?: string; public_id?: string }[];
+  };
+  try {
+    const { data } = await internalApi.get(`/services/${encodeURIComponent(serviceId)}`);
+    service = data?.service;
+    if (!service) {
+      throw new ApiError(404, "SERVICE_NOT_FOUND", "Service not found");
+    }
+  } catch (error) {
+    throw toApiError(error, "Service update failed");
+  }
+
+  const remaining = (service.image ?? [])
+    .filter((img) => img?.public_id !== publicId)
+    .filter((img): img is { url: string; public_id: string } =>
+      typeof img.url === "string" && img.url.length > 0 &&
+      typeof img.public_id === "string" && img.public_id.length > 0,
+    );
+
+  if (
+    !service.category ||
+    !service.subCategory ||
+    service.description == null ||
+    service.price == null ||
+    !service.pricingModel ||
+    !service.date
+  ) {
+    throw new ApiError(400, "SERVICE_UPDATE_FAILED", "Service is missing required fields");
+  }
+
+  return updateService(serviceId, {
+    category: service.category,
+    subCategory: service.subCategory,
+    description: service.description,
+    price: service.price,
+    pricingModel: service.pricingModel,
+    date: service.date,
+    materials_included: service.materials_included ?? false,
+    ...(service.schedule ? { schedule: service.schedule } : {}),
+    image: remaining,
+  });
 }
 
 export async function deleteService(id: string): Promise<void> {

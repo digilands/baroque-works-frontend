@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { HugeiconsIcon } from '@hugeicons/react';
 import MessageMultiple01Icon from '@hugeicons/core-free-icons/MessageMultiple01Icon';
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 interface HandymanProfileProps {
     image: string;
@@ -11,14 +12,16 @@ interface HandymanProfileProps {
 }
 
 export default function HandymanProfile({ image, name, rating, reviews }: HandymanProfileProps) {
+    const displayImage = normalizeImageSrc(image);
     return (
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full p-6 bg-[var(--color-white-bg)] rounded-[1.25rem] border border-[#EDEDED] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="flex items-center gap-5">
                 <Image
-                    src={image}
+                    src={displayImage}
                     alt={name}
                     width={64}
                     height={64}
+                    unoptimized={isUnoptimizedSrc(displayImage)}
                     className="rounded-full object-cover"
                 />
                 <div>

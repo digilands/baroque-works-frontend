@@ -22,11 +22,12 @@ export default function HomeLocationInitializer({
     if (geoActive) return;
 
     if (position) {
-      const params = new URLSearchParams();
-      if (category) params.set("category", category);
+      // Preserve every existing query param (category, filters, tabs…).
+      const params = new URLSearchParams(window.location.search);
       params.set("lat", String(position.latitude));
       params.set("lng", String(position.longitude));
-      params.set("radius", String(radius));
+      if (!params.has("radius")) params.set("radius", String(radius));
+      if (category && !params.has("category")) params.set("category", category);
       router.replace(`/home?${params.toString()}`);
       return;
     }

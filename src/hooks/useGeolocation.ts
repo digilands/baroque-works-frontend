@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type GeoStatus =
   | "idle"
@@ -54,15 +54,24 @@ function saveCached(position: GeoPosition) {
 
 /**
  * Browser geolocation with 24h localStorage caching.
- * Returns null until the user grants permission via `requestLocation()`.
+ * Cache is read after mount so SSR and the first client render match.
  */
 export function useGeolocation() {
-  const [position, setPosition] = useState<GeoPosition | null>(loadCached);
-  const [status, setStatus] = useState<GeoStatus>(() =>
-    typeof window !== "undefined" && window.localStorage.getItem(STORAGE_KEY)
-      ? "granted"
-      : "idle",
-  );
+  const [position, setPosition] = useState<GeoPosition | null>(null);
+  const [status, setStatus] = useState<GeoStatus>("idle");
+
+  useEffect(() => {
+    // Defer past first paint so SSR and the initial client render both see null
+    // (avoids hydration mismatch) without calling setState synchronously in the effect.
+    const timer = window.setTimeout(() => {
+      const cached = loadCached();
+      if (cached) {
+        setPosition(cached);
+        setStatus("granted");
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const requestLocation = useCallback(() => {
     if (typeof window === "undefined" || !("geolocation" in navigator)) {

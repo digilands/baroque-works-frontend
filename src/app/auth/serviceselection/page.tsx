@@ -7,12 +7,13 @@ import { SubTitle, Title } from "@/app/ui/Titles";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Tick02Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { useOnboardingCategories } from "@/hooks/useOnboarding";
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 /** Unified onboarding draft key — persists the full profile-setup state. */
 export const ONBOARDING_DRAFT_KEY = "bw:onboarding:draft";
 
 const MAX_SELECTION = 3;
-const FALLBACK_IMAGE = "https://placehold.co/600x400?text=BaroqueWorks";
+const FALLBACK_IMAGE = "https://placehold.co/600x400?text=Handyman";
 
 function loadDraftCategoryIds(): string[] {
   if (typeof window === "undefined") return [];
@@ -82,6 +83,7 @@ export default function ServicesPage() {
           {categories.map((service) => {
             const isActive = selected.includes(service._id);
             const isDisabled = !isActive && selected.length >= MAX_SELECTION;
+            const imageSrc = normalizeImageSrc(service.image?.url, FALLBACK_IMAGE);
             return (
               <div
                 key={service._id}
@@ -95,12 +97,14 @@ export default function ServicesPage() {
                 }`}
               >
                 <Image
-                  src={service.image?.url || FALLBACK_IMAGE}
+                  src={imageSrc}
                   alt={service.displayName}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className={`object-cover transition-transform duration-700 ${
                     isActive ? "scale-110" : "group-hover:scale-110"
                   }`}
+                  unoptimized={isUnoptimizedSrc(imageSrc)}
                 />
                 <div className={`absolute inset-0 transition-opacity duration-500 ${
                   isActive ? "bg-indigo-600/40" : "bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90"

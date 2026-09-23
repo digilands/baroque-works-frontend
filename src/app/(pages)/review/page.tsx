@@ -78,6 +78,7 @@ export default function ReviewPage() {
                             src="/profile.png"
                             alt="Emeka Okoro"
                             fill
+                            sizes="96px"
                             className="object-cover rounded-full border-4 border-white shadow-xl"
                         />
                         <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-indigo-600 rounded-full border-4 border-white flex items-center justify-center">
@@ -179,7 +180,7 @@ export default function ReviewPage() {
                             }`}>
                                 {uploadedImage ? (
                                     <>
-                                        <Image src={uploadedImage} alt="Preview" fill className="object-cover" />
+                                        <Image src={uploadedImage} alt="Preview" fill sizes="100vw" className="object-cover" />
                                         <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <p className="text-white font-bold text-sm bg-black/50 px-4 py-2 rounded-full uppercase tracking-widest">Change Photo</p>
                                         </div>

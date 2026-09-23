@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { nigerianStates } from "@/utils/data";
 import AvatarUpload from "@/components/ui/AvatarUpload";
 import LocationPicker, { type PickedLocation } from "@/components/ui/LocationPicker";
+import StyledSelect from "@/components/ui/StyledSelect";
 import { useCreateHandyman, useUpdateMe, useOnboardingCategories } from "@/hooks/useOnboarding";
 import { useUser } from "@/hooks/useAuth";
 import type { UploadedFile } from "@/lib/api";
@@ -202,9 +203,10 @@ export default function SetupProfile() {
       const imageUrl = avatar?.secureUrl || avatar?.url;
       const profileImage =
         avatar?.publicId && imageUrl
-          ? { url: imageUrl, public_id: avatar.publicId }
+          ? [{ url: imageUrl, public_id: avatar.publicId }]
           : undefined;
       const profileUpdate = {
+        ...(sessionUser?.email ? { email: sessionUser.email } : {}),
         ...(values.name.trim() ? { fullname: values.name.trim() } : {}),
         ...(values.bio.trim() ? { bio: values.bio.trim() } : {}),
         ...(values.address.trim() ? { address: values.address.trim() } : {}),
@@ -277,20 +279,18 @@ export default function SetupProfile() {
                       <span className="text-sm font-bold text-gray-700 shrink min-w-0 truncate">
                         {cat.name}
                       </span>
-                      <select
+                      <StyledSelect
                         value={cat.experienceLevel}
-                        onChange={(e) => handleCategoryExperienceChange(cat.id, e.target.value)}
-                        className="ml-auto shrink-0 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-                      >
-                        <option value="" disabled>
-                          Level
-                        </option>
-                        {EXPERIENCE_OPTIONS.map((lvl) => (
-                          <option key={lvl} value={lvl}>
-                            {lvl.charAt(0).toUpperCase() + lvl.slice(1)}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={(v) => handleCategoryExperienceChange(cat.id, v)}
+                        options={EXPERIENCE_OPTIONS.map((lvl) => ({
+                          value: lvl,
+                          label: lvl.charAt(0).toUpperCase() + lvl.slice(1),
+                        }))}
+                        placeholder="Level"
+                        aria-label={`Experience level for ${cat.name}`}
+                        className="ml-auto shrink-0"
+                        triggerClassName="w-auto min-w-[7rem] px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700"
+                      />
                     </div>
                   ))}
                 </div>
@@ -319,15 +319,16 @@ export default function SetupProfile() {
                   <div className="grid grid-cols-2 gap-3">
                     <label className="block">
                       <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">State</span>
-                      <select
-                        value={stateName}
-                        onChange={(e) => handleStateChange(e.target.value)}
-                        className="mt-1 w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:outline-none"
-                      >
-                        {nigerianStates.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
+                      <div className="mt-1 w-full">
+                        <StyledSelect
+                          value={stateName}
+                          onChange={handleStateChange}
+                          options={nigerianStates.map((s) => ({ value: s, label: s }))}
+                          aria-label="State"
+                          className="w-full"
+                          triggerClassName="p-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium"
+                        />
+                      </div>
                     </label>
                     <label className="block">
                       <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">LGA</span>

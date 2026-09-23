@@ -20,7 +20,11 @@ export function useSSE(channel: SSEChannel, onMessage: (data: unknown) => void) 
 
   useEffect(() => {
     if (typeof window === "undefined" || !("EventSource" in window)) return;
-    const source = new EventSource(`/api/sse?channel=${channel}`);
+
+    let source: EventSource | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let disposed = false;
+
     const listener = (event: Event) => {
       try {
         handlerRef.current(JSON.parse((event as MessageEvent).data));
@@ -28,11 +32,30 @@ export function useSSE(channel: SSEChannel, onMessage: (data: unknown) => void) 
         // ignore malformed frames
       }
     };
-    source.addEventListener(channel, listener);
-    // No explicit reconnect needed — EventSource retries on close/error.
+
+    const connect = () => {
+      if (disposed) return;
+      source = new EventSource(`/api/sse?channel=${channel}`);
+      source.addEventListener(channel, listener);
+      // The server closes after ~20s. Browser auto-reconnect can hammer
+      // (and briefly re-render) — back off slightly between attempts.
+      source.onerror = () => {
+        if (disposed || !source) return;
+        source.close();
+        source = null;
+        retryTimer = setTimeout(connect, 3000);
+      };
+    };
+
+    connect();
+
     return () => {
-      source.removeEventListener(channel, listener);
-      source.close();
+      disposed = true;
+      if (retryTimer) clearTimeout(retryTimer);
+      if (source) {
+        source.removeEventListener(channel, listener);
+        source.close();
+      }
     };
   }, [channel]);
 }

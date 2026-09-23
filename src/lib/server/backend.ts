@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { backendApi } from "@/lib/auth";
-import { ApiError } from "@/lib/api-errors";
+import { ApiError, pickErrorMessage } from "@/lib/api-errors";
 
 /**
  * Shared server-side backend client. Used by BFF route handlers AND
@@ -43,14 +43,22 @@ function toBackendError(error: unknown, path: string): ApiError {
   const err = error as {
     response?: {
       status?: number;
-      data?: { message?: string; error?: string; errorCode?: string };
+      data?: {
+        message?: string;
+        error?: string;
+        errorCode?: string;
+        errors?: string[];
+      };
     };
     message?: string;
   };
   return new ApiError(
     err.response?.status ?? 0,
     err.response?.data?.errorCode ?? err.response?.data?.error ?? "REQUEST_FAILED",
-    err.response?.data?.message ?? err.message ?? `Backend request failed: ${path}`,
+    pickErrorMessage(
+      err.response?.data,
+      err.message ?? `Backend request failed: ${path}`,
+    ),
     err.response?.data,
   );
 }

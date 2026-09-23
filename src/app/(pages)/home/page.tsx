@@ -32,9 +32,15 @@ export default async function HomePage({
     lat?: string;
     lng?: string;
     radius?: string;
+    pricingModel?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    rating?: string;
   }>;
 }) {
-  const { category, lat, lng, radius } = await searchParams;
+  const sp = await searchParams;
+  const { lat, lng, radius } = sp;
+  const categoryParam = sp.category?.trim() || undefined;
 
   const latitude = toNumber(lat);
   const longitude = toNumber(lng);
@@ -48,15 +54,18 @@ export default async function HomePage({
   const searchRadius = toNumber(radius) ?? 10;
 
   const categories = await getCategories();
-  const selected = category
-    ? categories.find((c) => (c._id ?? c.code) === category)
+  const selected = categoryParam
+    ? categories.find(
+        (c) => c._id === categoryParam || c.code === categoryParam,
+      )
     : undefined;
-  const selectedId = selected ? (selected._id ?? selected.code ?? "") : "";
+  const selectedId =
+    selected?._id ?? selected?.code ?? categoryParam ?? "";
 
   const [subcategories, feed] = await Promise.all([
     selectedId ? getSubcategories(selectedId) : Promise.resolve([]),
     getServicesFeed({
-      category: category ? selectedId || undefined : undefined,
+      category: categoryParam,
       limit: 24,
       latitude: geoActive ? latitude : undefined,
       longitude: geoActive ? longitude : undefined,
@@ -71,6 +80,13 @@ export default async function HomePage({
     ),
   );
 
+  const baseQuery = new URLSearchParams();
+  if (geoActive) {
+    baseQuery.set("lat", String(latitude));
+    baseQuery.set("lng", String(longitude));
+    baseQuery.set("radius", String(searchRadius));
+  }
+
   return (
     <div>
       <HomeLocationInitializer
@@ -78,7 +94,11 @@ export default async function HomePage({
         radius={searchRadius}
         geoActive={geoActive}
       />
-      <ServicesCarousel items={carouselItems} selectedCategory={selectedId} />
+      <ServicesCarousel
+        items={carouselItems}
+        selectedCategory={selectedId}
+        baseQuery={baseQuery.toString()}
+      />
       <div className="mt-6">
         <HomeServicesGrid
           title={selected?.displayName ?? "Services"}
@@ -88,7 +108,7 @@ export default async function HomePage({
           cards={feed.items.map(mapServiceItemToCard)}
           authGated={feed.unauthorized}
           params={{
-            category: category ? selectedId || undefined : undefined,
+            category: categoryParam,
             latitude: geoActive ? latitude : undefined,
             longitude: geoActive ? longitude : undefined,
             radius: geoActive ? searchRadius : undefined,
@@ -104,6 +124,8 @@ export default async function HomePage({
                 }
               : undefined
           }
+          subcategories={subcategories}
+          categoryId={selectedId || categoryParam || undefined}
         />
       </div>
     </div>

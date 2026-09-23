@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import ProfileEditForm, { type ProfileEditInitial } from "@/app/ui/profile/ProfileEditForm";
 import PasswordChangeForm from "@/app/ui/profile/PasswordChangeForm";
+import LogoutButton from "@/components/ui/LogoutButton";
 import {
   getMyHandymanProfile,
   getSessionUser,
@@ -34,6 +35,9 @@ export default async function ProfilePage() {
     <>
       <ProfileEditForm initial={initial} />
       <PasswordChangeForm />
+      <div className="mt-8">
+        <LogoutButton />
+      </div>
     </>
   );
 }

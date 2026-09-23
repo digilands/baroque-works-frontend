@@ -17,6 +17,7 @@ import type {
   ProfessionSubCategory,
   ServiceCategory,
 } from "@/lib/server/queries";
+import StyledSelect from "@/components/ui/StyledSelect";
 
 interface CatalogManagerProps {
   categories: ServiceCategory[];
@@ -240,15 +241,14 @@ function SubcategoryTab({ initial }: { initial: ProfessionSubCategory[] }) {
             placeholder="Display name"
             className={inputClasses}
           />
-          <select
+          <StyledSelect
             value={form.profession}
-            onChange={(e) => setForm((f) => ({ ...f, profession: e.target.value }))}
-            className={inputClasses}
-          >
-            {PROFESSIONS.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
+            onChange={(v) => setForm((f) => ({ ...f, profession: v }))}
+            options={PROFESSIONS.map((p) => ({ value: p, label: p }))}
+            aria-label="Profession"
+            className="w-full"
+            triggerClassName={inputClasses}
+          />
           <input
             value={form.description}
             onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
@@ -370,15 +370,14 @@ function TagTab({ initial }: { initial: ApiTag[] }) {
             placeholder="Display name"
             className={inputClasses}
           />
-          <select
+          <StyledSelect
             value={form.category}
-            onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-            className={inputClasses}
-          >
-            {TAG_CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+            onChange={(v) => setForm((f) => ({ ...f, category: v }))}
+            options={TAG_CATEGORIES.map((c) => ({ value: c, label: c }))}
+            aria-label="Tag category"
+            className="w-full"
+            triggerClassName={inputClasses}
+          />
           <input
             value={form.color}
             onChange={(e) => setForm((f) => ({ ...f, color: e.target.value }))}

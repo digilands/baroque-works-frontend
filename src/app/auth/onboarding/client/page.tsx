@@ -6,6 +6,7 @@ import { SubTitle, Title } from "@/app/ui/Titles";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { nigerianStates } from "@/utils/data";
+import StyledSelect from "@/components/ui/StyledSelect";
 import { useCreateHirer, useUpdateMe } from "@/hooks/useOnboarding";
 import type { PreferredLanguage, UrgencyTendency } from "@/lib/api";
 
@@ -140,15 +141,16 @@ export default function ClientOnboardingPage() {
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">State</span>
-            <select
-              value={stateName}
-              onChange={(e) => setStateName(e.target.value)}
-              className="mt-1 w-full p-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium focus:outline-none"
-            >
-              {nigerianStates.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            <div className="mt-1 w-full">
+              <StyledSelect
+                value={stateName}
+                onChange={setStateName}
+                options={nigerianStates.map((s) => ({ value: s, label: s }))}
+                aria-label="State"
+                className="w-full"
+                triggerClassName="p-3.5 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium"
+              />
+            </div>
           </label>
           <label className="block">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">LGA</span>

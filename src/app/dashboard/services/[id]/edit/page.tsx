@@ -31,6 +31,7 @@ export default async function EditServicePage({
   return (
     <ServiceCreateForm
       serviceId={service._id ?? id}
+      handymanId={profile._id}
       initial={{
         category: service.category ?? "",
         subCategory: service.subCategory ?? "",

@@ -48,7 +48,7 @@ export default function SignupForm() {
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-bold mb-3 text-gray-900 tracking-tight">Create Account</h1>
         <p className="text-gray-500 text-sm">
-          Join BaroqueWorks to manage your service requests with ease.
+          Join Handyman to manage your service requests with ease.
         </p>
       </div>
 

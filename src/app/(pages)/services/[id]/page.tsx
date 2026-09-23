@@ -13,7 +13,7 @@ import { formatNaira } from "@/lib/server/mappers";
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
 
-const FALLBACK_IMAGE = "https://placehold.co/600x400?text=BaroqueWorks";
+const FALLBACK_IMAGE = "https://placehold.co/600x400?text=Handyman";
 
 export default async function ServiceDetailsPage({
   params,

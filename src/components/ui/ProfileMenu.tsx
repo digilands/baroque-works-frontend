@@ -14,6 +14,7 @@ import {
   Certificate01Icon,
 } from "@hugeicons/core-free-icons";
 import { useAuth } from "@/context/AuthContext";
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 const PROFILE_FIELDS = ["fullname", "phone", "bio", "address", "image"] as const;
 
@@ -33,6 +34,7 @@ export default function ProfileMenu() {
   const isHandyman = user?.role === "handyman";
   const initials = user?.fullname?.trim()?.charAt(0).toUpperCase() || "?";
   const image = user?.image?.[0]?.url;
+  const avatarSrc = normalizeImageSrc(image);
 
   const items = isHandyman
     ? [
@@ -54,12 +56,12 @@ export default function ProfileMenu() {
         aria-label={completion < 100 ? `Profile completeness ${completion}%` : "Open profile menu"}
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className={`relative w-11 h-11 rounded-full hover:scale-105 transition-transform ${completion < 100 ? "p-[3px] bg-[conic-gradient(#D4A556_var(--progress),#E5E7EB_0)]" : "border border-gray-200"}`}
+        className={`relative w-9 h-9 md:w-11 md:h-11 rounded-full hover:scale-105 transition-transform shrink-0 ${completion < 100 ? "p-[3px] bg-[conic-gradient(#D4A556_var(--progress),#E5E7EB_0)]" : "border border-gray-200"}`}
         style={completion < 100 ? ({ "--progress": `${completion}%` } as React.CSSProperties) : undefined}
       >
         <span className="relative flex items-center justify-center w-full h-full rounded-full bg-white overflow-hidden">
           {image ? (
-            <Image src={image} alt="Profile" fill className="object-cover" sizes="44px" unoptimized={image.includes("thispersondoesnotexist.com")} />
+            <Image src={avatarSrc} alt="Profile" fill className="object-cover" sizes="44px" unoptimized={isUnoptimizedSrc(avatarSrc)} />
           ) : (
             <span className="text-sm font-bold text-gray-700">{initials}</span>
           )}

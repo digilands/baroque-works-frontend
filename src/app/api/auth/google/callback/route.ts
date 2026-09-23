@@ -92,7 +92,7 @@ export async function GET(request: Request) {
         .then((r) => r.data?.handyman ?? r.data?.data?.handyman ?? null)
         .catch(() => null);
       return NextResponse.redirect(
-        new URL(profile ? '/dashboard/jobs' : '/auth/serviceselection', request.url),
+        new URL(profile ? '/dashboard' : '/auth/serviceselection', request.url),
       );
     }
 
