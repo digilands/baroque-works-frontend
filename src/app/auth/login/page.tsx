@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { GoogleIcon } from "@hugeicons/core-free-icons";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -61,11 +62,11 @@ export default function LoginPage() {
 
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
+            <PasswordInput
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:ring-1 focus:ring-black outline-none transition-all text-sm font-medium"
               placeholder="••••••••"
             />
