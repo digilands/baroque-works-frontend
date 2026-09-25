@@ -58,15 +58,15 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#F7F7F0] pt-4 pb-2">
-      <div className="max-w-screen-2xl mx-auto px-6">
-        <div className="flex items-center justify-between gap-6">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-6">
+        <div className="flex items-center justify-between gap-3 md:gap-6">
 
           {/* Logo & Search Area */}
-          <div className="flex items-center gap-12 flex-1">
+          <div className="flex items-center gap-6 md:gap-12 flex-1 min-w-0">
             <Link href="/" className="shrink-0">
-              <span className="flex items-center gap-2 text-2xl font-bold text-gray-900 tracking-tight">
-                <Image src="/handyman-logo.svg" alt="BaroqueWorks" width={32} height={32} />
-                BaroqueWorks
+              <span className="flex items-center gap-1.5 md:gap-2 text-xl md:text-2xl font-bold text-gray-900 tracking-tight whitespace-nowrap">
+                <Image src="/handyman-logo.svg" alt="Handyman" width={32} height={32} className="w-7 h-7 md:w-8 md:h-8" />
+                Handyman
               </span>
             </Link>
 
@@ -136,7 +136,7 @@ export default function Header() {
           </div>
 
           {/* User Actions */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4 md:gap-8 shrink-0">
             <Link
               href="/auth/signup"
               className="hidden lg:block text-[15px] font-medium text-gray-400 hover:text-gray-900 transition-colors"
@@ -144,13 +144,13 @@ export default function Header() {
               Become a Handyman
             </Link>
 
-            <div className="flex items-center gap-5">
-              <button className="text-gray-900 hover:text-gray-600 transition-colors">
-                <HugeiconsIcon icon={MessageMultiple01Icon} size={24} />
+            <div className="flex items-center gap-3 md:gap-5">
+              <button className="shrink-0 text-gray-900 hover:text-gray-600 transition-colors">
+                <HugeiconsIcon icon={MessageMultiple01Icon} size={22} />
               </button>
 
-              <button className="text-gray-900 hover:text-gray-600 transition-colors">
-                <HugeiconsIcon icon={Notification02Icon} size={24} />
+              <button className="shrink-0 text-gray-900 hover:text-gray-600 transition-colors">
+                <HugeiconsIcon icon={Notification02Icon} size={22} />
               </button>
 
               <ProfileMenu />
@@ -159,17 +159,25 @@ export default function Header() {
         </div>
 
         {/* Mobile Search Bar (Only visible on mobile) */}
-        <div className="mt-4 md:hidden">
-          <div className="flex items-center gap-3 bg-[#f0f0e9] rounded-full px-5 py-3">
-            <HugeiconsIcon icon={Search01Icon} size={20} className="text-gray-900" />
+        <div className="mt-4 md:hidden flex items-center gap-2.5">
+          <div className="flex items-center gap-3 bg-[#f0f0e9] rounded-full px-5 py-3 flex-1 min-w-0">
+            <HugeiconsIcon icon={Search01Icon} size={20} className="text-gray-900 shrink-0" />
             <input
               type="text"
               placeholder="What type of service do you want"
-              className="w-full bg-transparent border-none text-[15px] font-medium text-gray-900 focus:outline-none placeholder:text-gray-400"
+              className="w-full min-w-0 bg-transparent border-none text-[15px] font-medium text-gray-900 focus:outline-none placeholder:text-gray-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <button
+            type="button"
+            aria-label="Use my location"
+            onClick={handleUseMyLocation}
+            className="shrink-0 w-12 h-12 inline-flex items-center justify-center bg-[#f0f0e9] rounded-2xl text-gray-900 hover:bg-gray-200/60 transition-colors"
+          >
+            <HugeiconsIcon icon={Location04Icon} size={22} />
+          </button>
         </div>
       </div>
     </header>

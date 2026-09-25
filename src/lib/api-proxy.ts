@@ -22,8 +22,15 @@ function toResponse<T>(data: T) {
 function toErrorResponse(error: unknown, fallbackMessage: string) {
   if (error instanceof ApiError) {
     console.error(fallbackMessage, error.details ?? error.message);
+    const details = error.details as { errors?: string[] } | undefined;
     return NextResponse.json(
-      { success: false, message: error.message },
+      {
+        success: false,
+        message: error.message,
+        ...(Array.isArray(details?.errors) && details.errors.length > 0
+          ? { errors: details.errors }
+          : {}),
+      },
       { status: error.status || 500 },
     );
   }

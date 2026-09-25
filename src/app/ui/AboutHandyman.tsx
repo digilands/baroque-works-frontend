@@ -53,7 +53,7 @@ export default function AboutHandyman({ aboutMe, experience, previousWork, categ
                         {/* Display first 3 images or fewer */}
                         {previousWork.slice(0, 3).map((img, index) => (
                             <div key={index} className={`relative h-[8rem] rounded-xl overflow-hidden ${index === 0 ? "col-span-1" : "col-span-1"}`}>
-                                <Image src={img} alt={`Work ${index + 1}`} fill className="object-cover" />
+                                <Image src={img} alt={`Work ${index + 1}`} fill sizes="(max-width: 768px) 50vw, 33vw" className="object-cover" />
                             </div>
                         ))}
                     </div>

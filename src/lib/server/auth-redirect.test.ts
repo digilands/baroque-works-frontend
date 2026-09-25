@@ -58,11 +58,11 @@ describe("resolvePostAuthDestination", () => {
     ).resolves.toBe("/auth/serviceselection");
   });
 
-  it("sends handymen with a profile to the job feed", async () => {
+  it("sends handymen with a profile to the dashboard", async () => {
     mockedHandyman.mockResolvedValue({ _id: "h1" });
     await expect(
       resolvePostAuthDestination(userWithRole("handyman")),
-    ).resolves.toBe("/dashboard/jobs");
+    ).resolves.toBe("/dashboard");
   });
 
   it("sends clients without a hirer profile to client onboarding", async () => {

@@ -1,17 +1,16 @@
-import { redirect } from "next/navigation";
 import ProfileEditForm, { type ProfileEditInitial } from "@/app/ui/profile/ProfileEditForm";
 import PasswordChangeForm from "@/app/ui/profile/PasswordChangeForm";
+import LogoutButton from "@/components/ui/LogoutButton";
 import {
   getMyHandymanProfile,
-  getSessionUser,
 } from "@/lib/server/queries";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
-  const user = await getSessionUser().catch(() => null);
-  if (!user) redirect("/auth/login");
+  const user = await requireSessionUser("/dashboard/profile");
 
   const handyman =
     user.role === "handyman" ? await getMyHandymanProfile() : null;
@@ -34,6 +33,9 @@ export default async function ProfilePage() {
     <>
       <ProfileEditForm initial={initial} />
       <PasswordChangeForm />
+      <div className="mt-8">
+        <LogoutButton />
+      </div>
     </>
   );
 }

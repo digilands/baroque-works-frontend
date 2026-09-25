@@ -11,8 +11,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "BaroqueWorks — Trusted local trade professionals",
-    template: "%s · BaroqueWorks",
+    default: "Handyman — Trusted local trade professionals",
+    template: "%s · Handyman",
   },
   description:
     "Find vetted electricians, plumbers, carpenters, painters, and more across Nigeria. Book trusted local pros in minutes.",

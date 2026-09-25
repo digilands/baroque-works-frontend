@@ -5,10 +5,17 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextInput from "@/app/ui/TextInput";
 import Button from "@/app/ui/Button";
+import PasswordChecklist from "@/components/ui/PasswordChecklist";
 import { useResetPassword } from "@/hooks/useMarketplace";
 
 const validationSchema = Yup.object({
-  password: Yup.string().min(6, "At least 6 characters").required("New password is required"),
+  password: Yup.string()
+    .min(8, "At least 8 characters")
+    .matches(/[A-Z]/, "One uppercase letter")
+    .matches(/[a-z]/, "One lowercase letter")
+    .matches(/[0-9]/, "One number")
+    .matches(/[!@#$%^&*(),.?":{}|<>]/, "One special character")
+    .required("New password is required"),
   confirm: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm your new password"),
@@ -51,9 +58,10 @@ export default function PasswordChangeForm() {
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, values }) => (
           <Form className="space-y-5">
             <TextInput label="New password" name="password" type="password" required placeholder="••••••••" />
+            <PasswordChecklist password={values.password} />
             <TextInput label="Confirm password" name="confirm" type="password" required placeholder="••••••••" />
             <Button
               type="submit"

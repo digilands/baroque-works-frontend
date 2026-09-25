@@ -21,23 +21,23 @@ export default function VerticalCarousel() {
   const displayItems = [...slides, ...slides, ...slides];
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-[500px] w-full overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center h-[440px] w-full overflow-hidden">
       {/* Background Graphic Element */}
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-72 h-72 bg-indigo-50 rounded-full blur-3xl opacity-50 -z-10" />
       
       {/* Featured Large Image */}
-      <div className="absolute left-10 top-1/2 -translate-y-1/2 z-10 transition-all duration-700 ease-out transform">
-        <div className="relative w-64 h-64">
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10 transition-all duration-700 ease-out transform">
+        <div className="relative w-48 h-48">
            {slides.map((slide, idx) => (
              <Image
                key={idx}
                src={slide.image}
                alt={slide.title}
-               width={256}
-               height={256}
+               width={192}
+               height={192}
                className={`absolute inset-0 object-contain transition-all duration-700 ${
                  idx === activeIndex % slides.length 
-                   ? "opacity-100 scale-110 rotate-0 translate-x-0" 
+                   ? "opacity-100 scale-105 rotate-0 translate-x-0" 
                    : "opacity-0 scale-75 rotate-12 translate-x-20"
                }`}
              />
@@ -61,31 +61,33 @@ export default function VerticalCarousel() {
         {displayItems.map((service, idx) => {
           const isActive = activeIndex === idx;
           const isNeighbor = Math.abs(activeIndex - idx) === 1;
+          // Long titles shrink so the active label clears the illustration.
+          const activeSize = service.title.length > 12 ? "text-2xl" : "text-3xl";
 
           return (
             <SwiperSlide key={idx}>
               <div
-                className={`flex items-center justify-end pr-12 transition-all duration-500 ease-out ${
+                className={`flex items-center justify-end pr-6 transition-all duration-500 ease-out ${
                   isActive 
-                    ? "scale-125 opacity-100 translate-x-0" 
+                    ? "scale-105 opacity-100 translate-x-0" 
                     : isNeighbor 
-                      ? "scale-100 opacity-40 translate-x-8" 
-                      : "scale-90 opacity-20 translate-x-16"
+                      ? "scale-100 opacity-40 translate-x-12" 
+                      : "scale-90 opacity-20 translate-x-20"
                 }`}
               >
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4">
                   <Image 
                     src={service.image} 
                     alt={service.title} 
-                    width={isActive ? 48 : 32} 
-                    height={isActive ? 48 : 32} 
+                    width={isActive ? 36 : 28} 
+                    height={isActive ? 36 : 28} 
                     className="transition-all duration-500"
                   />
                   <p
                     className={`font-bold transition-all duration-500 whitespace-nowrap ${
                       isActive 
-                        ? "text-4xl text-gray-900" 
-                        : "text-2xl text-gray-400"
+                        ? `${activeSize} text-gray-900` 
+                        : "text-xl text-gray-400"
                     }`}
                   >
                     {service.title}

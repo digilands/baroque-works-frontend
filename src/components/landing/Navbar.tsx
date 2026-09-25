@@ -14,8 +14,8 @@ const Navbar = () => {
     <nav className="w-full flex items-center justify-between py-4 px-4 md:px-12 bg-transparent border-b border-gray-200 relative z-50">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
-        <Image src="/handyman-logo.svg" alt="BaroqueWorks" width={32} height={32} />
-        <span className="text-xl font-bold text-text dark:text-white">BaroqueWorks</span>
+        <Image src="/handyman-logo.svg" alt="Handyman" width={32} height={32} />
+        <span className="text-xl font-bold text-text dark:text-white">Handyman</span>
       </Link>
 
       {/* Desktop Links */}

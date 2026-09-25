@@ -3,9 +3,9 @@ import ServiceCreateForm from "@/app/ui/services/ServiceCreateForm";
 import {
   getMyHandymanProfile,
   getServiceById,
-  getSessionUser,
 } from "@/lib/server/queries";
 import { toDateTimeLocalValue } from "@/lib/server/mappers";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
@@ -16,8 +16,7 @@ export default async function EditServicePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getSessionUser().catch(() => null);
-  if (!user) redirect("/auth/login");
+  const user = await requireSessionUser(`/dashboard/services/${id}/edit`);
   if (user.role !== "handyman") redirect("/dashboard");
 
   const [profile, service] = await Promise.all([
@@ -31,6 +30,7 @@ export default async function EditServicePage({
   return (
     <ServiceCreateForm
       serviceId={service._id ?? id}
+      handymanId={profile._id}
       initial={{
         category: service.category ?? "",
         subCategory: service.subCategory ?? "",

@@ -71,6 +71,14 @@ export interface ServiceCardData {
   title: string;
   rate: string;
   rateType: string;
+  /** Raw price for client-side min/max filters. */
+  priceValue?: number;
+  /** Geo distance in meters when the feed returned a geospatial hit. */
+  distanceMeters?: number;
+  /** Subcategory id or display name when the feed includes it. */
+  subCategory?: string;
+  /** Category id when the feed includes it — client-side category filter. */
+  category?: string;
   profile: {
     profilePic: string;
     name: string;
@@ -84,14 +92,18 @@ export function mapServiceItemToCard(item: ServiceFeedItem): ServiceCardData {
   const handyman = item.handyman;
   return {
     id: item._id ?? "",
-    image: handyman?.image?.[0]?.url ?? "",
+    image: item.image?.[0]?.url ?? handyman?.image?.[0]?.url ?? "",
     title: item.description ?? "Service",
     rate: formatNaira(item.price ?? 0),
     rateType: item.pricingModel ?? "fixed",
+    priceValue: item.price,
+    distanceMeters: item.distance,
+    subCategory: item.subCategory,
+    category: item.category,
     profile: {
       profilePic: handyman?.image?.[0]?.url ?? "",
       name: handyman?.fullname ?? "Handyman",
-      availability: true,
+      availability: false,
       rating: handyman?.rating ?? 0,
     },
   };
@@ -109,13 +121,13 @@ export interface JobListItem {
 }
 
 /** Backend job -> dashboard jobs list row. */
-export function mapJobToListItem(job: ApiJob): JobListItem {
+export function mapJobToListItem(job: ApiJob, categoryName?: string): JobListItem {
   const distanceMeters = job.distance ?? 0;
   return {
     id: job._id ?? "",
     title: job.title ?? "Untitled job",
     status: (job.status ?? "OPEN").toLowerCase(),
-    category: job.category ?? "General",
+    category: categoryName ?? (job.category && !/^[\da-f]{24}$/i.test(job.category) ? job.category : "Service request"),
     urgency: job.urgency ?? "NORMAL",
     budget: formatNaira(job.budget?.max ?? job.budget?.min ?? 0),
     date: formatDate(job.createdAt),

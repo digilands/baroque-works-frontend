@@ -1,116 +1,124 @@
 # API Routes
 
-All routes are Next.js Route Handlers under `src/app/api/`. They act as a BFF (Backend for Frontend) proxy, forwarding requests to the NodeJS backend and managing cookies.
+All routes are Next.js Route Handlers under `src/app/api/`. They form a **BFF (Backend for Frontend)** proxy: the browser calls `/api/*`, the handler forwards to the NestJS backend at `NEXT_PUBLIC_API_URL`, attaching `Authorization: Bearer <accessToken cookie>` and managing session cookies.
 
-## POST `/api/auth/login`
+**Implementation pattern:** most routes are one-liners over `src/lib/api-proxy.ts` (`proxyGet/Post/Put/Patch/Delete/MultipartPost`), which call `src/lib/server/backend.ts`. Query params are forwarded automatically. Errors return `{ success: false, message }` with the backend's status code.
 
-**Purpose:** Authenticate a user with email/password.
+**Contract source:** backend Swagger at `context/swagger.yaml` → generated `src/types/api.d.ts`.
 
-**Request body:**
+## Auth (`/api/auth`)
 
-```json
-{ "email": "string", "password": "string" }
-```
+| Method | Route | Purpose | Notes |
+| ------ | ----- | ------- | ----- |
+| POST | `/api/auth/login` | Email/password login | Sets `accessToken` (7d) + `refreshToken` (30d) HTTP-only cookies. Body: `{ email, password }`. Returns `{ success, user }`. |
+| POST | `/api/auth/signup` | Register | Backend returns tokens in JSON body (sets no cookies) — this route sets both cookies itself. Body: `{ fullname, email, password, role? }` (role lowercase `client`/`handyman`, optional). Fresh signup lands authenticated → `/auth/role-selection`. |
+| POST | `/api/auth/refresh` | Rotate session | Reads `refreshToken` cookie → `POST /auth/refresh` → rewrites both cookies. Called by the client's single-flight 401 interceptor. |
+| POST | `/api/auth/logout` | End session | Clears both cookies (no backend call). |
+| GET | `/api/auth/me` | Current user | Cookie → `GET /auth/me`. Returns `{ user }` or 401. |
+| GET | `/api/auth/google/callback` | OAuth redirect target | Query `?token=&refreshToken?` → sets cookies → fetches `/auth/me` + profile with the fresh token → redirects to role/profile-aware destination (login / role-selection / serviceselection / onboarding/client / dashboard / admin). |
+| PUT | `/api/auth/password-reset` | Reset password | Proxies `PUT /auth/password-reset`. |
 
-**Backend call:** `POST /auth/login` on `NEXT_PUBLIC_API_URL`
+## Categories (`/api/categories`)
 
-**Response (success):**
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/categories` | Service categories (`?isActive`). |
+| GET | `/api/categories/subcategories` | Subcategories (`?categoryId&isActive`). |
+| GET | `/api/categories/tags` | Tags (`?category&isActive`). |
 
-```json
-{ "success": true, "user": { "_id", "email", "fullname", "role", "avatar" } }
-```
+> Envelope note: backend list responses vary (`items` / `categories` / `data` / bare array). Server queries normalize via `asArray()`; client fetchers try each key.
 
-**Side effects:** Sets `accessToken` (7 days) and optionally `refreshToken` (30 days) as HTTP-only cookies.
+## Handymen (`/api/handymen`)
 
-**Error:** Returns the backend's error message and status code, or 500 on network failure.
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/handymen` | Geospatial search (`?cursor&limit&categoryId&experienceLevel&rating&latitude&longitude&radius`). |
+| GET | `/api/handymen/[id]` | Profile detail (public). |
+| POST | `/api/handymen` | Create own handyman profile (onboarding). Body: `{ categoryId: [{ type, experienceLevel }], location?, tags? }`. |
+| PATCH | `/api/handymen/me` | Update own handyman profile (proxies `PATCH /handymen`). |
 
-**File:** `src/app/api/auth/login/route.ts`
+## Hirers (`/api/hirers`)
 
----
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| POST | `/api/hirers` | Create own hirer profile (client onboarding). |
 
-## POST `/api/auth/signup`
+## Users (`/api/users`)
 
-**Purpose:** Register a new user account.
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/users` | Paginated user list, admin (`?nextCursor&limit&role`). |
+| PUT | `/api/users/me` | Update own record (phone, avatar, bio, address, fullname). Resolves user id via `/auth/me`, proxies `PUT /users/{id}`. **Side effect:** if the backend rotates tokens (e.g. role change), cookies are rewritten server-side; tokens are stripped before responding to the browser. |
 
-**Request body:**
+## Jobs (`/api/jobs`)
 
-```json
-{ "fullname": "string", "email": "string", "password": "string", "role": "Client" | "Handyman" }
-```
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/jobs` | Listings + filters + geo search (`?category&urgency&status&minBudget&maxBudget&latitude&longitude&radius&limit&cursor`). |
+| POST | `/api/jobs` | Create job posting (hirer). |
+| GET | `/api/jobs/[id]` | Job detail. |
+| PATCH | `/api/jobs/[id]` | Update job (owner). |
+| DELETE | `/api/jobs/[id]` | Cancel/delete job (owner). |
 
-**Backend call:** `POST /auth/signup` on `NEXT_PUBLIC_API_URL`
+## Services (`/api/services`)
 
-**Response (success):**
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/services` | Service feed/list. |
+| POST | `/api/services` | Create service (handyman). |
+| GET | `/api/services/[id]` | Service detail. |
+| PUT | `/api/services/[id]` | Update service (owner). |
+| DELETE | `/api/services/[id]` | Delete service (owner). |
 
-```json
-{ "success": true, "data": { ... } }
-```
+## Bookings (`/api/bookings`)
 
-**Side effects:** None (user must log in separately after signup).
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/bookings` | Current user's bookings (`?status&bookingSource&paymentStatus&hirerId&handymanId&limit&cursor`). |
+| POST | `/api/bookings` | Accept a bid: proxied to `POST /bookings/job`. Body: `{ jobId, handymanId, scheduledDate?, totalAmount? }`. |
+| GET | `/api/bookings/[id]` | Booking detail. |
+| PATCH | `/api/bookings/[id]/status` | Role-aware status transitions (confirm/start/complete/cancel). |
+| POST | `/api/bookings/service` | Book directly from a service listing (Hire flow). |
 
-**File:** `src/app/api/auth/signup/route.ts`
+## Disputes (`/api/disputes`)
 
----
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| POST | `/api/disputes` | Open a dispute. |
+| GET | `/api/disputes/[id]` | Dispute detail. |
 
-## POST `/api/auth/logout`
+## Uploads (`/api/uploads`)
 
-**Purpose:** End the user session by clearing cookies.
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| POST | `/api/uploads/image` | Single image (multipart) → Cloudinary. |
+| POST | `/api/uploads/images` | Up to 10 images (multipart: `files[]`, `folder?`). |
+| DELETE | `/api/uploads/[...publicId]` | Delete asset by public id. |
 
-**Request body:** None
+Cloudinary folders: `user-profiles`, `user-services`, `user-jobs`, `user-videos`, `service-categories`.
 
-**Backend call:** None (cookie clearing only)
+## Admin Catalog (`/api/admin`)
 
-**Response:**
+All writes are admin-only at the backend. List endpoints proxy the public reads.
 
-```json
-{ "success": true, "message": "Logged out successfully" }
-```
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET/POST | `/api/admin/categories` | List (public read) / create. |
+| PUT/DELETE | `/api/admin/categories/[id]` | Update / delete. |
+| GET/POST | `/api/admin/subcategories` | List (`?categoryId`) / create. |
+| PUT/DELETE | `/api/admin/subcategories/[id]` | Update / delete. |
+| GET/POST | `/api/admin/tags` | List (`?category`) / create. |
+| PUT/DELETE | `/api/admin/tags/[id]` | Update / delete. |
 
-**Side effects:** Deletes `accessToken` and `refreshToken` cookies.
+## Realtime (`/api/sse`)
 
-**File:** `src/app/api/auth/logout/route.ts`
+| Method | Route | Purpose |
+| ------ | ----- | ------- |
+| GET | `/api/sse?channel=bookings\|jobs` | **Server-Sent Events.** Sends one backend snapshot + 4 heartbeats over ~20s, then closes (Vercel can't hold streams open). `EventSource` auto-reconnects, giving near-live dashboard updates. Always `force-dynamic`. |
 
----
+## Conventions
 
-## GET `/api/auth/me`
-
-**Purpose:** Get the current authenticated user's profile.
-
-**Request body:** None (reads `accessToken` from cookies)
-
-**Backend call:** `GET /auth/me` with `Authorization: Bearer <token>` header
-
-**Response (success):**
-
-```json
-{ "user": { "_id", "email", "fullname", "role", "avatar" } }
-```
-
-**Response (no token):**
-
-```json
-{ "user": null }
-```
-
-Status: 401
-
-**File:** `src/app/api/auth/me/route.ts`
-
----
-
-## GET `/api/auth/google/callback`
-
-**Purpose:** Handle the OAuth redirect from Google (via the NodeJs backend). Extracts the token from query parameters and sets cookies.
-
-**Query parameters:**
-
-- `token` (required) — JWT access token
-- `refreshToken` (optional) — refresh token
-
-**Response:** Redirects to `/dashboard`
-
-**Side effects:** Sets `accessToken` and optionally `refreshToken` as HTTP-only cookies.
-
-**Error:** Redirects to `/auth/login?error=oauth_failed` if no token is present.
-
-**File:** `src/app/api/auth/google/callback/route.ts`
+- Session tokens never reach browser JavaScript — cookies only.
+- Dynamic segments are read from `request.nextUrl.params` / path and re-encoded before the backend call.
+- Anything nontrivial (login, signup, refresh, OAuth callback, `users/me`) handles cookies explicitly with `next/headers`.
+- Adding a route: prefer a `proxy*` one-liner; only hand-roll when cookies or response shaping are involved.

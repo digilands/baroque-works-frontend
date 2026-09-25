@@ -26,9 +26,13 @@ export async function resolvePostAuthDestination(
 
   if (user.role === "handyman") {
     const profile = await getMyHandymanProfile();
-    return profile ? "/dashboard/jobs" : "/auth/serviceselection";
+    return profile ? "/dashboard" : "/auth/serviceselection";
   }
 
   const hirer = await getMyHirerProfile();
-  return hirer?.profile_completed ? "/dashboard" : "/auth/onboarding/client";
+  // Treat missing OR incomplete hirer profiles the same: both mean the
+  // client has not finished onboarding. Returning /dashboard for incomplete
+  // profiles would bounce the user straight back here on every load.
+  if (!hirer || !hirer.profile_completed) return "/auth/onboarding/client";
+  return "/dashboard";
 }

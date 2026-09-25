@@ -9,7 +9,7 @@ export type ProfessionSubCategory =
   components["schemas"]["ProfessionSubCategory"];
 export type ApiTag = components["schemas"]["Tag"];
 export type ApiHandyman = components["schemas"]["Handyman"];
-export type ApiHirer = components["schemas"]["Hirer"] & {
+export type ApiHirer = Omit<components["schemas"]["Hirer"], "profile_completed"> & {
   /** Set by the backend when client onboarding creates the hirer profile. */
   profile_completed?: boolean;
 };
@@ -24,6 +24,10 @@ export interface ServiceFeedItem {
   price?: number;
   pricingModel?: string;
   distance?: number;
+  subCategory?: string;
+  category?: string;
+  /** Service gallery images — preferred over the handyman profile photo on cards. */
+  image?: { public_id?: string; url?: string }[];
   handyman?: {
     _id?: string;
     fullname?: string;

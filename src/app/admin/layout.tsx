@@ -8,7 +8,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <header className="bg-gray-950 text-white">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/admin" className="font-bold tracking-tight hover:text-gray-300 transition-colors">
-            BaroqueWorks · Admin
+            Handyman · Admin
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium">
             <Link href="/admin" className="text-white/70 hover:text-white transition-colors">

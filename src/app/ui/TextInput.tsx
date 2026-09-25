@@ -9,6 +9,8 @@ interface TextInputProps {
   required?: boolean;
   type?: string;
   maxLength?: number;
+  /** When set with maxLength, shows a live "{n} characters left" counter. */
+  showCount?: boolean;
 }
 
 export default function TextInput({
@@ -16,9 +18,13 @@ export default function TextInput({
   multiline,
   rows = 3,
   required,
+  showCount = false,
   ...props
 }: TextInputProps) {
   const [field, meta] = useField(props.name);
+  const length = String(field.value ?? "").length;
+  const remaining =
+    props.maxLength != null ? Math.max(props.maxLength - length, 0) : null;
 
   return (
     <div className="w-full">
@@ -58,6 +64,11 @@ export default function TextInput({
       
       {meta.touched && meta.error && (
         <p className="text-xs text-red-500 mt-1 ml-1 font-medium">{meta.error}</p>
+      )}
+      {showCount && remaining !== null && (
+        <p className="text-xs text-gray-400 mt-1 mr-1 font-medium text-right">
+          {remaining} character{remaining === 1 ? "" : "s"} left
+        </p>
       )}
     </div>
   );

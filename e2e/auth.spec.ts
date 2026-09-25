@@ -60,7 +60,7 @@ test.describe("auth gates", () => {
   test("admin login rejects non-admin flow without crashing", async ({ page }) => {
     await page.goto("/admin/login");
     await expect(page.getByText("Admin Console")).toBeVisible();
-    await page.getByPlaceholder("admin@baroqueworks.com").fill("nobody@example.com");
+    await page.getByPlaceholder("admin@handyman.com").fill("nobody@example.com");
     await page.getByPlaceholder("••••••••").fill("WrongPassword123!");
     await page.getByRole("button", { name: "Sign In", exact: true }).click();
     // Either invalid credentials or non-admin — both stay on the page with feedback.

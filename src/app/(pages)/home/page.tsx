@@ -1,5 +1,6 @@
 import dynamicImport from "next/dynamic";
-import ServicesGrid from "../../ui/ServicesGrid";
+import HomeServicesGrid from "../../ui/HomeServicesGrid";
+import HomeLocationInitializer from "../../ui/HomeLocationInitializer";
 import {
   getCategories,
   getServicesFeed,
@@ -31,9 +32,15 @@ export default async function HomePage({
     lat?: string;
     lng?: string;
     radius?: string;
+    pricingModel?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    rating?: string;
   }>;
 }) {
-  const { category, lat, lng, radius } = await searchParams;
+  const sp = await searchParams;
+  const { lat, lng, radius } = sp;
+  const categoryParam = sp.category?.trim() || undefined;
 
   const latitude = toNumber(lat);
   const longitude = toNumber(lng);
@@ -47,14 +54,18 @@ export default async function HomePage({
   const searchRadius = toNumber(radius) ?? 10;
 
   const categories = await getCategories();
-  const selected =
-    categories.find((c) => (c._id ?? c.code) === category) ?? categories[0];
-  const selectedId = selected ? (selected._id ?? selected.code ?? "") : "";
+  const selected = categoryParam
+    ? categories.find(
+        (c) => c._id === categoryParam || c.code === categoryParam,
+      )
+    : undefined;
+  const selectedId =
+    selected?._id ?? selected?.code ?? categoryParam ?? "";
 
   const [subcategories, feed] = await Promise.all([
     selectedId ? getSubcategories(selectedId) : Promise.resolve([]),
     getServicesFeed({
-      category: selectedId || undefined,
+      category: categoryParam,
       limit: 24,
       latitude: geoActive ? latitude : undefined,
       longitude: geoActive ? longitude : undefined,
@@ -69,17 +80,52 @@ export default async function HomePage({
     ),
   );
 
+  const baseQuery = new URLSearchParams();
+  if (geoActive) {
+    baseQuery.set("lat", String(latitude));
+    baseQuery.set("lng", String(longitude));
+    baseQuery.set("radius", String(searchRadius));
+  }
+
   return (
     <div>
-      <ServicesCarousel items={carouselItems} selectedCategory={selectedId} />
+      <HomeLocationInitializer
+        category={selectedId || undefined}
+        radius={searchRadius}
+        geoActive={geoActive}
+      />
+      <ServicesCarousel
+        items={carouselItems}
+        selectedCategory={selectedId}
+        baseQuery={baseQuery.toString()}
+      />
       <div className="mt-6">
-        <ServicesGrid
+        <HomeServicesGrid
           title={selected?.displayName ?? "Services"}
           subtitle={
             geoActive ? `Within ${searchRadius}km of your location` : undefined
           }
           cards={feed.items.map(mapServiceItemToCard)}
           authGated={feed.unauthorized}
+          params={{
+            category: categoryParam,
+            latitude: geoActive ? latitude : undefined,
+            longitude: geoActive ? longitude : undefined,
+            radius: geoActive ? searchRadius : undefined,
+            limit: 24,
+          }}
+          nearby={
+            geoActive
+              ? {
+                  latitude: latitude!,
+                  longitude: longitude!,
+                  radius: searchRadius,
+                  category: selectedId,
+                }
+              : undefined
+          }
+          subcategories={subcategories}
+          categoryId={selectedId || categoryParam || undefined}
         />
       </div>
     </div>

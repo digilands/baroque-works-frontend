@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Navigation03Icon from "@hugeicons/core-free-icons/Navigation03Icon";
+import StyledSelect from "@/components/ui/StyledSelect";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import type { ServiceCategory } from "@/lib/server/queries";
 
@@ -33,8 +34,11 @@ export default function SearchFilters({ categories, initial, currentGeo }: Searc
   const [values, setValues] = useState(initial);
   const { requestLocation, clearLocation, status } = useGeolocation();
 
-  const set = (key: keyof SearchFilterValues) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  const set = (key: keyof SearchFilterValues) => (value: string) =>
+    setValues((v) => ({ ...v, [key]: value }));
+
+  const setInput = (key: keyof SearchFilterValues) => (
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => setValues((v) => ({ ...v, [key]: e.target.value }));
 
   const buildParams = (
@@ -112,57 +116,92 @@ export default function SearchFilters({ categories, initial, currentGeo }: Searc
 
       <label className="block">
         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Category</span>
-        <select value={values.category} onChange={set("category")} className={`${inputClasses} mt-1`}>
-          <option value="">All categories</option>
-          {categories.map((c) => (
-            <option key={c._id} value={c._id ?? ""}>
-              {c.displayName}
-            </option>
-          ))}
-        </select>
+        <div className="mt-1 w-full">
+          <StyledSelect
+            value={values.category}
+            onChange={set("category")}
+            options={[
+              { value: "", label: "All categories" },
+              ...categories.map((c) => ({
+                value: c._id ?? "",
+                label: c.displayName,
+              })),
+            ]}
+            aria-label="Category"
+            className="w-full"
+            triggerClassName="px-4 py-3 rounded-xl"
+          />
+        </div>
       </label>
 
       {values.tab === "services" && (
         <label className="block">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Pricing</span>
-          <select value={values.pricingModel} onChange={set("pricingModel")} className={`${inputClasses} mt-1`}>
-            <option value="">Any</option>
-            <option value="fixed">Fixed</option>
-            <option value="hourly">Hourly</option>
-            <option value="contract">Contract</option>
-          </select>
+          <div className="mt-1 w-full">
+            <StyledSelect
+              value={values.pricingModel}
+              onChange={set("pricingModel")}
+              options={[
+                { value: "", label: "Any" },
+                { value: "fixed", label: "Fixed" },
+                { value: "hourly", label: "Hourly" },
+                { value: "contract", label: "Contract" },
+              ]}
+              aria-label="Pricing model"
+              className="w-full"
+              triggerClassName="px-4 py-3 rounded-xl"
+            />
+          </div>
         </label>
       )}
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Min ₦</span>
-          <input value={values.minPrice} onChange={set("minPrice")} type="number" min={0} placeholder="0" className={`${inputClasses} mt-1`} />
+          <input value={values.minPrice} onChange={setInput("minPrice")} type="number" min={0} placeholder="0" className={`${inputClasses} mt-1`} />
         </label>
         <label className="block">
           <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Max ₦</span>
-          <input value={values.maxPrice} onChange={set("maxPrice")} type="number" min={0} placeholder="Any" className={`${inputClasses} mt-1`} />
+          <input value={values.maxPrice} onChange={setInput("maxPrice")} type="number" min={0} placeholder="Any" className={`${inputClasses} mt-1`} />
         </label>
       </div>
 
       <label className="block">
         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Min rating</span>
-        <select value={values.rating} onChange={set("rating")} className={`${inputClasses} mt-1`}>
-          <option value="">Any</option>
-          <option value="4.5">4.5+</option>
-          <option value="4">4.0+</option>
-          <option value="3">3.0+</option>
-        </select>
+        <div className="mt-1 w-full">
+          <StyledSelect
+            value={values.rating}
+            onChange={set("rating")}
+            options={[
+              { value: "", label: "Any" },
+              { value: "4.5", label: "4.5+" },
+              { value: "4", label: "4.0+" },
+              { value: "3", label: "3.0+" },
+            ]}
+            aria-label="Minimum rating"
+            className="w-full"
+            triggerClassName="px-4 py-3 rounded-xl"
+          />
+        </div>
       </label>
 
       <label className="block">
         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Radius (km)</span>
-        <select value={values.radius} onChange={set("radius")} className={`${inputClasses} mt-1`}>
-          <option value="5">5 km</option>
-          <option value="10">10 km</option>
-          <option value="25">25 km</option>
-          <option value="50">50 km</option>
-        </select>
+        <div className="mt-1 w-full">
+          <StyledSelect
+            value={values.radius}
+            onChange={set("radius")}
+            options={[
+              { value: "5", label: "5 km" },
+              { value: "10", label: "10 km" },
+              { value: "25", label: "25 km" },
+              { value: "50", label: "50 km" },
+            ]}
+            aria-label="Search radius"
+            className="w-full"
+            triggerClassName="px-4 py-3 rounded-xl"
+          />
+        </div>
       </label>
 
       <button

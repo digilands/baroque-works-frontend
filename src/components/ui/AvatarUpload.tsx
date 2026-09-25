@@ -6,6 +6,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import ImageAdd01Icon from "@hugeicons/core-free-icons/ImageAdd01Icon";
 import { useUploadImage } from "@/hooks/useUpload";
 import type { UploadedFile, UploadFolder } from "@/lib/api";
+import { isUnoptimizedSrc } from "@/lib/images";
 
 interface AvatarUploadProps {
   folder?: UploadFolder;
@@ -51,7 +52,7 @@ export default function AvatarUpload({
         className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-dashed border-gray-200 hover:border-indigo-400 transition-colors disabled:opacity-60"
       >
         {preview ? (
-          <Image src={preview} alt="Profile photo" fill className="object-cover" />
+          <Image src={preview} alt="Profile photo" fill sizes="96px" unoptimized={isUnoptimizedSrc(preview)} className="object-cover" />
         ) : (
           <span className="flex items-center justify-center w-full h-full">
             <HugeiconsIcon icon={ImageAdd01Icon} size={28} className="text-gray-400" />

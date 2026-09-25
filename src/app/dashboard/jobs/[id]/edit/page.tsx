@@ -3,8 +3,8 @@ import JobCreateForm from "@/app/ui/jobs/JobCreateForm";
 import {
   getJobById,
   getMyHirerProfile,
-  getSessionUser,
 } from "@/lib/server/queries";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
@@ -15,8 +15,7 @@ export default async function EditJobPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getSessionUser().catch(() => null);
-  if (!user) redirect("/auth/login");
+  const user = await requireSessionUser(`/dashboard/jobs/${id}/edit`);
   if (user.role !== "client") redirect("/dashboard");
 
   const [hirer, job] = await Promise.all([

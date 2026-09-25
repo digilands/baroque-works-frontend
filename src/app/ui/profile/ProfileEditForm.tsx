@@ -58,27 +58,33 @@ export default function ProfileEditForm({ initial }: ProfileEditFormProps) {
   }) => {
     setFormError("");
     setSaved(false);
+    const location = {
+      ...(values.state.trim() ? { state: values.state.trim() } : {}),
+      ...(values.lga.trim() ? { lga: values.lga.trim() } : {}),
+    };
+    const locationUpdate = Object.keys(location).length > 0 ? { location } : {};
+    const imageUrl = avatar?.secureUrl || avatar?.url;
+    // User.image is [{url, public_id}] — omit partial objects so Zod never
+    // sees `public_id`/`url` as undefined after JSON.stringify drops keys.
+    const profileImage =
+      avatar?.publicId && imageUrl
+        ? [{ url: imageUrl, public_id: avatar.publicId }]
+        : undefined;
     try {
       await updateMe.mutateAsync({
+        ...(initial.email ? { email: initial.email } : {}),
         ...(values.fullname.trim() ? { fullname: values.fullname.trim() } : {}),
         ...(values.phone.trim() ? { phone: values.phone.trim() } : {}),
         ...(values.bio.trim() ? { bio: values.bio.trim() } : {}),
         ...(values.address.trim() ? { address: values.address.trim() } : {}),
-        location: {
-          state: values.state,
-          ...(values.lga.trim() ? { lga: values.lga.trim() } : {}),
-        },
-        ...(avatar
-          ? { image: { url: avatar.secureUrl || avatar.url, public_id: avatar.publicId } }
-          : {}),
+        ...locationUpdate,
+        ...(profileImage ? { image: profileImage } : {}),
       });
+      // Handyman.location is 2dsphere GeoJSON — state/lga alone crash Mongo.
+      // This form has no coordinates, so only availability is safe to PATCH.
       if (isHandyman) {
         await updateHandyman.mutateAsync({
           availability: { status: values.availability },
-          location: {
-            state: values.state,
-            ...(values.lga.trim() ? { lga: values.lga.trim() } : {}),
-          },
         });
       }
       setSaved(true);

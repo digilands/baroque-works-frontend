@@ -1,4 +1,5 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import { ApiError } from "@/lib/api-errors";
 import { JobHeader } from "@/app/ui/jobs/JobHeader";
 import { LocationCard } from "@/app/ui/jobs/LocationCard";
 import { TaskOverviewCard } from "@/app/ui/jobs/TaskOverviewCard";
@@ -9,7 +10,6 @@ import JobOwnerActions from "@/app/ui/jobs/JobOwnerActions";
 import {
   getHirerById,
   getJobById,
-  getSessionUser,
   getUserById,
 } from "@/lib/server/queries";
 import {
@@ -17,6 +17,7 @@ import {
   mapHirerToClient,
   mapJobToDetailBlocks,
 } from "@/lib/server/mappers";
+import { requireSessionUser } from "@/lib/server/session-guard";
 
 // Backend-driven: always render per request, never prerender at build.
 export const dynamic = "force-dynamic";
@@ -27,11 +28,15 @@ export default async function JobRequestPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getSessionUser().catch(() => null);
-  if (!user) redirect("/auth/login");
+  const user = await requireSessionUser(`/dashboard/jobs/${id}`);
 
-  const job = await getJobById(id).catch(() => null);
-  if (!job) notFound();
+  let job;
+  try {
+    job = await getJobById(id);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
+  }
 
   // Hirer -> user chain for the client card (best effort; card hidden on failure).
   const hirer = job.hirerId
@@ -71,7 +76,7 @@ export default async function JobRequestPage({
         <div className="lg:col-span-2">
           <TaskOverviewCard
             description={job.description ?? "No description provided."}
-            photos={[]}
+            photos={job.image?.map((image) => image.url).filter((url): url is string => Boolean(url)) ?? []}
             instructions={undefined}
           />
 

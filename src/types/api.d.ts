@@ -653,7 +653,7 @@ export interface paths {
         };
         /**
          * Google OAuth callback endpoint for web
-         * @description Handles the callback from Google. On success, sets accessToken and refreshToken as HttpOnly cookies and redirects to the frontend dashboard.
+         * @description Handles the callback from Google. On success, redirects to the frontend callback with accessToken and refreshToken query parameters so the frontend BFF can set origin-scoped HttpOnly cookies.
          */
         get: {
             parameters: {
@@ -669,7 +669,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Redirect to frontend dashboard with user info in query (tokens are set as HttpOnly cookies) */
+                /** @description Redirect to the frontend Google callback with accessToken and refreshToken query parameters */
                 302: {
                     headers: {
                         [name: string]: unknown;
@@ -2086,7 +2086,7 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Hirer profile created */
+                /** @description Hirer profile created. Client onboarding creates this profile with profile_completed set to true so the user can post jobs immediately. */
                 201: {
                     headers: {
                         [name: string]: unknown;
@@ -2316,7 +2316,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Filter by job category */
+                    /** @description Filter by ServiceCategory ObjectId */
                     category?: string;
                     /** @description Filter by urgency level */
                     urgency?: "URGENT" | "NORMAL" | "FLEXIBLE";
@@ -2387,8 +2387,24 @@ export interface paths {
                         title: string;
                         /** @example Bathroom sink is leaking and needs urgent repair. Materials will be provided. */
                         description: string;
-                        /** @example plumbing */
+                        /**
+                         * @description ServiceCategory ObjectId
+                         * @example 65f100000000000000000301
+                         */
                         category: string;
+                        /**
+                         * @description Optional job images, maximum of 3
+                         * @example [
+                         *       {
+                         *         "public_id": "jobs/image1",
+                         *         "url": "https://example.com/job-image1.jpg"
+                         *       }
+                         *     ]
+                         */
+                        image?: {
+                            public_id?: string;
+                            url?: string;
+                        }[];
                         budget: {
                             /** @example 5000 */
                             min?: number;
@@ -2543,6 +2559,13 @@ export interface paths {
                     "application/json": {
                         title?: string;
                         description?: string;
+                        /** @description ServiceCategory ObjectId */
+                        category?: string;
+                        /** @description Optional job images, maximum of 3 */
+                        image?: {
+                            public_id?: string;
+                            url?: string;
+                        }[];
                         budget?: {
                             min?: number;
                             max?: number;
@@ -3522,7 +3545,7 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description User updated */
+                /** @description User updated. When the role is updated, refreshed accessToken and refreshToken values are returned so clients can replace JWTs containing the previous role. */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -3531,6 +3554,10 @@ export interface paths {
                         "application/json": {
                             success?: boolean;
                             user?: components["schemas"]["User"];
+                            /** @description Present when role is included in the update payload */
+                            accessToken?: string;
+                            /** @description Present when role is included in the update payload */
+                            refreshToken?: string;
                         };
                     };
                 };
@@ -3854,6 +3881,11 @@ export interface components {
                 /** @enum {string} */
                 urgencyTendency?: "PLANNED" | "EMERGENCY" | "FLEXIBLE";
             };
+            /**
+             * @description Whether the hirer has completed their profile. Defaults to false at the schema level, but POST /hirers sets it to true when client onboarding creates the profile.
+             * @default false
+             */
+            profile_completed: boolean;
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -3865,8 +3897,13 @@ export interface components {
             hirerId?: string;
             title: string;
             description: string;
-            /** @description Reference to ServiceCategory ID */
+            /** @description ObjectId reference to ServiceCategory */
             category: string;
+            /** @description Optional job images, maximum of 3 */
+            image?: {
+                public_id?: string;
+                url?: string;
+            }[];
             budget: {
                 min?: number;
                 max?: number;

@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import Cancel01Icon from '@hugeicons/core-free-icons/Cancel01Icon';
 import { BookingData } from "./ScheduleModal";
 import Image from "next/image";
+import { isUnoptimizedSrc, normalizeImageSrc } from "@/lib/images";
 
 interface ConfirmModalProps {
     open: boolean;
@@ -28,6 +29,7 @@ export default function ConfirmModal({
     location
 }: ConfirmModalProps) {
     if (!bookingData) return null;
+    const workerImage = normalizeImageSrc(handymanImage);
 
     return (
         <Dialog
@@ -63,9 +65,11 @@ export default function ConfirmModal({
                     <div className="flex items-center gap-3 mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                         <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
                             <Image 
-                                src={handymanImage} 
+                                src={workerImage} 
                                 alt={handymanName} 
                                 fill
+                                sizes="48px"
+                                unoptimized={isUnoptimizedSrc(workerImage)}
                                 className="object-cover"
                             />
                         </div>

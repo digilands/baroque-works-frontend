@@ -12,6 +12,8 @@ import {
   LockPasswordIcon
 } from "@hugeicons/core-free-icons";
 import { useSignup } from "@/hooks/useAuth";
+import PasswordChecklist from "@/components/ui/PasswordChecklist";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -26,7 +28,13 @@ export default function SignupForm() {
     validationSchema: Yup.object({
       fullname: Yup.string().required("Full name is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
-      password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+      password: Yup.string()
+        .min(8, "Password must be at least 8 characters")
+        .matches(/[A-Z]/, "Password must contain an uppercase letter")
+        .matches(/[a-z]/, "Password must contain a lowercase letter")
+        .matches(/[0-9]/, "Password must contain a number")
+        .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain a special character")
+        .required("Password is required"),
     }),
     onSubmit: async (values) => {
       try {
@@ -44,11 +52,11 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex flex-col justify-center bg-white p-8 md:p-12 w-full max-w-md mx-auto">
-      <div className="mb-10 text-center">
+    <div className="flex flex-col justify-center bg-white px-2 py-4 md:px-4 md:py-6 w-full max-w-md mx-auto">
+      <div className="mb-4 text-center">
         <h1 className="text-3xl font-bold mb-3 text-gray-900 tracking-tight">Create Account</h1>
         <p className="text-gray-500 text-sm">
-          Join BaroqueWorks to manage your service requests with ease.
+          Join Handyman to manage your service requests with ease.
         </p>
       </div>
 
@@ -58,7 +66,7 @@ export default function SignupForm() {
         </div>
       )}
 
-      <form onSubmit={formik.handleSubmit} className="space-y-5">
+      <form onSubmit={formik.handleSubmit} className="space-y-4">
         {/* Full Name */}
         <div className="space-y-2">
           <label htmlFor="fullname" className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
@@ -73,7 +81,7 @@ export default function SignupForm() {
               name="fullname"
               type="text"
               placeholder="Emeka Obi"
-              className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
+              className={`w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
                 formik.touched.fullname && formik.errors.fullname
                   ? "border-red-200 focus:ring-red-100/50"
                   : "border-gray-100 focus:border-indigo-600 focus:ring-indigo-100/50"
@@ -102,7 +110,7 @@ export default function SignupForm() {
               name="email"
               type="email"
               placeholder="e.g. emeka@homehero.com"
-              className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
+              className={`w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
                 formik.touched.email && formik.errors.email
                   ? "border-red-200 focus:ring-red-100/50"
                   : "border-gray-100 focus:border-indigo-600 focus:ring-indigo-100/50"
@@ -123,15 +131,15 @@ export default function SignupForm() {
             Password
           </label>
           <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+            <div className="absolute z-10 left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors pointer-events-none">
               <HugeiconsIcon icon={LockPasswordIcon} size={20} />
             </div>
-            <input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               placeholder="••••••••"
-              className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
+              autoComplete="new-password"
+              className={`w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all ${
                 formik.touched.password && formik.errors.password
                   ? "border-red-200 focus:ring-red-100/50"
                   : "border-gray-100 focus:border-indigo-600 focus:ring-indigo-100/50"
@@ -141,6 +149,7 @@ export default function SignupForm() {
               onBlur={formik.handleBlur}
             />
           </div>
+          <PasswordChecklist password={formik.values.password} />
           {formik.touched.password && formik.errors.password && (
             <p className="text-xs text-red-500 ml-1 font-medium">{formik.errors.password}</p>
           )}
@@ -149,14 +158,14 @@ export default function SignupForm() {
         <button
           type="submit"
           disabled={formik.isSubmitting || signupMutation.isPending}
-          className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-gray-200 active:scale-[0.98] disabled:opacity-70"
+          className="w-full py-3 bg-gray-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-gray-200 active:scale-[0.98] disabled:opacity-70"
         >
           {signupMutation.isPending ? "Creating..." : "Continue"}
           <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
         </button>
       </form>
 
-      <div className="flex items-center gap-4 my-8">
+      <div className="flex items-center gap-4 my-4">
         <div className="flex-1 h-px bg-gray-100"></div>
         <span className="text-gray-400 text-xs font-bold uppercase tracking-widest">or</span>
         <div className="flex-1 h-px bg-gray-100"></div>
@@ -166,14 +175,14 @@ export default function SignupForm() {
         <button
           onClick={handleGoogleSignup}
           type="button"
-          className="w-full py-3.5 bg-white border border-gray-100 text-gray-700 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-all shadow-sm active:scale-[0.98]"
+          className="w-full py-3 bg-white border border-gray-100 text-gray-700 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-all shadow-sm active:scale-[0.98]"
         >
           <HugeiconsIcon icon={GoogleIcon} size={20} />
           Sign up with Google
         </button>
       </div>
 
-      <p className="text-sm text-center mt-10 text-gray-500">
+      <p className="text-sm text-center mt-4 text-gray-500">
         Already have an account?{" "}
         <a href="/auth/login" className="text-indigo-600 font-bold hover:underline">
           Sign in

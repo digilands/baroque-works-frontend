@@ -9,6 +9,7 @@ import {
   deleteJob,
   deleteService,
   getCategorySummaries,
+  removeServiceImage,
   resetPassword,
   updateBookingStatus,
   updateHandymanProfile,
@@ -42,7 +43,10 @@ export function useSubcategories(categoryId?: string) {
       const { data } = await internalApi.get("/categories/subcategories", {
         params: { categoryId, isActive: true },
       });
-      const list = Array.isArray(data) ? data : (data?.subcategories ?? []);
+      // Backend envelopes vary by endpoint (`subcategories` | `items` | `data`).
+      const list = Array.isArray(data)
+        ? data
+        : (data?.subcategories ?? data?.items ?? data?.data ?? []);
       return list as ProfessionSubCategory[];
     },
     enabled: Boolean(categoryId),
@@ -104,6 +108,17 @@ export function useUpdateService() {
   const queryClient = useQueryClient();
   return useMutation<unknown, Error, { id: string; input: Partial<CreateServiceInput> }>({
     mutationFn: ({ id, input }) => updateService(id, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["services"] });
+    },
+  });
+}
+
+/** Remove one gallery image from a service (owner only). */
+export function useRemoveServiceImage() {
+  const queryClient = useQueryClient();
+  return useMutation<unknown, Error, { serviceId: string; publicId: string }>({
+    mutationFn: ({ serviceId, publicId }) => removeServiceImage(serviceId, publicId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
     },
