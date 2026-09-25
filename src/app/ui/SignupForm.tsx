@@ -131,7 +131,7 @@ export default function SignupForm() {
             Password
           </label>
           <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors">
+            <div className="absolute z-10 left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors pointer-events-none">
               <HugeiconsIcon icon={LockPasswordIcon} size={20} />
             </div>
             <PasswordInput
