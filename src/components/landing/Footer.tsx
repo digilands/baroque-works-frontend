@@ -2,15 +2,14 @@
 import React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Wrench01Icon } from "@hugeicons/core-free-icons";
+import Image from "next/image";
 
 const Footer = () => {
   return (
     <footer className="py-12 bg-[#FDFCF8] border-t border-gray-100 flex flex-col items-center justify-center text-center">
       <div className="flex items-center gap-2 mb-4">
-         <div className="w-8 h-8 rounded-full bg-[#D4A556] flex items-center justify-center text-white">
-            <HugeiconsIcon icon={Wrench01Icon} size={18} strokeWidth={2} className="text-white" />
-        </div>
-        <span className="text-xl font-bold text-text">Handymen</span>
+        <Image src="/handyman-logo.svg" alt="Handyman" width={32} height={32} />
+        <span className="text-xl font-bold text-text">HandyMan</span>
       </div>
 
       <p className="text-sm text-gray-text1 mb-8 max-w-md px-4">

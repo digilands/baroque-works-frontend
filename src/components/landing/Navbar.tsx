@@ -15,7 +15,7 @@ const Navbar = () => {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
         <Image src="/handyman-logo.svg" alt="Handyman" width={32} height={32} />
-        <span className="text-xl font-bold text-text dark:text-white">Handyman</span>
+        <span className="text-xl font-bold text-text dark:text-white">HandyMan</span>
       </Link>
 
       {/* Desktop Links */}
