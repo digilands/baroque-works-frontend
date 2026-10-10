@@ -19,10 +19,12 @@ const Navbar = () => {
       </Link>
 
       {/* Desktop Links */}
+      {/* TODO: All links currently redirect to /waitlist for early users. Use proper routes later. */}
       <div className="hidden md:flex items-center gap-8 text-sm font-medium text-text dark:text-gray-300">
-        <Link href="/home" className="hover:text-gold transition-colors">Find a Pro</Link>
-        <Link href="/home" className="hover:text-gold transition-colors">Services</Link>
-        <Link href="#" className="hover:text-gold transition-colors">How it works</Link>
+        <Link href="/waitlist" className="hover:text-gold transition-colors">Find a Pro</Link>
+        <Link href="/waitlist" className="hover:text-gold transition-colors">Services</Link>
+        <Link href="/waitlist" className="hover:text-gold transition-colors">How it works</Link>
+        <Link href="/waitlist" className="hover:text-gold transition-colors font-bold text-gold">Join Waitlist</Link>
       </div>
 
       {/* Right Side Actions */}
@@ -37,7 +39,8 @@ const Navbar = () => {
 
         {user ? (
           <>
-            <Link href="/dashboard" className="text-sm font-semibold text-text hover:text-gold transition-colors">
+            {/* TODO: All links currently redirect to /waitlist for early users. Use proper routes later. */}
+            <Link href="/waitlist" className="text-sm font-semibold text-text hover:text-gold transition-colors">
               Dashboard
             </Link>
             <button
@@ -49,11 +52,12 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link href="/auth/login" className="text-sm font-semibold text-text hover:text-gold transition-colors">
+            {/* TODO: All links currently redirect to /waitlist for early users. Use proper routes later. */}
+            <Link href="/waitlist" className="text-sm font-semibold text-text hover:text-gold transition-colors">
               Log In
             </Link>
             <Link
-              href="/auth/signup"
+              href="/waitlist"
               className="bg-gold text-white px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm"
             >
               Sign Up
@@ -62,23 +66,32 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Mobile Menu Button */}
-      <button
-        className="md:hidden text-text"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-      >
-        <HugeiconsIcon icon={Menu01Icon} size={24} />
-      </button>
+      {/* Mobile Actions */}
+      <div className="flex items-center gap-4 md:hidden">
+        <Link 
+          href="/waitlist" 
+          className="bg-gold text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-sm hover:opacity-90 transition-opacity"
+        >
+          Join Waitlist
+        </Link>
+        <button
+          className="text-text"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <HugeiconsIcon icon={Menu01Icon} size={24} />
+        </button>
+      </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="absolute top-16 left-0 w-full bg-white dark:bg-black shadow-lg p-6 flex flex-col gap-4 md:hidden border-t border-gray-100 dark:border-gray-800">
-          <Link href="/home" className="text-text font-medium" onClick={() => setIsMenuOpen(false)}>Services</Link>
-          <Link href="/home" className="text-text font-medium" onClick={() => setIsMenuOpen(false)}>Find a Pro</Link>
-          <Link href="#" className="text-text font-medium">About</Link>
+          {/* TODO: All links currently redirect to /waitlist for early users. Use proper routes later. */}
+          <Link href="/waitlist" className="text-text font-medium" onClick={() => setIsMenuOpen(false)}>Services</Link>
+          <Link href="/waitlist" className="text-text font-medium" onClick={() => setIsMenuOpen(false)}>Find a Pro</Link>
+          <Link href="/waitlist" className="text-text font-medium">About</Link>
           <div className="border-t border-gray-100 my-2 pt-2">
-            <Link href="/auth/signup" className="block w-full text-center py-2 font-semibold" onClick={() => setIsMenuOpen(false)}>Log In</Link>
-            <Link href="/auth/signup" className="block w-full bg-gold text-white text-center py-2 rounded-lg mt-2 font-semibold" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+            <Link href="/waitlist" className="block w-full text-center py-2 font-semibold" onClick={() => setIsMenuOpen(false)}>Log In</Link>
+            <Link href="/waitlist" className="block w-full bg-gold text-white text-center py-2 rounded-lg mt-2 font-semibold" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import TechnicalCircuit from "./TechnicalCircuit";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
@@ -48,7 +49,7 @@ const HeroSection = () => {
 
         {/* Search Bar */}
         <motion.div 
-          className="bg-white p-2 rounded-full shadow-lg flex flex-col md:flex-row items-center gap-2 max-w-xl border border-gray-100"
+          className="bg-white p-2 rounded-3xl md:rounded-full shadow-lg flex flex-col md:flex-row items-center gap-2 max-w-xl border border-gray-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -70,9 +71,10 @@ const HeroSection = () => {
               className="w-full bg-transparent outline-none text-text placeholder-gray-400"
             />
           </div>
-          <button className="bg-[#D4A556] text-white p-3 rounded-full hover:opacity-90 transition-opacity w-full md:w-auto flex justify-center">
+          {/* TODO: Search currently redirects to /waitlist for early users. Implement real search later. */}
+          <Link href="/waitlist" className="bg-[#D4A556] text-white p-3 rounded-2xl md:rounded-full hover:opacity-90 transition-opacity w-full md:w-auto flex justify-center mt-2 md:mt-0">
             <HugeiconsIcon icon={ArrowRight01Icon} size={24} />
-          </button>
+          </Link>
         </motion.div>
 
         {/* Badges */}
@@ -154,9 +156,10 @@ const HeroSection = () => {
                  </div>
               </div>
 
-              <button className="w-full mt-6 bg-[#D4A556] text-white py-3 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-[#D4A556]/20">
+              {/* TODO: Booking action redirects to waitlist for early users. */}
+              <Link href="/waitlist" className="block w-full mt-6 bg-[#D4A556] text-white py-3 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-lg shadow-[#D4A556]/20 text-center">
                 Book Tunde
-              </button>
+              </Link>
 
               <div className="mt-6 flex items-center gap-3 pt-4 border-t border-gray-100">
                  <div className="flex -space-x-2">

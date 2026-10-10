@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   SolarPanel01Icon,
@@ -36,7 +37,8 @@ export default function PopularCategories({ categories }: { categories: PopularC
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {visible.map((cat, index) => (
-          <div key={cat.id ?? `cat-${index}`} className="group cursor-pointer">
+          /* TODO: Category links currently redirect to /waitlist for early users. Use dynamic routing later. */
+          <Link href="/waitlist" key={cat.id ?? `cat-${index}`} className="group cursor-pointer block">
             <div className="relative h-48 w-full rounded-2xl overflow-hidden mb-4">
               <img
                 src={cat.image}
@@ -50,7 +52,7 @@ export default function PopularCategories({ categories }: { categories: PopularC
 
             <h3 className="font-bold text-lg text-text group-hover:text-[#D4A556] transition-colors">{cat.title}</h3>
             {cat.subtitle && <p className="text-sm text-gray-text1">{cat.subtitle}</p>}
-          </div>
+          </Link>
         ))}
       </div>
     </section>

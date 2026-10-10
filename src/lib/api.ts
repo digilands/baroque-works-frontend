@@ -578,3 +578,20 @@ export async function acceptJobBid(input: AcceptJobBidInput): Promise<{ id?: str
     throw toApiError(error, "Failed to accept bid");
   }
 }
+
+export interface JoinWaitlistInput {
+  name: string;
+  email: string;
+}
+
+export async function joinWaitlist(input: JoinWaitlistInput): Promise<unknown> {
+  try {
+    const { data } = await internalApi.post('/waitlist', input);
+    if (!data?.success) {
+      throw new ApiError(400, 'WAITLIST_FAILED', data?.message || 'Failed to join waitlist');
+    }
+    return data.waitlist ?? data;
+  } catch (error) {
+    throw toApiError(error, 'Failed to join waitlist');
+  }
+}
