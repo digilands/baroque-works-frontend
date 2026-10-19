@@ -579,9 +579,15 @@ export async function acceptJobBid(input: AcceptJobBidInput): Promise<{ id?: str
   }
 }
 
+/** Whether the user wants to offer services (handyman) or needs services (client). */
+export type WaitlistIntent = "offer" | "need";
+
 export interface JoinWaitlistInput {
   name: string;
   email: string;
+  city: string;
+  intent: WaitlistIntent;
+  services: string[];
 }
 
 export async function joinWaitlist(input: JoinWaitlistInput): Promise<unknown> {
