@@ -5,6 +5,8 @@ import {
   customServiceCopy,
   hasWaitlistErrors,
   mapServerErrors,
+  normalizePhone,
+  validatePhone,
   validateWaitlist,
   type WaitlistFormValues,
 } from "@/lib/waitlist";
@@ -13,6 +15,7 @@ function makeValues(overrides: Partial<WaitlistFormValues> = {}): WaitlistFormVa
   return {
     name: "Ada Obi",
     email: "ada@example.com",
+    phone: "08031234567",
     intent: "need",
     city: "Lagos",
     services: ["plumbing"],
@@ -23,17 +26,19 @@ function makeValues(overrides: Partial<WaitlistFormValues> = {}): WaitlistFormVa
 }
 
 describe("buildWaitlistPayload", () => {
-  it("trims name/email/city and lowercases the email", () => {
+  it("trims name/email/city, lowercases the email and normalizes the phone", () => {
     const payload = buildWaitlistPayload(
       makeValues({
         name: "  Ada Obi  ",
         email: "  Ada@Example.COM ",
+        phone: " 0803 123-4567 ",
         city: " Lagos ",
       }),
     );
     expect(payload).toEqual({
       name: "Ada Obi",
       email: "ada@example.com",
+      phone: "08031234567",
       city: " Lagos ",
       intent: "need",
       services: ["plumbing"],
@@ -78,6 +83,34 @@ describe("buildWaitlistPayload", () => {
   });
 });
 
+describe("normalizePhone", () => {
+  it("strips spaces, dashes and parentheses", () => {
+    expect(normalizePhone("0803 123-4567")).toBe("08031234567");
+    expect(normalizePhone("+234 (803) 123-4567")).toBe("+2348031234567");
+    expect(normalizePhone("  08031234567  ")).toBe("08031234567");
+  });
+});
+
+describe("validatePhone", () => {
+  it("accepts local and international Nigerian mobile numbers", () => {
+    expect(validatePhone("08031234567")).toBeUndefined();
+    expect(validatePhone("+2348031234567")).toBeUndefined();
+    expect(validatePhone("2348031234567")).toBeUndefined();
+    expect(validatePhone("0803 123 4567")).toBeUndefined();
+  });
+
+  it("requires a value", () => {
+    expect(validatePhone("")).toBe("Phone number is required");
+    expect(validatePhone("   ")).toBe("Phone number is required");
+  });
+
+  it("rejects invalid Nigerian numbers", () => {
+    expect(validatePhone("12345")).toBe("Enter a valid Nigerian phone number");
+    expect(validatePhone("07031234567")).toBe("Enter a valid Nigerian phone number");
+    expect(validatePhone("+1 415 555 0100")).toBe("Enter a valid Nigerian phone number");
+  });
+});
+
 describe("countWaitlistServices", () => {
   it("counts listed plus a usable custom service", () => {
     expect(
@@ -103,10 +136,11 @@ describe("validateWaitlist", () => {
     expect(hasWaitlistErrors(validateWaitlist(makeValues()))).toBe(false);
   });
 
-  it("requires name, email, intent, city and at least one service", () => {
+  it("requires name, email, phone, intent, city and at least one service", () => {
     const errors = validateWaitlist({
       name: "",
       email: "",
+      phone: "",
       intent: "",
       city: "",
       services: [],
@@ -115,6 +149,7 @@ describe("validateWaitlist", () => {
     });
     expect(errors.name).toBe("Name is required");
     expect(errors.email).toBe("Email is required");
+    expect(errors.phone).toBe("Phone number is required");
     expect(errors.intent).toBeTruthy();
     expect(errors.city).toBeTruthy();
     expect(errors.services).toBeTruthy();
@@ -127,6 +162,12 @@ describe("validateWaitlist", () => {
 
   it("rejects malformed emails", () => {
     expect(validateWaitlist(makeValues({ email: "not-an-email" })).email).toBeTruthy();
+  });
+
+  it("rejects malformed phone numbers", () => {
+    expect(validateWaitlist(makeValues({ phone: "12345" })).phone).toBe(
+      "Enter a valid Nigerian phone number",
+    );
   });
 
   it("requires the custom service when Other is checked", () => {
@@ -163,10 +204,12 @@ describe("mapServerErrors", () => {
   it("attaches known-field messages and returns the rest", () => {
     const { fieldErrors, generalErrors } = mapServerErrors([
       "email must be a valid email",
+      "phone must be a valid Nigerian number",
       "city is required",
       "something unrelated broke",
     ]);
     expect(fieldErrors.email).toBeTruthy();
+    expect(fieldErrors.phone).toBeTruthy();
     expect(fieldErrors.city).toBeTruthy();
     expect(generalErrors).toEqual(["something unrelated broke"]);
   });

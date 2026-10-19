@@ -585,6 +585,8 @@ export type WaitlistIntent = "offer" | "need";
 export interface JoinWaitlistInput {
   name: string;
   email: string;
+  /** Normalized Nigerian mobile number, e.g. `08031234567` or `+2348031234567`. */
+  phone: string;
   city: string;
   intent: WaitlistIntent;
   services: string[];

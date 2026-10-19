@@ -11,6 +11,21 @@ export const WAITLIST_MIN_CUSTOM_SERVICE = 2;
 export const WAITLIST_MAX_CUSTOM_SERVICE = 100;
 
 export const WAITLIST_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Nigerian mobile: `0XXXXXXXXXX` or `+234XXXXXXXXXX` (spaces/dashes/parens stripped first). */
+export const WAITLIST_PHONE_RE = /^(\+?234|0)[789]\d{9}$/;
+
+/** Remove spaces, dashes and parentheses so a phone number can be validated/sent. */
+export function normalizePhone(raw: string): string {
+  return (raw ?? "").replace(/[\s()\-]/g, "");
+}
+
+/** Inline error for the phone field, or `undefined` when valid. */
+export function validatePhone(rawPhone: string): string | undefined {
+  const phone = normalizePhone(rawPhone);
+  if (!phone) return "Phone number is required";
+  if (!WAITLIST_PHONE_RE.test(phone)) return "Enter a valid Nigerian phone number";
+  return undefined;
+}
 
 export interface WaitlistIntentOption {
   value: WaitlistIntent;
@@ -43,6 +58,7 @@ export const WAITLIST_SERVICES: WaitlistServiceOption[] = [
 export interface WaitlistFormValues {
   name: string;
   email: string;
+  phone: string;
   intent: WaitlistIntent | "";
   city: string;
   /** Selected listed service values. */
@@ -54,6 +70,7 @@ export interface WaitlistFormValues {
 export interface WaitlistFieldErrors {
   name?: string;
   email?: string;
+  phone?: string;
   intent?: string;
   city?: string;
   services?: string;
@@ -63,6 +80,7 @@ export interface WaitlistFieldErrors {
 export const EMPTY_WAITLIST_FORM: WaitlistFormValues = {
   name: "",
   email: "",
+  phone: "",
   intent: "",
   city: "",
   services: [],
@@ -97,7 +115,8 @@ export function customServiceCopy(intent: WaitlistIntent | ""): {
 
 /**
  * Build the POST /api/v1/waitlist body. Trims name/email/city, lowercases the
- * email, and appends the trimmed custom service when "Other" is checked.
+ * email, normalizes the phone number, and appends the trimmed custom service
+ * when "Other" is checked.
  */
 export function buildWaitlistPayload(values: WaitlistFormValues): JoinWaitlistInput {
   const services = [...values.services];
@@ -109,13 +128,14 @@ export function buildWaitlistPayload(values: WaitlistFormValues): JoinWaitlistIn
   return {
     name: values.name.trim(),
     email: values.email.trim().toLowerCase(),
+    phone: normalizePhone(values.phone),
     city: values.city,
     intent: values.intent as WaitlistIntent,
     services,
   };
 }
 
-/** Client-side validation for all five fields plus the conditional custom service. */
+/** Client-side validation for all six fields plus the conditional custom service. */
 export function validateWaitlist(values: WaitlistFormValues): WaitlistFieldErrors {
   const errors: WaitlistFieldErrors = {};
 
@@ -134,6 +154,11 @@ export function validateWaitlist(values: WaitlistFormValues): WaitlistFieldError
     errors.email = "Email is required";
   } else if (!WAITLIST_EMAIL_RE.test(email)) {
     errors.email = "Enter a valid email address";
+  }
+
+  const phoneError = validatePhone(values.phone);
+  if (phoneError) {
+    errors.phone = phoneError;
   }
 
   if (!values.intent) {
@@ -177,6 +202,7 @@ export function isWaitlistValid(values: WaitlistFormValues): boolean {
 const FIELD_KEYWORDS: { field: keyof WaitlistFieldErrors; keywords: string[] }[] = [
   { field: "name", keywords: ["name"] },
   { field: "email", keywords: ["email"] },
+  { field: "phone", keywords: ["phone", "mobile"] },
   { field: "intent", keywords: ["intent", "role"] },
   { field: "city", keywords: ["city", "state"] },
   { field: "otherService", keywords: ["custom", "other"] },

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, Mail01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import Call02Icon from "@hugeicons/core-free-icons/Call02Icon";
 import { joinWaitlist } from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
 import {
@@ -17,6 +18,7 @@ import {
   customServiceCopy,
   hasWaitlistErrors,
   mapServerErrors,
+  validatePhone,
   validateWaitlist,
   type WaitlistFieldErrors,
   type WaitlistFormValues,
@@ -200,6 +202,36 @@ export default function WaitlistPage() {
                   />
                 </div>
                 <FieldError message={errors.email} />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label htmlFor="waitlist-phone" className="block text-sm font-semibold text-text mb-1.5">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <HugeiconsIcon icon={Call02Icon} size={18} />
+                  </div>
+                  <input
+                    id="waitlist-phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={values.phone}
+                    onChange={(e) => {
+                      setValues((prev) => ({ ...prev, phone: e.target.value }));
+                      clearError("phone");
+                    }}
+                    onBlur={() => {
+                      setErrors((prev) => ({ ...prev, phone: validatePhone(values.phone) }));
+                    }}
+                    className={fieldClass(Boolean(errors.phone), "pl-10")}
+                    placeholder="0803 123 4567"
+                    aria-invalid={Boolean(errors.phone)}
+                  />
+                </div>
+                <FieldError message={errors.phone} />
               </div>
 
               {/* Intent */}
