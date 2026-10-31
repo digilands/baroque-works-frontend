@@ -86,7 +86,7 @@ Client data access goes through `src/lib/api.ts` functions wrapped by TanStack Q
 ## Git/CI
 
 - Branches: `main` (production) and `dev` (integration) on `origin`.
-- **Deploy target: Vercel** (SSR + API routes; static export was removed).
-- `.github/workflows/nextjs.yml` still exists but is **stale** — it builds a static `./out` for GitHub Pages, which no longer matches this app (no `output: 'export'`, and Pages deploys would break the BFF routes). Treat as legacy; remove or replace when convenient.
+- **Deploy target: Cloudflare Workers (migration in progress)** via OpenNext; see `docs/setup.md`. Incremental cache configuration and successful Cloudflare preview/deploy validation are still outstanding.
+- `.github/workflows/nextjs.yml` still exists but is **stale** — it builds a static `./out` for GitHub Pages, which no longer matches this app (no `output: 'export'`, and Pages deploys would break the BFF routes). It does not deploy the Cloudflare Worker; replace it with an appropriate deployment workflow when ready.
 - pnpm for dependencies. No pre-commit hooks.
 - Lint gate: 0 errors (warnings tolerated). Build gate: `pnpm build` must pass.

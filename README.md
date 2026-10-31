@@ -33,6 +33,10 @@ The app runs at `http://localhost:3000`. A running NestJS backend is required fo
 |---------|-------------|
 | `pnpm dev` | Start development server |
 | `pnpm build` | Production build |
+| `pnpm preview` | Build and preview the Cloudflare Worker locally |
+| `pnpm deploy` | Build and deploy to Cloudflare Workers |
+| `pnpm upload` | Build and upload the Worker without deploying |
+| `pnpm cf-typegen` | Generate Cloudflare environment types |
 | `pnpm start` | Start production server |
 | `pnpm lint` | Run ESLint |
 | `pnpm test` | Run unit tests (Vitest) |
@@ -40,6 +44,8 @@ The app runs at `http://localhost:3000`. A running NestJS backend is required fo
 | `pnpm test:e2e` | Run Playwright E2E tests |
 | `pnpm gen:types` | Regenerate `src/types/api.d.ts` from Swagger |
 | `pnpm make` | Scaffold UI components, utils, or pages |
+
+Cloudflare deployment uses OpenNext. See [docs/setup.md](docs/setup.md#cloudflare-workers) for setup, preview, deployment, and current limitations.
 
 ## Project Structure
 

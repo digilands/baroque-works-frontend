@@ -155,8 +155,11 @@ Provider tree (root layout): `ClientProviders` → `Providers` (QueryClient) →
 
 ## Deployment
 
-- **Vercel** (SSR + API routes + image optimization; static export removed).
+- **Cloudflare Workers (migration in progress)** via `@opennextjs/cloudflare`. Wrangler config is in `wrangler.jsonc`; OpenNext config is in `open-next.config.ts`; static asset headers are in `public/_headers`.
+- Commands: `pnpm preview` builds and previews locally; `pnpm deploy` builds and deploys; `pnpm upload` builds and uploads without deploying. See `docs/setup.md` for environment variables and secrets.
+- The migration did not configure incremental caching. Configure the OpenNext cache and Cloudflare bindings before production deployment.
+- Validation caveats: OpenNext currently warns that this project's Next.js `16.3.5` is outside its declared peer range (`>=15.5.28 <16 || >=16.4.1`), and warns that Node.js middleware support on Cloudflare is experimental. On Windows, the initial preview build passed the Next.js build and type checks but failed while creating a middleware symlink (`EPERM`); OpenNext recommends WSL.
 - Env vars: see `docs/setup.md`.
 - Gates: `pnpm build` (type-check + routes), `pnpm lint` (0 errors), `pnpm test`, `pnpm test:e2e`.
 - `prebuild` runs `rimraf .next` to avoid stale Turbopack cache crashes.
-- `.github/workflows/nextjs.yml` is a stale GitHub Pages workflow (static `./out` deploy) that predates Vercel — it no longer matches the build; see `docs/conventions.md`.
+- `.github/workflows/nextjs.yml` is a stale GitHub Pages workflow (static `./out` deploy) and does not deploy this Worker; see `docs/conventions.md`.
